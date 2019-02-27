@@ -1,0 +1,228 @@
+package com.jy.service.content.file.question_bank;
+
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.file.question_bank.BusinessMapper;
+import com.jy.dao.content.file.question_bank.CompanyinfoMapper;
+import com.jy.dao.content.file.question_bank.InterviewquestionbankMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.file.question_bank.Companyinfo;
+import com.jy.entiy.content.file.question_bank.CompanyinfoExample;
+import com.jy.entiy.content.file.question_bank.InterviewquestionbankExample;
+import com.jy.entiy.content.file.question_bank.InterviewquestionbankExample.Criteria;
+import com.jy.service.base.BaseService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @ClassName:  CompanyInfoServiceImpl
+ * @Description:面经题库公司接口实现类
+ * @author: cheng fei
+ * @date:   2018-09-20 14:38
+ */
+
+@Service
+public class CompanyInfoServiceImpl extends BaseService implements CompanyInfoService{
+
+	//数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_COMPANY";
+
+	//文件引用表
+	private static final String TABLE_NAME = "CompanyInfo";
+
+	@Resource
+	private CompanyinfoMapper companyinfoMapper;
+
+	@Resource
+	private InterviewquestionbankMapper interviewquestionbankMapper;
+
+	@Resource
+	private BusinessMapper businessMapper;
+
+	@Resource
+	private FileinfoMapper fileinfoMapper;
+
+	@Override
+	public Result insertCompanyInfo(AccountInfo accountInfo, String AUTHORITY_CODE, Companyinfo companyinfo) throws MyException {
+
+		//检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		//补全参数
+		companyinfo.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		companyinfo.setCreateby(accountInfo.getAccount().getName());
+		companyinfo.setCreatetime(new Date());
+
+		int i = companyinfoMapper.insertSelective(companyinfo);
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		//添加文件引用
+		if (companyinfo.getCompanylogo() != null) {
+			addUseFile(companyinfo.getCompanylogo(), TABLE_NAME, (long) companyinfo.getCompanyid());
+		}
+
+		//数据库操作日志
+		String log = "[ " + businessMapper.getBusinessNameByBusinessID(companyinfo.getBusinessid()) + " ]行业添加了公司:[ ";
+		log += "公司名=" + companyinfo.getCompanyname() + ",";
+		log += companyinfo.getCompanylogo() == null ? "" : "公司logo文件ID=" + companyinfo.getCompanylogo() + ",";
+		log = log.substring(0,log.length()-1) + " ]";
+
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result getCompanyInfo(AccountInfo accountInfo, Integer company_id) throws MyException {
+
+		Companyinfo companyinfo = companyinfoMapper.selectByPrimaryKey(company_id);
+        Fileinfo fileinfo = companyinfo.getCompanylogo() == null ? null :  fileinfoMapper.selectByPrimaryKey(companyinfo.getCompanylogo());
+        String filePath = "";
+
+        //获取阿里云OSS文件地址
+		if (fileinfo != null && StringUtils.isNotBlank(fileinfo.getFilefullpath())){
+			filePath = aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath());
+		}
+		aliyunOSSClientUtil.closeOSSClient();
+		companyinfo.setLogoPath(filePath);
+		return Result.succee(companyinfo);
+	}
+
+	@Override
+	public Result updateCompanyInfo(AccountInfo accountInfo, String AUTHORITY_CODE, Companyinfo companyinfo) throws MyException {
+
+		//检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		//补全参数
+		companyinfo.setUpatepersonid(accountInfo.getAccount().getAccountid());
+		companyinfo.setUpdateby(accountInfo.getAccount().getName());
+		companyinfo.setUpdatetime(new Date());
+
+		Companyinfo old_companyinfo = companyinfoMapper.selectByPrimaryKey(companyinfo.getCompanyid());
+
+		int i = companyinfoMapper.updateByPrimaryKeySelective(companyinfo);
+		if (i < 1 ) {
+			throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		//数据库操作日志
+		String log = "修改了面经题库[ " + old_companyinfo.getCompanyname() + " ]公司:[ ";
+		log += StringUtils.isBlank(companyinfo.getCompanyname()) ? "" : "公司名=" + companyinfo.getCompanyname() + ",";
+		log += companyinfo.getCompanylogo() == null ? "" : "公司logo文件ID=" + companyinfo.getCompanylogo();
+		log = log.substring(0,log.length()-1) + " ]";
+
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+
+		//判读是是否有logo的修改,有的话添加文件引用,删除旧文件
+		if (companyinfo.getCompanylogo() != null) {
+			this.addUseFile(companyinfo.getCompanylogo(), TABLE_NAME, (long)companyinfo.getCompanyid());
+			if (old_companyinfo.getCompanyid() != null) {
+				this.deleteFile(accountInfo, DB_LOG_TYPE, old_companyinfo.getCompanylogo(), TABLE_NAME, (long)old_companyinfo.getCompanyid());
+			}
+		}
+		return Result.succee();
+	}
+
+	@Override
+	public Result deleteCompanyInfo(AccountInfo accountInfo, String AUTHORITY_CODE, String company_ids) throws MyException {
+
+		//检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		String[] ids = company_ids.split(",");
+
+		for (String id : ids) {
+			if (!StringUtils.isNumeric(id)) {
+				return Result.build(ResultEnum.PARAMETER_ERROR);
+			}
+			InterviewquestionbankExample example = new InterviewquestionbankExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andCompanyidEqualTo(Integer.parseInt(id));
+			int count = interviewquestionbankMapper.countByExample(example);
+			if (count > 0) {
+				return Result.build(ResultEnum.COMPANY_EXIST_FILE);
+			}else {
+
+				Companyinfo companyinfo = companyinfoMapper.selectByPrimaryKey(Integer.parseInt(id));
+				int i = companyinfoMapper.deleteByPrimaryKey(Integer.parseInt(id));
+				if (i < 1) {
+					throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+				}
+				//数据库操作日志
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), "删除了面经题库公司[ " + companyinfo.getCompanyname() + " ]", DB_LOG_TYPE);
+
+				//查询是否有logo文件,有则删除logo文件
+				if (companyinfo.getCompanylogo() != null) {
+					deleteFile(accountInfo, DB_LOG_TYPE, companyinfo.getCompanylogo(), TABLE_NAME, (long)companyinfo.getCompanyid());
+				}
+			}
+		}
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result getCompanyInfoList(Integer business_id, String search, Integer page, Integer page_size) throws MyException {
+
+		//检查参数
+		search = checkSearch(search);
+
+		//设置查询所有行业时,设置行业ID为null
+        //所有行业ID为1
+        business_id = business_id == 1 ? null : business_id;
+
+		//查询
+		CompanyinfoExample example = new CompanyinfoExample();
+		com.jy.entiy.content.file.question_bank.CompanyinfoExample.Criteria criteria = example.createCriteria();
+		if (business_id != null) {
+			criteria.andBusinessidEqualTo(business_id);
+		}
+		if (StringUtils.isNotBlank(search)) {
+			criteria.andCompanynameLike(search);
+		}
+		PageHelper.startPage(page,page_size);
+		List<Companyinfo> list = companyinfoMapper.selectByExample(example);
+		PageInfo<Companyinfo> pageInfo = new PageInfo<>(list);
+		List<Companyinfo> data = pageInfo.getList();
+
+		//查询logo文件地址
+		for (Companyinfo companyinfo : data) {
+			String filePath = companyinfo.getCompanylogo() == null ? null : fileinfoMapper.getFileFullPathByFileID(companyinfo.getCompanylogo());
+			if (StringUtils.isNotBlank(filePath)){
+				filePath = aliyunOSSClientUtil.getUrl(filePath);
+			}
+			companyinfo.setLogoPath(filePath);
+		}
+		Map<String,Object> map = new HashMap<>();
+		map.put("rows", data);
+		map.put("count", pageInfo.getTotal());
+
+		return Result.succee(map);
+	}
+
+}

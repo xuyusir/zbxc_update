@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.select.AreaMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.select.Area" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="Code" property="code" jdbcType="VARCHAR" />
+    <result column="ParentCode" property="parentcode" jdbcType="VARCHAR" />
+    <result column="Name" property="name" jdbcType="VARCHAR" />
+    <result column="MergerName" property="mergername" jdbcType="VARCHAR" />
+    <result column="ShortName" property="shortname" jdbcType="VARCHAR" />
+    <result column="MergerShortName" property="mergershortname" jdbcType="VARCHAR" />
+    <result column="LevelType" property="leveltype" jdbcType="VARCHAR" />
+    <result column="CityCode" property="citycode" jdbcType="VARCHAR" />
+    <result column="ZipCode" property="zipcode" jdbcType="VARCHAR" />
+    <result column="PinYin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="JianPin" property="jianpin" jdbcType="VARCHAR" />
+    <result column="FirstChar" property="firstchar" jdbcType="VARCHAR" />
+    <result column="Lng" property="lng" jdbcType="DOUBLE" />
+    <result column="Lat" property="lat" jdbcType="DOUBLE" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, Code, ParentCode, Name, MergerName, ShortName, MergerShortName, LevelType, CityCode, 
+    ZipCode, PinYin, JianPin, FirstChar, Lng, Lat, Remark
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.select.AreaExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Area
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Area
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Area
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.select.AreaExample" >
+    delete from Area
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.select.Area" >
+    insert into Area (ID, Code, ParentCode, 
+      Name, MergerName, ShortName, 
+      MergerShortName, LevelType, CityCode, 
+      ZipCode, PinYin, JianPin, 
+      FirstChar, Lng, Lat, 
+      Remark)
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{parentcode,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{mergername,jdbcType=VARCHAR}, #{shortname,jdbcType=VARCHAR}, 
+      #{mergershortname,jdbcType=VARCHAR}, #{leveltype,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR}, 
+      #{zipcode,jdbcType=VARCHAR}, #{pinyin,jdbcType=VARCHAR}, #{jianpin,jdbcType=VARCHAR}, 
+      #{firstchar,jdbcType=VARCHAR}, #{lng,jdbcType=DOUBLE}, #{lat,jdbcType=DOUBLE}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.select.Area" >
+    insert into Area
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="code != null" >
+        Code,
+      </if>
+      <if test="parentcode != null" >
+        ParentCode,
+      </if>
+      <if test="name != null" >
+        Name,
+      </if>
+      <if test="mergername != null" >
+        MergerName,
+      </if>
+      <if test="shortname != null" >
+        ShortName,
+      </if>
+      <if test="mergershortname != null" >
+        MergerShortName,
+      </if>
+      <if test="leveltype != null" >
+        LevelType,
+      </if>
+      <if test="citycode != null" >
+        CityCode,
+      </if>
+      <if test="zipcode != null" >
+        ZipCode,
+      </if>
+      <if test="pinyin != null" >
+        PinYin,
+      </if>
+      <if test="jianpin != null" >
+        JianPin,
+      </if>
+      <if test="firstchar != null" >
+        FirstChar,
+      </if>
+      <if test="lng != null" >
+        Lng,
+      </if>
+      <if test="lat != null" >
+        Lat,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="parentcode != null" >
+        #{parentcode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mergername != null" >
+        #{mergername,jdbcType=VARCHAR},
+      </if>
+      <if test="shortname != null" >
+        #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="mergershortname != null" >
+        #{mergershortname,jdbcType=VARCHAR},
+      </if>
+      <if test="leveltype != null" >
+        #{leveltype,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="zipcode != null" >
+        #{zipcode,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="jianpin != null" >
+        #{jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="firstchar != null" >
+        #{firstchar,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null" >
+        #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null" >
+        #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.select.AreaExample" resultType="java.lang.Integer" >
+    select count(*) from Area
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Area
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        Code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentcode != null" >
+        ParentCode = #{record.parentcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        Name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mergername != null" >
+        MergerName = #{record.mergername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.shortname != null" >
+        ShortName = #{record.shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mergershortname != null" >
+        MergerShortName = #{record.mergershortname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.leveltype != null" >
+        LevelType = #{record.leveltype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.citycode != null" >
+        CityCode = #{record.citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.zipcode != null" >
+        ZipCode = #{record.zipcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pinyin != null" >
+        PinYin = #{record.pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jianpin != null" >
+        JianPin = #{record.jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstchar != null" >
+        FirstChar = #{record.firstchar,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lng != null" >
+        Lng = #{record.lng,jdbcType=DOUBLE},
+      </if>
+      <if test="record.lat != null" >
+        Lat = #{record.lat,jdbcType=DOUBLE},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Area
+    set ID = #{record.id,jdbcType=INTEGER},
+      Code = #{record.code,jdbcType=VARCHAR},
+      ParentCode = #{record.parentcode,jdbcType=VARCHAR},
+      Name = #{record.name,jdbcType=VARCHAR},
+      MergerName = #{record.mergername,jdbcType=VARCHAR},
+      ShortName = #{record.shortname,jdbcType=VARCHAR},
+      MergerShortName = #{record.mergershortname,jdbcType=VARCHAR},
+      LevelType = #{record.leveltype,jdbcType=VARCHAR},
+      CityCode = #{record.citycode,jdbcType=VARCHAR},
+      ZipCode = #{record.zipcode,jdbcType=VARCHAR},
+      PinYin = #{record.pinyin,jdbcType=VARCHAR},
+      JianPin = #{record.jianpin,jdbcType=VARCHAR},
+      FirstChar = #{record.firstchar,jdbcType=VARCHAR},
+      Lng = #{record.lng,jdbcType=DOUBLE},
+      Lat = #{record.lat,jdbcType=DOUBLE},
+      Remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.select.Area" >
+    update Area
+    <set >
+      <if test="code != null" >
+        Code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="parentcode != null" >
+        ParentCode = #{parentcode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        Name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mergername != null" >
+        MergerName = #{mergername,jdbcType=VARCHAR},
+      </if>
+      <if test="shortname != null" >
+        ShortName = #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="mergershortname != null" >
+        MergerShortName = #{mergershortname,jdbcType=VARCHAR},
+      </if>
+      <if test="leveltype != null" >
+        LevelType = #{leveltype,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        CityCode = #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="zipcode != null" >
+        ZipCode = #{zipcode,jdbcType=VARCHAR},
+      </if>
+      <if test="pinyin != null" >
+        PinYin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="jianpin != null" >
+        JianPin = #{jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="firstchar != null" >
+        FirstChar = #{firstchar,jdbcType=VARCHAR},
+      </if>
+      <if test="lng != null" >
+        Lng = #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null" >
+        Lat = #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.select.Area" >
+    update Area
+    set Code = #{code,jdbcType=VARCHAR},
+      ParentCode = #{parentcode,jdbcType=VARCHAR},
+      Name = #{name,jdbcType=VARCHAR},
+      MergerName = #{mergername,jdbcType=VARCHAR},
+      ShortName = #{shortname,jdbcType=VARCHAR},
+      MergerShortName = #{mergershortname,jdbcType=VARCHAR},
+      LevelType = #{leveltype,jdbcType=VARCHAR},
+      CityCode = #{citycode,jdbcType=VARCHAR},
+      ZipCode = #{zipcode,jdbcType=VARCHAR},
+      PinYin = #{pinyin,jdbcType=VARCHAR},
+      JianPin = #{jianpin,jdbcType=VARCHAR},
+      FirstChar = #{firstchar,jdbcType=VARCHAR},
+      Lng = #{lng,jdbcType=DOUBLE},
+      Lat = #{lat,jdbcType=DOUBLE},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getSelect" resultType="map">
+  		SELECT Code,Name FROM Area WHERE ParentCode = #{code}
+  </select>
+  
+  <select id="getNameByCode" resultType="string">
+  	select Name from Area where Code = #{code}
+  </select>
+</mapper>

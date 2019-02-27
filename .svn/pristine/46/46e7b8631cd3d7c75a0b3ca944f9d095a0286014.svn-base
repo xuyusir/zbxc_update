@@ -1,0 +1,514 @@
+package com.jy.common.utils;
+
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.Bucket;
+import com.aliyun.oss.model.OSSObject;
+import com.aliyun.oss.model.ObjectMetadata;
+import com.aliyun.oss.model.PutObjectResult;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.UUID;
+
+/**
+ * @Description : 阿里云OSS工具类
+ * @Author : cheng fei
+ * @Date : 2018/12/24 09:43
+ */
+public class AliyunOSSClientUtil {
+
+    /**
+     * log日志
+     */
+    private static Logger logger = Logger.getLogger(AliyunOSSClientUtil.class);
+
+    /**
+     * 阿里云API的内网域名
+     */
+    private String intranetEndpoint;
+
+    /**
+     * 阿里云API的外网域名
+     */
+    private String outerNetEndpoint;
+    /**
+     * 阿里云API的密钥Access Key ID
+     */
+    private String accessKeyID;
+    /**
+     * 阿里云API的密钥Access Key Secret
+     */
+    private String accessKeySecret;
+    /**
+     * 阿里云API的bucket名称
+     */
+    private String bucketName;
+
+    /**
+     * url有效时间
+     */
+    private long expiration;
+
+    /**
+     * 阿里云外网连接
+     */
+    private OSSClient ossClientByOuterNet;
+
+    /**
+     * 阿里云内网连接
+     */
+    private OSSClient ossClientByIntranet;
+
+    /**
+     * 当前环境是否能连接OSS内网
+     */
+    private boolean clientIntranetEndpoint;
+
+    /**
+     * 是否使用nginx反向代理
+     */
+    private boolean useNginx;
+
+    /**
+     * nginx反向代理地址
+     */
+    private String nginxUrl;
+
+
+    public boolean isUseNginx() {
+        return useNginx;
+    }
+
+    public void setUseNginx(boolean useNginx) {
+        this.useNginx = useNginx;
+    }
+
+    public OSSClient getOssClientByIntranet() {
+        return ossClientByIntranet;
+    }
+
+    public void setOssClientByIntranet(OSSClient ossClientByIntranet) {
+        this.ossClientByIntranet = ossClientByIntranet;
+    }
+
+    public String getNginxUrl() {
+        return nginxUrl;
+    }
+
+    public void setNginxUrl(String nginxUrl) {
+        this.nginxUrl = nginxUrl;
+    }
+
+    public boolean isClientIntranetEndpoint() {
+        return clientIntranetEndpoint;
+    }
+
+    public void setClientIntranetEndpoint(boolean clientIntranetEndpoint) {
+        this.clientIntranetEndpoint = clientIntranetEndpoint;
+    }
+
+    public OSSClient getOssClientByOuterNet() {
+        return ossClientByOuterNet;
+    }
+
+    public void setOssClientByOuterNet(OSSClient ossClientByOuterNet) {
+        this.ossClientByOuterNet = ossClientByOuterNet;
+    }
+
+    public String getIntranetEndpoint() {
+        return intranetEndpoint;
+    }
+
+    public void setIntranetEndpoint(String intranetEndpoint) {
+        this.intranetEndpoint = intranetEndpoint;
+    }
+
+    public String getOuterNetEndpoint() {
+        return outerNetEndpoint;
+    }
+
+    public void setOuterNetEndpoint(String outerNetEndpoint) {
+        this.outerNetEndpoint = outerNetEndpoint;
+    }
+
+    public String getAccessKeyID() {
+        return accessKeyID;
+    }
+
+    public void setAccessKeyID(String accessKeyID) {
+        this.accessKeyID = accessKeyID;
+    }
+
+    public String getAccessKeySecret() {
+        return accessKeySecret;
+    }
+
+    public void setAccessKeySecret(String accessKeySecret) {
+        this.accessKeySecret = accessKeySecret;
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
+    }
+
+    public long getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(long expiration) {
+        this.expiration = expiration;
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:18
+     * 描述 : 获取阿里云OSS客户端连接对象
+     *
+     * @return
+     */
+    public OSSClient createOSSClient() {
+        if (clientIntranetEndpoint){
+            if (this.ossClientByIntranet == null) {
+                this.ossClientByIntranet = new OSSClient(intranetEndpoint, accessKeyID, accessKeySecret);
+            }
+            return this.ossClientByIntranet;
+        }else {
+            if (this.ossClientByOuterNet == null) {
+                this.ossClientByOuterNet = new OSSClient(outerNetEndpoint, accessKeyID, accessKeySecret);
+            }
+            return this.ossClientByOuterNet;
+        }
+    }
+
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2019/1/10 15:46
+     * 描述 : 获取阿里云OSS客户端外网连接对象
+     * @return
+     */
+    public OSSClient createOSSClientByOuterNet() {
+        if (this.ossClientByOuterNet == null) {
+            this.ossClientByOuterNet = new OSSClient(outerNetEndpoint, accessKeyID, accessKeySecret);
+        }
+        return this.ossClientByOuterNet;
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2019/1/10 15:46
+     * 描述 : 获取阿里云OSS内网连接对象
+     * @return
+     */
+    public OSSClient createOSSClientByIntranet() {
+        if (this.ossClientByIntranet == null) {
+            this.ossClientByIntranet = new OSSClient(intranetEndpoint, accessKeyID, accessKeySecret);
+        }
+        return this.ossClientByIntranet;
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:43
+     * 描述 : 关闭OSS连接
+     */
+    public void closeOSSClient() {
+
+        if (this.ossClientByOuterNet != null) {
+            this.ossClientByOuterNet.shutdown();
+            this.ossClientByOuterNet = null;
+        }
+
+        if (this.ossClientByIntranet != null) {
+            this.ossClientByIntranet.shutdown();
+            this.ossClientByIntranet = null;
+        }
+
+
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:19
+     * 描述 : 创建存储空间
+     *
+     * @param bucketName
+     * @return
+     */
+    public String createBucketName(String bucketName) {
+
+        // 创建存储空间
+        Bucket bucket = createOSSClient().createBucket(bucketName);
+        logger.info("创建存储空间成功");
+        return bucket.getName();
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:44
+     * 描述 : 删除存储空间buckName
+     *
+     * @param bucketName
+     */
+    public void deleteBucket(String bucketName) {
+        createOSSClient().deleteBucket(bucketName);
+        logger.info("删除" + bucketName + "Bucket成功");
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 16:50
+     * 描述 : 创建文件唯一名称
+     *
+     * @return
+     */
+    private static String createFileName() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    /**
+     * 创建模拟文件夹
+     *
+     * @param folder
+     * @return
+     */
+    public String createFolder(String folder) {
+        // 文件夹名
+        final String keySuffixWithSlash = folder;
+        // 判断文件夹是否存在，不存在则创建
+        if (!createOSSClient().doesObjectExist(bucketName, keySuffixWithSlash)) {
+            // 创建文件夹
+            createOSSClient().putObject(bucketName, keySuffixWithSlash, new ByteArrayInputStream(new byte[0]));
+            logger.info("创建文件夹成功");
+            // 得到文件夹名
+            OSSObject object = createOSSClient().getObject(bucketName, keySuffixWithSlash);
+            String fileDir = object.getKey();
+            return fileDir;
+        }
+        return keySuffixWithSlash;
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:12
+     * 描述 : 删除文件
+     *
+     * @param folder
+     * @param fileName
+     */
+    public void deleteFile(String folder, String fileName) {
+        createOSSClient().deleteObject(bucketName, folder + fileName);
+        logger.info("删除" + bucketName + "下的文件" + folder + fileName + "成功");
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 23:37
+     * 描述 : 删除文件
+     *
+     * @param fullFolder 文件全路径
+     */
+    public void deleteFile(String fullFolder) {
+        createOSSClient().deleteObject(bucketName, fullFolder);
+        logger.info("删除" + bucketName + "下的文件" + fullFolder + "成功");
+    }
+
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 17:52
+     * 描述 : 拷贝文件
+     *
+     * @param sourceFileName
+     * @param fileName
+     */
+    public void copyFile(String sourceFolder, String sourceFileName, String folder, String fileName) {
+        createFolder(folder);
+        createOSSClient().copyObject(bucketName, sourceFolder + sourceFileName, bucketName, folder + fileName);
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 16:55
+     * 描述 : 上传文件
+     *
+     * @param folder   文件夹路径
+     * @param fileName 文件名称
+     * @param fileSize 文件大小
+     * @param is       文件输入流
+     * @return
+     */
+    public String uploadFile(String folder, String fileName, Long fileSize, InputStream is) {
+        try {
+
+            String newFileName = createFileName() + fileName.substring(fileName.lastIndexOf("."));
+            logger.info("上传到路径" + folder + fileName);
+            // 创建上传Object的Metadata
+            ObjectMetadata metadata = new ObjectMetadata();
+            // 上传的文件的长度
+            metadata.setContentLength(is.available());
+            // 指定该Object被下载时的网页的缓存行为
+            metadata.setCacheControl("no-cache");
+            // 指定该Object下设置Header
+            metadata.setHeader("Pragma", "no-cache");
+            // 指定该Object被下载时的内容编码格式
+            metadata.setContentEncoding("utf-8");
+            // 文件的MIME，定义文件的类型及网页编码，决定浏览器将以什么形式、什么编码读取文件。如果用户没有指定则根据Key或文件名的扩展名生成，
+            // 如果没有扩展名则填默认值application/octet-stream
+//            metadata.setContentType(getContentType(fileName));
+            metadata.setContentType("multipart/form-data");
+            // 指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
+            metadata.setContentDisposition("filename=" + fileName);
+            // 上传文件 (上传文件流的形式)
+
+            PutObjectResult putResult = createOSSClient().putObject(bucketName, folder + newFileName, is, metadata);
+            // 解析结果
+            String eTag = putResult.getETag();
+            if (StringUtils.isBlank(eTag)) {
+                return null;
+            }
+            return folder + newFileName;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
+        }
+        return null;
+    }
+
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/25 1:01
+     * 描述 : 下载文件
+     *
+     * @param fileFullpath
+     * @return
+     */
+    public InputStream downLoadFile(String fileFullpath) {
+        if (clientIntranetEndpoint) {
+            OSSObject ossObject = createOSSClient().getObject(bucketName, fileFullpath);
+            return ossObject.getObjectContent();
+        } else {
+            OSSObject ossObject = createOSSClientByOuterNet().getObject(bucketName, fileFullpath);
+            return ossObject.getObjectContent();
+        }
+    }
+
+    /**
+     * 通过文件名判断并获取OSS服务文件上传时文件的contentType
+     *
+     * @param fileName 文件名
+     * @return 文件的contentType
+     */
+    public String getContentType(String fileName) {
+        // 文件的后缀名
+        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        if (".bmp".equalsIgnoreCase(fileExtension)) {
+            return "image/bmp";
+        }
+        if (".gif".equalsIgnoreCase(fileExtension)) {
+            return "image/gif";
+        }
+        if (".jpeg".equalsIgnoreCase(fileExtension) || ".jpg".equalsIgnoreCase(fileExtension)
+                || ".png".equalsIgnoreCase(fileExtension)) {
+            return "image/jpeg";
+        }
+        /*if (".html".equalsIgnoreCase(fileExtension)) {
+            return "text/html";
+        }
+        if (".txt".equalsIgnoreCase(fileExtension)) {
+            return "text/plain";
+        }
+        if (".vsd".equalsIgnoreCase(fileExtension)) {
+            return "application/vnd.visio";
+        }
+        if (".ppt".equalsIgnoreCase(fileExtension) || "pptx".equalsIgnoreCase(fileExtension)) {
+            return "application/vnd.ms-powerpoint";
+        }
+        if (".doc".equalsIgnoreCase(fileExtension) || "docx".equalsIgnoreCase(fileExtension)) {
+            return "application/msword";
+        }
+        if (".xml".equalsIgnoreCase(fileExtension)) {
+            return "text/xml";
+        }*/
+        if (".mp4".equalsIgnoreCase(fileExtension)) {
+            return "video/mp4";
+        }
+        // 默认返回类型
+        return "multipart/form-data";
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 21:30
+     * 描述 : 获得url链接
+     *
+     * @param fileName
+     * @return
+     */
+    public String getUrl(String fileName) {
+
+        if (useNginx){
+            // 设置URL过期时间
+            Date expirationDate = new Date(System.currentTimeMillis() + expiration);
+            // 生成URL
+            URL url = createOSSClientByIntranet().generatePresignedUrl(bucketName, fileName, expirationDate);
+            if (url != null) {
+                System.err.println(url.toString());
+                System.err.println(intranetEndpoint);
+                System.err.println(nginxUrl);
+                String path = url.toString();
+                System.err.println(path.indexOf("/",8));
+                System.err.println(path.substring(path.indexOf("/",8),path.length()));
+                return nginxUrl + path.substring(path.indexOf("/",8),path.length());
+            }
+            return "获网址路径出错";
+        }else {
+            // 设置URL过期时间
+            Date expirationDate = new Date(System.currentTimeMillis() + expiration);
+            // 生成URL
+            URL url = createOSSClientByOuterNet().generatePresignedUrl(bucketName, fileName, expirationDate);
+
+            if (url != null) {
+                return url.toString();
+            }
+            return "获网址路径出错";
+        }
+
+    }
+
+    public String getFilePath(String fileName) {
+        // 设置URL过期时间
+        Date expirationDate = new Date(System.currentTimeMillis() + expiration);
+        // 生成URL
+        URL url = createOSSClientByOuterNet().generatePresignedUrl(bucketName, fileName, expirationDate);
+        if (url != null) {
+            return url.toString();
+        }
+        return "获网址路径出错";
+    }
+
+    public static void main(String[] args) {
+        AliyunOSSClientUtil aliyunOSSClientUtil = new AliyunOSSClientUtil();
+        aliyunOSSClientUtil.setIntranetEndpoint("http://oss-cn-shenzhen-internal.aliyuncs.com");
+        aliyunOSSClientUtil.setOuterNetEndpoint("http://oss-cn-shenzhen.aliyuncs.com");
+        aliyunOSSClientUtil.setAccessKeyID("LTAIGVHgaxoZo93C");
+        aliyunOSSClientUtil.setAccessKeySecret("Ka1k8ijASskYyuGuYrVsfViUbyGZTB");
+        aliyunOSSClientUtil.setBucketName("zbxc");
+        aliyunOSSClientUtil.setClientIntranetEndpoint(true);
+        aliyunOSSClientUtil.setExpiration(86400000l);
+        String url = aliyunOSSClientUtil.getUrl("图片库/2018/7199279f6a03457a8a5ec09d629fc7ed.jpg");
+        System.err.println(url);
+
+    }
+
+}

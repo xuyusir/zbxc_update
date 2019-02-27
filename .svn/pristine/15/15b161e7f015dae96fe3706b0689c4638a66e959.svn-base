@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.product.ProductdiscountMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.content.product.product.Productdiscount">
+		<id column="ProductDiscountID" property="productdiscountid"
+			jdbcType="INTEGER" />
+		<result column="Discount" property="discount" jdbcType="REAL" />
+		<result column="StartDate" property="startdate"
+			jdbcType="TIMESTAMP" />
+		<result column="EndDate" property="enddate"
+			jdbcType="TIMESTAMP" />
+		<result column="IsActice" property="isactice" jdbcType="CHAR" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="ProductID" property="productid"
+			jdbcType="BIGINT" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="VARCHAR" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		ProductDiscountID, Discount, StartDate, EndDate, IsActice, Remark, ProductID,
+		CreateTime,
+		CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.content.product.product.ProductdiscountExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from ProductDiscount
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from ProductDiscount
+		where ProductDiscountID = #{productdiscountid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from ProductDiscount
+		where ProductDiscountID = #{productdiscountid,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.content.product.product.ProductdiscountExample">
+		delete from ProductDiscount
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.content.product.product.Productdiscount">
+		insert into ProductDiscount (ProductDiscountID, Discount, StartDate,
+		EndDate, IsActice, Remark,
+		ProductID, CreateTime, CreateBy,
+		CreatePersonID, UpdateTime, UpdateBy,
+		UpdatePersonID)
+		values (#{productdiscountid,jdbcType=INTEGER}, #{discount,jdbcType=REAL},
+		#{startdate,jdbcType=TIMESTAMP},
+		#{enddate,jdbcType=TIMESTAMP}, #{isactice,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR},
+		#{productid,jdbcType=BIGINT}, #{createtime,jdbcType=TIMESTAMP},
+		#{createby,jdbcType=VARCHAR},
+		#{createpersonid,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+		#{updatepersonid,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.content.product.product.Productdiscount">
+		<selectKey keyProperty="productdiscountid" order="AFTER"
+			resultType="Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into ProductDiscount
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="productdiscountid != null">
+				ProductDiscountID,
+			</if>
+			<if test="discount != null">
+				Discount,
+			</if>
+			<if test="startdate != null">
+				StartDate,
+			</if>
+			<if test="enddate != null">
+				EndDate,
+			</if>
+			<if test="isactice != null">
+				IsActice,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="productid != null">
+				ProductID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="productdiscountid != null">
+				#{productdiscountid,jdbcType=INTEGER},
+			</if>
+			<if test="discount != null">
+				#{discount,jdbcType=REAL},
+			</if>
+			<if test="startdate != null">
+				#{startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="enddate != null">
+				#{enddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isactice != null">
+				#{isactice,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="productid != null">
+				#{productid,jdbcType=BIGINT},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.content.product.product.ProductdiscountExample"
+		resultType="java.lang.Integer">
+		select count(*) from ProductDiscount
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update ProductDiscount
+		<set>
+			<if test="record.productdiscountid != null">
+				ProductDiscountID = #{record.productdiscountid,jdbcType=INTEGER},
+			</if>
+			<if test="record.discount != null">
+				Discount = #{record.discount,jdbcType=REAL},
+			</if>
+			<if test="record.startdate != null">
+				StartDate = #{record.startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.enddate != null">
+				EndDate = #{record.enddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.isactice != null">
+				IsActice = #{record.isactice,jdbcType=CHAR},
+			</if>
+			<if test="record.remark != null">
+				Remark = #{record.remark,jdbcType=VARCHAR},
+			</if>
+			<if test="record.productid != null">
+				ProductID = #{record.productid,jdbcType=BIGINT},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update ProductDiscount
+		set ProductDiscountID = #{record.productdiscountid,jdbcType=INTEGER},
+		Discount = #{record.discount,jdbcType=REAL},
+		StartDate = #{record.startdate,jdbcType=TIMESTAMP},
+		EndDate = #{record.enddate,jdbcType=TIMESTAMP},
+		IsActice = #{record.isactice,jdbcType=CHAR},
+		Remark = #{record.remark,jdbcType=VARCHAR},
+		ProductID = #{record.productid,jdbcType=BIGINT},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		CreatePersonID = #{record.createpersonid,jdbcType=VARCHAR},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.content.product.product.Productdiscount">
+		update ProductDiscount
+		<set>
+			<if test="discount != null">
+				Discount = #{discount,jdbcType=REAL},
+			</if>
+			<if test="startdate != null">
+				StartDate = #{startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="enddate != null">
+				EndDate = #{enddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isactice != null">
+				IsActice = #{isactice,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="productid != null">
+				ProductID = #{productid,jdbcType=BIGINT},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ProductDiscountID = #{productdiscountid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.content.product.product.Productdiscount">
+		update ProductDiscount
+		set Discount = #{discount,jdbcType=REAL},
+		StartDate = #{startdate,jdbcType=TIMESTAMP},
+		EndDate = #{enddate,jdbcType=TIMESTAMP},
+		IsActice = #{isactice,jdbcType=CHAR},
+		Remark = #{remark,jdbcType=VARCHAR},
+		ProductID = #{productid,jdbcType=BIGINT},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		CreatePersonID = #{createpersonid,jdbcType=VARCHAR},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{updatepersonid,jdbcType=VARCHAR}
+		where ProductDiscountID = #{productdiscountid,jdbcType=INTEGER}
+	</update>
+</mapper>

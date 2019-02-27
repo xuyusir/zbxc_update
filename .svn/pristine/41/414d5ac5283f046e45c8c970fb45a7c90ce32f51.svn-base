@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.enterpriseFunction.EnterprisejobdeployapplicationMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication" >
+    <id column="EJDApplicationID" property="ejdapplicationid" jdbcType="INTEGER" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    <result column="ApplicationTime" property="applicationtime" jdbcType="TIMESTAMP" />
+    <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+    <result column="EnterpriseID" property="enterpriseid" jdbcType="INTEGER" />
+    <result column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    EJDApplicationID, ApplicationStatusID, ServiceNo, ApplicationTime, HandleTime, EnterpriseID,
+    EJobVacancyID, CreateTime, CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterprisejobdeployapplicationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from EnterpriseJobDeployApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from EnterpriseJobDeployApplication
+    where EJDApplicationID = #{ejdapplicationid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from EnterpriseJobDeployApplication
+    where EJDApplicationID = #{ejdapplicationid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterprisejobdeployapplicationExample" >
+    delete from EnterpriseJobDeployApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication" >
+    insert into EnterpriseJobDeployApplication (EJDApplicationID, ApplicationStatusID,
+      ServiceNo, ApplicationTime, HandleTime,
+      EnterpriseID, EJobVacancyID, CreateTime,
+      CreateBy, CreatePersonID, UpdateTime,
+      UpdateBy, UpdatePersonID)
+    values (#{ejdapplicationid,jdbcType=INTEGER}, #{applicationstatusid,jdbcType=INTEGER},
+      #{serviceno,jdbcType=VARCHAR}, #{applicationtime,jdbcType=TIMESTAMP}, #{handletime,jdbcType=TIMESTAMP},
+      #{enterpriseid,jdbcType=INTEGER}, #{ejobvacancyid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
+      #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP},
+      #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication" >
+    insert into EnterpriseJobDeployApplication
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ejdapplicationid != null" >
+        EJDApplicationID,
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID,
+      </if>
+      <if test="serviceno != null" >
+        ServiceNo,
+      </if>
+      <if test="applicationtime != null" >
+        ApplicationTime,
+      </if>
+      <if test="handletime != null" >
+        HandleTime,
+      </if>
+      <if test="enterpriseid != null" >
+        EnterpriseID,
+      </if>
+      <if test="ejobvacancyid != null" >
+        EJobVacancyID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ejdapplicationid != null" >
+        #{ejdapplicationid,jdbcType=INTEGER},
+      </if>
+      <if test="applicationstatusid != null" >
+        #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="serviceno != null" >
+        #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationtime != null" >
+        #{applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handletime != null" >
+        #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enterpriseid != null" >
+        #{enterpriseid,jdbcType=INTEGER},
+      </if>
+      <if test="ejobvacancyid != null" >
+        #{ejobvacancyid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterprisejobdeployapplicationExample" resultType="java.lang.Integer" >
+    select count(*) from EnterpriseJobDeployApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update EnterpriseJobDeployApplication
+    <set >
+      <if test="record.ejdapplicationid != null" >
+        EJDApplicationID = #{record.ejdapplicationid,jdbcType=INTEGER},
+      </if>
+      <if test="record.applicationstatusid != null" >
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceno != null" >
+        ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicationtime != null" >
+        ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.handletime != null" >
+        HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.enterpriseid != null" >
+        EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+      </if>
+      <if test="record.ejobvacancyid != null" >
+        EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update EnterpriseJobDeployApplication
+    set EJDApplicationID = #{record.ejdapplicationid,jdbcType=INTEGER},
+      ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+      EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication" >
+    update EnterpriseJobDeployApplication
+    <set >
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="serviceno != null" >
+        ServiceNo = #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationtime != null" >
+        ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handletime != null" >
+        HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enterpriseid != null" >
+        EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+      </if>
+      <if test="ejobvacancyid != null" >
+        EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where EJDApplicationID = #{ejdapplicationid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication" >
+    update EnterpriseJobDeployApplication
+    set ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      ServiceNo = #{serviceno,jdbcType=VARCHAR},
+      ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+      HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+      EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where EJDApplicationID = #{ejdapplicationid,jdbcType=INTEGER}
+  </update>
+
+    <!-- 获取职位审核状态 -->
+    <select id="getApplicationStatus" resultType="java.lang.Integer">
+      SELECT ApplicationStatusID FROM EnterpriseJobDeployApplication WHERE EJobVacancyID = #{jobID} ORDER BY EJDApplicationID DESC lim
+    </select>
+</mapper>

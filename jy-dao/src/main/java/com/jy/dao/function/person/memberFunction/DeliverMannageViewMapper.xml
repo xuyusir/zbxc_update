@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.memberFunction.DeliverMannageViewMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.memberFunction.DeliverMannageView" >
+  	<result column="PDApplciationID" property="pdapplciationid" jdbcType="BIGINT" />
+    <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    <result column="DeliveryDate" property="deliverydate" jdbcType="TIMESTAMP" />
+    <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <result column="Name" property="name" jdbcType="VARCHAR" />
+    <result column="Phone" property="phone" jdbcType="VARCHAR" />
+    <result column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER" />
+    <result column="JobTitle" property="jobtitle" jdbcType="VARCHAR" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ApplicationStatusName" property="applicationstatusname" jdbcType="VARCHAR" />
+    <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+    <result column="PDeliveryStatusID" property="pdeliverystatusid" jdbcType="INTEGER" />
+    <result column="DeleiveryStatusName" property="deleiverystatusname" jdbcType="VARCHAR" />
+    <result column="IsMember" property="ismember" jdbcType="BIT" />
+  </resultMap>
+ 
+  
+  <select id="selectDeliverList" resultMap="BaseResultMap">
+		SELECT 
+			a.PDApplciationID,
+			a.ServiceNo,
+			a.DeliveryDate,
+			b.AccountID,
+			b.name,
+			b.Phone,
+			b.IsMember,
+			c.JobTitle,
+			a.ApplicationStatusID,
+			d.ApplicationStatusName,
+			a.HandleTime,
+			a.PDeliveryStatusID,
+			e.DeleiveryStatusName
+		FROM 
+			(((PersonDeliveryApplication a
+			left join Account b on (a.AccountID = b.AccountID))
+			left join EnterpriseJobVacancy c on (a.EJobVacancyID = c.EJobVacancyID))
+			left join ApplicationStatus d on (a.ApplicationStatusID = d.ApplicationStatusID))
+			left join PersonDeliveryStatus e on (a.PDeliveryStatusID = e.PDeliveryStatusID)
+		<where>
+			
+			<trim prefixOverrides="AND">
+				a.AccountID = b.AccountID
+				<if test="applicationstatusname != null">
+					AND (d.ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="deliverydate != null">
+					AND (a.DeliveryDate like '%${deliverydate}%')
+				</if>
+				<if test="search != null">
+					AND (b.Name like #{search} OR JobTitle like #{search})
+				</if>
+				<if test="ismember != null">
+					AND (b.IsMember = #{ismember})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		a.DeliveryDate DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountDeliver" resultType="int">
+		SELECT
+			count(a.PDApplciationID)
+		FROM
+			(((PersonDeliveryApplication a
+			left join Account b on (a.AccountID = b.AccountID))
+			left join EnterpriseJobVacancy c on (a.EJobVacancyID = c.EJobVacancyID))
+			left join ApplicationStatus d on (a.ApplicationStatusID = d.ApplicationStatusID))
+			left join PersonDeliveryStatus e on (a.PDeliveryStatusID = e.PDeliveryStatusID)
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="applicationstatusname != null">
+					AND (ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="deliverydate != null">
+					AND (DeliveryDate like '%${deliverydate}%')
+				</if>
+				<if test="search != null">
+					AND (Name like #{search} OR JobTitle like #{search})
+				</if>
+				<if test="ismember != null">
+					AND (b.IsMember = #{ismember})
+				</if>
+			</trim>
+		</where>
+	</select>
+	
+	
+</mapper>

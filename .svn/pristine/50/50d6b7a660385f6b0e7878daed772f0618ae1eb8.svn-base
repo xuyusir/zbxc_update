@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.order.order.OrderactionlogMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.order.order.Orderactionlog" >
+    <id column="OrderActionLogID" property="orderactionlogid" jdbcType="BIGINT" />
+    <result column="OrderID" property="orderid" jdbcType="BIGINT" />
+    <result column="OrderDetailsID" property="orderdetailsid" jdbcType="BIGINT" />
+    <result column="ActionUser" property="actionuser" jdbcType="VARCHAR" />
+    <result column="OrderStatus" property="orderstatus" jdbcType="INTEGER" />
+    <result column="PayStatus" property="paystatus" jdbcType="INTEGER" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+    <result column="ActionLogTime" property="actionlogtime" jdbcType="TIMESTAMP" />
+    <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    OrderActionLogID, OrderID, OrderDetailsID, ActionUser, OrderStatus, PayStatus, Remark, 
+    ActionLogTime, AccountID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.order.order.OrderactionlogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from OrderActionLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from OrderActionLog
+    where OrderActionLogID = #{orderactionlogid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from OrderActionLog
+    where OrderActionLogID = #{orderactionlogid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.order.order.OrderactionlogExample" >
+    delete from OrderActionLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.order.order.Orderactionlog" >
+    insert into OrderActionLog (OrderActionLogID, OrderID, OrderDetailsID, 
+      ActionUser, OrderStatus, PayStatus, 
+      Remark, ActionLogTime, AccountID
+      )
+    values (#{orderactionlogid,jdbcType=BIGINT}, #{orderid,jdbcType=BIGINT}, #{orderdetailsid,jdbcType=BIGINT}, 
+      #{actionuser,jdbcType=VARCHAR}, #{orderstatus,jdbcType=INTEGER}, #{paystatus,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{actionlogtime,jdbcType=TIMESTAMP}, #{accountid,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.order.order.Orderactionlog" >
+    insert into OrderActionLog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderactionlogid != null" >
+        OrderActionLogID,
+      </if>
+      <if test="orderid != null" >
+        OrderID,
+      </if>
+      <if test="orderdetailsid != null" >
+        OrderDetailsID,
+      </if>
+      <if test="actionuser != null" >
+        ActionUser,
+      </if>
+      <if test="orderstatus != null" >
+        OrderStatus,
+      </if>
+      <if test="paystatus != null" >
+        PayStatus,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="actionlogtime != null" >
+        ActionLogTime,
+      </if>
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderactionlogid != null" >
+        #{orderactionlogid,jdbcType=BIGINT},
+      </if>
+      <if test="orderid != null" >
+        #{orderid,jdbcType=BIGINT},
+      </if>
+      <if test="orderdetailsid != null" >
+        #{orderdetailsid,jdbcType=BIGINT},
+      </if>
+      <if test="actionuser != null" >
+        #{actionuser,jdbcType=VARCHAR},
+      </if>
+      <if test="orderstatus != null" >
+        #{orderstatus,jdbcType=INTEGER},
+      </if>
+      <if test="paystatus != null" >
+        #{paystatus,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="actionlogtime != null" >
+        #{actionlogtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.order.order.OrderactionlogExample" resultType="java.lang.Integer" >
+    select count(*) from OrderActionLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update OrderActionLog
+    <set >
+      <if test="record.orderactionlogid != null" >
+        OrderActionLogID = #{record.orderactionlogid,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderid != null" >
+        OrderID = #{record.orderid,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderdetailsid != null" >
+        OrderDetailsID = #{record.orderdetailsid,jdbcType=BIGINT},
+      </if>
+      <if test="record.actionuser != null" >
+        ActionUser = #{record.actionuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderstatus != null" >
+        OrderStatus = #{record.orderstatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.paystatus != null" >
+        PayStatus = #{record.paystatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.actionlogtime != null" >
+        ActionLogTime = #{record.actionlogtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update OrderActionLog
+    set OrderActionLogID = #{record.orderactionlogid,jdbcType=BIGINT},
+      OrderID = #{record.orderid,jdbcType=BIGINT},
+      OrderDetailsID = #{record.orderdetailsid,jdbcType=BIGINT},
+      ActionUser = #{record.actionuser,jdbcType=VARCHAR},
+      OrderStatus = #{record.orderstatus,jdbcType=INTEGER},
+      PayStatus = #{record.paystatus,jdbcType=INTEGER},
+      Remark = #{record.remark,jdbcType=VARCHAR},
+      ActionLogTime = #{record.actionlogtime,jdbcType=TIMESTAMP},
+      AccountID = #{record.accountid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.order.order.Orderactionlog" >
+    update OrderActionLog
+    <set >
+      <if test="orderid != null" >
+        OrderID = #{orderid,jdbcType=BIGINT},
+      </if>
+      <if test="orderdetailsid != null" >
+        OrderDetailsID = #{orderdetailsid,jdbcType=BIGINT},
+      </if>
+      <if test="actionuser != null" >
+        ActionUser = #{actionuser,jdbcType=VARCHAR},
+      </if>
+      <if test="orderstatus != null" >
+        OrderStatus = #{orderstatus,jdbcType=INTEGER},
+      </if>
+      <if test="paystatus != null" >
+        PayStatus = #{paystatus,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="actionlogtime != null" >
+        ActionLogTime = #{actionlogtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accountid != null" >
+        AccountID = #{accountid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where OrderActionLogID = #{orderactionlogid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.order.order.Orderactionlog" >
+    update OrderActionLog
+    set OrderID = #{orderid,jdbcType=BIGINT},
+      OrderDetailsID = #{orderdetailsid,jdbcType=BIGINT},
+      ActionUser = #{actionuser,jdbcType=VARCHAR},
+      OrderStatus = #{orderstatus,jdbcType=INTEGER},
+      PayStatus = #{paystatus,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR},
+      ActionLogTime = #{actionlogtime,jdbcType=TIMESTAMP},
+      AccountID = #{accountid,jdbcType=BIGINT}
+    where OrderActionLogID = #{orderactionlogid,jdbcType=BIGINT}
+  </update>
+</mapper>

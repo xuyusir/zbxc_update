@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.articleManage.ArticleinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.articleManage.Articleinfo" >
+    <id column="ArticleID" property="articleid" jdbcType="INTEGER" />
+    <result column="ArticleStatusID" property="articlestatusid" jdbcType="INTEGER" />
+    <result column="ArticleNo" property="articleno" jdbcType="INTEGER" />
+    <result column="PageColumnID" property="pagecolumnid" jdbcType="INTEGER" />
+    <result column="ArticleTitle" property="articletitle" jdbcType="VARCHAR" />
+    <result column="ArticleSubTitle" property="articlesubtitle" jdbcType="VARCHAR" />
+    <result column="Keyword" property="keyword" jdbcType="VARCHAR" />
+    <result column="SEOAbstract" property="seoabstract" jdbcType="VARCHAR" />
+    <result column="ArticleAbstract" property="articleabstract" jdbcType="VARCHAR" />
+    <result column="ThumbnailFileID" property="thumbnailfileid" jdbcType="BIGINT" />
+    <result column="ThumbnailPath" property="thumbnailpath" jdbcType="VARCHAR" />
+    <result column="AttachmentPath" property="attachmentpath" jdbcType="VARCHAR" />
+    <result column="AttachmentFileID" property="attachmentfileid" jdbcType="BIGINT" />
+    <result column="AttachmentType" property="attachmenttype" jdbcType="VARCHAR" />
+    <result column="DeadlineTime" property="deadlinetime" jdbcType="TIMESTAMP" />
+    <result column="DeploymentTime" property="deploymenttime" jdbcType="TIMESTAMP" />
+    <result column="DeployPerson" property="deployperson" jdbcType="VARCHAR" />
+    <result column="OriginalSource" property="originalsource" jdbcType="VARCHAR" />
+    <result column="IsDelete" property="isdelete" jdbcType="CHAR" />
+    <result column="IsActive" property="isactive" jdbcType="CHAR" />
+    <result column="IsAuditPassed" property="isauditpassed" jdbcType="CHAR" />
+    <result column="AuditComment" property="auditcomment" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="LiveVedioListID" property="livevediolistid" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.jy.entiy.content.articleManage.Articleinfo" extends="BaseResultMap" >
+    <result column="ArticleMainBody" property="articlemainbody" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ArticleID, ArticleStatusID, ArticleNo, PageColumnID, ArticleTitle, ArticleSubTitle, 
+    Keyword, SEOAbstract, ArticleAbstract, ThumbnailFileID, ThumbnailPath, AttachmentPath, 
+    AttachmentFileID, AttachmentType, DeadlineTime, DeploymentTime, DeployPerson, OriginalSource, 
+    IsDelete, IsActive, IsAuditPassed, AuditComment, CreateTime, CreateBy, CreatePersonID, 
+    UpdateTime, UpdateBy, UpdatePersonID, LiveVedioListID
+  </sql>
+  <sql id="Blob_Column_List" >
+    ArticleMainBody
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.jy.entiy.content.articleManage.ArticleinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ArticleInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.articleManage.ArticleinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ArticleInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ArticleInfo
+    where ArticleID = #{articleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ArticleInfo
+    where ArticleID = #{articleid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.articleManage.ArticleinfoExample" >
+    delete from ArticleInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.articleManage.Articleinfo" >
+    insert into ArticleInfo (ArticleID, ArticleStatusID, ArticleNo, 
+      PageColumnID, ArticleTitle, ArticleSubTitle, 
+      Keyword, SEOAbstract, ArticleAbstract, 
+      ThumbnailFileID, ThumbnailPath, AttachmentPath, 
+      AttachmentFileID, AttachmentType, DeadlineTime, 
+      DeploymentTime, DeployPerson, OriginalSource, 
+      IsDelete, IsActive, IsAuditPassed, 
+      AuditComment, CreateTime, CreateBy, 
+      CreatePersonID, UpdateTime, UpdateBy, 
+      UpdatePersonID, LiveVedioListID, ArticleMainBody
+      )
+    values (#{articleid,jdbcType=INTEGER}, #{articlestatusid,jdbcType=INTEGER}, #{articleno,jdbcType=INTEGER}, 
+      #{pagecolumnid,jdbcType=INTEGER}, #{articletitle,jdbcType=VARCHAR}, #{articlesubtitle,jdbcType=VARCHAR}, 
+      #{keyword,jdbcType=VARCHAR}, #{seoabstract,jdbcType=VARCHAR}, #{articleabstract,jdbcType=VARCHAR}, 
+      #{thumbnailfileid,jdbcType=BIGINT}, #{thumbnailpath,jdbcType=VARCHAR}, #{attachmentpath,jdbcType=VARCHAR}, 
+      #{attachmentfileid,jdbcType=BIGINT}, #{attachmenttype,jdbcType=VARCHAR}, #{deadlinetime,jdbcType=TIMESTAMP}, 
+      #{deploymenttime,jdbcType=TIMESTAMP}, #{deployperson,jdbcType=VARCHAR}, #{originalsource,jdbcType=VARCHAR}, 
+      #{isdelete,jdbcType=CHAR}, #{isactive,jdbcType=CHAR}, #{isauditpassed,jdbcType=CHAR}, 
+      #{auditcomment,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{livevediolistid,jdbcType=BIGINT}, #{articlemainbody,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.articleManage.Articleinfo" useGeneratedKeys="true" keyColumn="ArticleID" keyProperty="articleid">
+    insert into ArticleInfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="articleid != null" >
+        ArticleID,
+      </if>
+      <if test="articlestatusid != null" >
+        ArticleStatusID,
+      </if>
+      <if test="articleno != null" >
+        ArticleNo,
+      </if>
+      <if test="pagecolumnid != null" >
+        PageColumnID,
+      </if>
+      <if test="articletitle != null" >
+        ArticleTitle,
+      </if>
+      <if test="articlesubtitle != null" >
+        ArticleSubTitle,
+      </if>
+      <if test="keyword != null" >
+        Keyword,
+      </if>
+      <if test="seoabstract != null" >
+        SEOAbstract,
+      </if>
+      <if test="articleabstract != null" >
+        ArticleAbstract,
+      </if>
+      <if test="thumbnailfileid != null" >
+        ThumbnailFileID,
+      </if>
+      <if test="thumbnailpath != null" >
+        ThumbnailPath,
+      </if>
+      <if test="attachmentpath != null" >
+        AttachmentPath,
+      </if>
+      <if test="attachmentfileid != null" >
+        AttachmentFileID,
+      </if>
+      <if test="attachmenttype != null" >
+        AttachmentType,
+      </if>
+      <if test="deadlinetime != null" >
+        DeadlineTime,
+      </if>
+      <if test="deploymenttime != null" >
+        DeploymentTime,
+      </if>
+      <if test="deployperson != null" >
+        DeployPerson,
+      </if>
+      <if test="originalsource != null" >
+        OriginalSource,
+      </if>
+      <if test="isdelete != null" >
+        IsDelete,
+      </if>
+      <if test="isactive != null" >
+        IsActive,
+      </if>
+      <if test="isauditpassed != null" >
+        IsAuditPassed,
+      </if>
+      <if test="auditcomment != null" >
+        AuditComment,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="livevediolistid != null" >
+        LiveVedioListID,
+      </if>
+      <if test="articlemainbody != null" >
+        ArticleMainBody,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="articleid != null" >
+        #{articleid,jdbcType=INTEGER},
+      </if>
+      <if test="articlestatusid != null" >
+        #{articlestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="articleno != null" >
+        #{articleno,jdbcType=INTEGER},
+      </if>
+      <if test="pagecolumnid != null" >
+        #{pagecolumnid,jdbcType=INTEGER},
+      </if>
+      <if test="articletitle != null" >
+        #{articletitle,jdbcType=VARCHAR},
+      </if>
+      <if test="articlesubtitle != null" >
+        #{articlesubtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="keyword != null" >
+        #{keyword,jdbcType=VARCHAR},
+      </if>
+      <if test="seoabstract != null" >
+        #{seoabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="articleabstract != null" >
+        #{articleabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbnailfileid != null" >
+        #{thumbnailfileid,jdbcType=BIGINT},
+      </if>
+      <if test="thumbnailpath != null" >
+        #{thumbnailpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentpath != null" >
+        #{attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentfileid != null" >
+        #{attachmentfileid,jdbcType=BIGINT},
+      </if>
+      <if test="attachmenttype != null" >
+        #{attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="deadlinetime != null" >
+        #{deadlinetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deploymenttime != null" >
+        #{deploymenttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deployperson != null" >
+        #{deployperson,jdbcType=VARCHAR},
+      </if>
+      <if test="originalsource != null" >
+        #{originalsource,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=CHAR},
+      </if>
+      <if test="isactive != null" >
+        #{isactive,jdbcType=CHAR},
+      </if>
+      <if test="isauditpassed != null" >
+        #{isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="auditcomment != null" >
+        #{auditcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="livevediolistid != null" >
+        #{livevediolistid,jdbcType=BIGINT},
+      </if>
+      <if test="articlemainbody != null" >
+        #{articlemainbody,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.articleManage.ArticleinfoExample" resultType="java.lang.Integer" >
+    select count(*) from ArticleInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ArticleInfo
+    <set >
+      <if test="record.articleid != null" >
+        ArticleID = #{record.articleid,jdbcType=INTEGER},
+      </if>
+      <if test="record.articlestatusid != null" >
+        ArticleStatusID = #{record.articlestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.articleno != null" >
+        ArticleNo = #{record.articleno,jdbcType=INTEGER},
+      </if>
+      <if test="record.pagecolumnid != null" >
+        PageColumnID = #{record.pagecolumnid,jdbcType=INTEGER},
+      </if>
+      <if test="record.articletitle != null" >
+        ArticleTitle = #{record.articletitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.articlesubtitle != null" >
+        ArticleSubTitle = #{record.articlesubtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keyword != null" >
+        Keyword = #{record.keyword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seoabstract != null" >
+        SEOAbstract = #{record.seoabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="record.articleabstract != null" >
+        ArticleAbstract = #{record.articleabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="record.thumbnailfileid != null" >
+        ThumbnailFileID = #{record.thumbnailfileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.thumbnailpath != null" >
+        ThumbnailPath = #{record.thumbnailpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attachmentpath != null" >
+        AttachmentPath = #{record.attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attachmentfileid != null" >
+        AttachmentFileID = #{record.attachmentfileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.attachmenttype != null" >
+        AttachmentType = #{record.attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deadlinetime != null" >
+        DeadlineTime = #{record.deadlinetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deploymenttime != null" >
+        DeploymentTime = #{record.deploymenttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deployperson != null" >
+        DeployPerson = #{record.deployperson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originalsource != null" >
+        OriginalSource = #{record.originalsource,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isdelete != null" >
+        IsDelete = #{record.isdelete,jdbcType=CHAR},
+      </if>
+      <if test="record.isactive != null" >
+        IsActive = #{record.isactive,jdbcType=CHAR},
+      </if>
+      <if test="record.isauditpassed != null" >
+        IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="record.auditcomment != null" >
+        AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.livevediolistid != null" >
+        LiveVedioListID = #{record.livevediolistid,jdbcType=BIGINT},
+      </if>
+      <if test="record.articlemainbody != null" >
+        ArticleMainBody = #{record.articlemainbody,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update ArticleInfo
+    set ArticleID = #{record.articleid,jdbcType=INTEGER},
+      ArticleStatusID = #{record.articlestatusid,jdbcType=INTEGER},
+      ArticleNo = #{record.articleno,jdbcType=INTEGER},
+      PageColumnID = #{record.pagecolumnid,jdbcType=INTEGER},
+      ArticleTitle = #{record.articletitle,jdbcType=VARCHAR},
+      ArticleSubTitle = #{record.articlesubtitle,jdbcType=VARCHAR},
+      Keyword = #{record.keyword,jdbcType=VARCHAR},
+      SEOAbstract = #{record.seoabstract,jdbcType=VARCHAR},
+      ArticleAbstract = #{record.articleabstract,jdbcType=VARCHAR},
+      ThumbnailFileID = #{record.thumbnailfileid,jdbcType=BIGINT},
+      ThumbnailPath = #{record.thumbnailpath,jdbcType=VARCHAR},
+      AttachmentPath = #{record.attachmentpath,jdbcType=VARCHAR},
+      AttachmentFileID = #{record.attachmentfileid,jdbcType=BIGINT},
+      AttachmentType = #{record.attachmenttype,jdbcType=VARCHAR},
+      DeadlineTime = #{record.deadlinetime,jdbcType=TIMESTAMP},
+      DeploymentTime = #{record.deploymenttime,jdbcType=TIMESTAMP},
+      DeployPerson = #{record.deployperson,jdbcType=VARCHAR},
+      OriginalSource = #{record.originalsource,jdbcType=VARCHAR},
+      IsDelete = #{record.isdelete,jdbcType=CHAR},
+      IsActive = #{record.isactive,jdbcType=CHAR},
+      IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      LiveVedioListID = #{record.livevediolistid,jdbcType=BIGINT},
+      ArticleMainBody = #{record.articlemainbody,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ArticleInfo
+    set ArticleID = #{record.articleid,jdbcType=INTEGER},
+      ArticleStatusID = #{record.articlestatusid,jdbcType=INTEGER},
+      ArticleNo = #{record.articleno,jdbcType=INTEGER},
+      PageColumnID = #{record.pagecolumnid,jdbcType=INTEGER},
+      ArticleTitle = #{record.articletitle,jdbcType=VARCHAR},
+      ArticleSubTitle = #{record.articlesubtitle,jdbcType=VARCHAR},
+      Keyword = #{record.keyword,jdbcType=VARCHAR},
+      SEOAbstract = #{record.seoabstract,jdbcType=VARCHAR},
+      ArticleAbstract = #{record.articleabstract,jdbcType=VARCHAR},
+      ThumbnailFileID = #{record.thumbnailfileid,jdbcType=BIGINT},
+      ThumbnailPath = #{record.thumbnailpath,jdbcType=VARCHAR},
+      AttachmentPath = #{record.attachmentpath,jdbcType=VARCHAR},
+      AttachmentFileID = #{record.attachmentfileid,jdbcType=BIGINT},
+      AttachmentType = #{record.attachmenttype,jdbcType=VARCHAR},
+      DeadlineTime = #{record.deadlinetime,jdbcType=TIMESTAMP},
+      DeploymentTime = #{record.deploymenttime,jdbcType=TIMESTAMP},
+      DeployPerson = #{record.deployperson,jdbcType=VARCHAR},
+      OriginalSource = #{record.originalsource,jdbcType=VARCHAR},
+      IsDelete = #{record.isdelete,jdbcType=CHAR},
+      IsActive = #{record.isactive,jdbcType=CHAR},
+      IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      LiveVedioListID = #{record.livevediolistid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.articleManage.Articleinfo" >
+    update ArticleInfo
+    <set >
+      <if test="articlestatusid != null" >
+        ArticleStatusID = #{articlestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="articleno != null" >
+        ArticleNo = #{articleno,jdbcType=INTEGER},
+      </if>
+      <if test="pagecolumnid != null" >
+        PageColumnID = #{pagecolumnid,jdbcType=INTEGER},
+      </if>
+      <if test="articletitle != null" >
+        ArticleTitle = #{articletitle,jdbcType=VARCHAR},
+      </if>
+      <if test="articlesubtitle != null" >
+        ArticleSubTitle = #{articlesubtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="keyword != null" >
+        Keyword = #{keyword,jdbcType=VARCHAR},
+      </if>
+      <if test="seoabstract != null" >
+        SEOAbstract = #{seoabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="articleabstract != null" >
+        ArticleAbstract = #{articleabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbnailfileid != null" >
+        ThumbnailFileID = #{thumbnailfileid,jdbcType=BIGINT},
+      </if>
+      <if test="thumbnailpath != null" >
+        ThumbnailPath = #{thumbnailpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentpath != null" >
+        AttachmentPath = #{attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentfileid != null" >
+        AttachmentFileID = #{attachmentfileid,jdbcType=BIGINT},
+      </if>
+      <if test="attachmenttype != null" >
+        AttachmentType = #{attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="deadlinetime != null" >
+        DeadlineTime = #{deadlinetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deploymenttime != null" >
+        DeploymentTime = #{deploymenttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deployperson != null" >
+        DeployPerson = #{deployperson,jdbcType=VARCHAR},
+      </if>
+      <if test="originalsource != null" >
+        OriginalSource = #{originalsource,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        IsDelete = #{isdelete,jdbcType=CHAR},
+      </if>
+      <if test="isactive != null" >
+        IsActive = #{isactive,jdbcType=CHAR},
+      </if>
+      <if test="isauditpassed != null" >
+        IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="auditcomment != null" >
+        AuditComment = #{auditcomment,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="livevediolistid != null" >
+        LiveVedioListID = #{livevediolistid,jdbcType=BIGINT},
+      </if>
+      <if test="articlemainbody != null" >
+        ArticleMainBody = #{articlemainbody,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ArticleID = #{articleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jy.entiy.content.articleManage.Articleinfo" >
+    update ArticleInfo
+    set ArticleStatusID = #{articlestatusid,jdbcType=INTEGER},
+      ArticleNo = #{articleno,jdbcType=INTEGER},
+      PageColumnID = #{pagecolumnid,jdbcType=INTEGER},
+      ArticleTitle = #{articletitle,jdbcType=VARCHAR},
+      ArticleSubTitle = #{articlesubtitle,jdbcType=VARCHAR},
+      Keyword = #{keyword,jdbcType=VARCHAR},
+      SEOAbstract = #{seoabstract,jdbcType=VARCHAR},
+      ArticleAbstract = #{articleabstract,jdbcType=VARCHAR},
+      ThumbnailFileID = #{thumbnailfileid,jdbcType=BIGINT},
+      ThumbnailPath = #{thumbnailpath,jdbcType=VARCHAR},
+      AttachmentPath = #{attachmentpath,jdbcType=VARCHAR},
+      AttachmentFileID = #{attachmentfileid,jdbcType=BIGINT},
+      AttachmentType = #{attachmenttype,jdbcType=VARCHAR},
+      DeadlineTime = #{deadlinetime,jdbcType=TIMESTAMP},
+      DeploymentTime = #{deploymenttime,jdbcType=TIMESTAMP},
+      DeployPerson = #{deployperson,jdbcType=VARCHAR},
+      OriginalSource = #{originalsource,jdbcType=VARCHAR},
+      IsDelete = #{isdelete,jdbcType=CHAR},
+      IsActive = #{isactive,jdbcType=CHAR},
+      IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      AuditComment = #{auditcomment,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      LiveVedioListID = #{livevediolistid,jdbcType=BIGINT},
+      ArticleMainBody = #{articlemainbody,jdbcType=LONGVARCHAR}
+    where ArticleID = #{articleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.articleManage.Articleinfo" >
+    update ArticleInfo
+    set ArticleStatusID = #{articlestatusid,jdbcType=INTEGER},
+      ArticleNo = #{articleno,jdbcType=INTEGER},
+      PageColumnID = #{pagecolumnid,jdbcType=INTEGER},
+      ArticleTitle = #{articletitle,jdbcType=VARCHAR},
+      ArticleSubTitle = #{articlesubtitle,jdbcType=VARCHAR},
+      Keyword = #{keyword,jdbcType=VARCHAR},
+      SEOAbstract = #{seoabstract,jdbcType=VARCHAR},
+      ArticleAbstract = #{articleabstract,jdbcType=VARCHAR},
+      ThumbnailFileID = #{thumbnailfileid,jdbcType=BIGINT},
+      ThumbnailPath = #{thumbnailpath,jdbcType=VARCHAR},
+      AttachmentPath = #{attachmentpath,jdbcType=VARCHAR},
+      AttachmentFileID = #{attachmentfileid,jdbcType=BIGINT},
+      AttachmentType = #{attachmenttype,jdbcType=VARCHAR},
+      DeadlineTime = #{deadlinetime,jdbcType=TIMESTAMP},
+      DeploymentTime = #{deploymenttime,jdbcType=TIMESTAMP},
+      DeployPerson = #{deployperson,jdbcType=VARCHAR},
+      OriginalSource = #{originalsource,jdbcType=VARCHAR},
+      IsDelete = #{isdelete,jdbcType=CHAR},
+      IsActive = #{isactive,jdbcType=CHAR},
+      IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      AuditComment = #{auditcomment,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      LiveVedioListID = #{livevediolistid,jdbcType=BIGINT},
+      ArticleMainBody = #{articlemainbody,jdbcType=LONGVARCHAR}
+    where ArticleID = #{articleid,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 条件分页 -->
+	<select id="getArticleinfoByPageColumnID"
+		resultMap="BaseResultMap">
+		SELECT
+			 <include refid="Base_Column_List" />
+			  ,
+    		 <include refid="Blob_Column_List" />
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='N' AND IsAuditPassed = 'Y'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+				
+				<if test="search != null">
+					AND ((ArticleTitle like '%${search}%') OR (ArticleSubTitle like '%${search}%'))
+				</if>
+		</where>
+		ORDER BY
+		DeploymentTime DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="getArticleinfoCountByPageColumnID" resultType="int">
+		SELECT
+			COUNT(ArticleID)
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='N' AND IsAuditPassed = 'Y'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+				
+				<if test="search != null">
+					AND ((ArticleTitle like '%${search}%') OR (ArticleSubTitle like '%${search}%'))
+				</if>
+		</where>
+	</select>
+
+	<!-- 条件分页回收站 -->
+		<select id="getRecycleInfoByPageColumnID"
+		resultMap="BaseResultMap">
+		SELECT
+			 <include refid="Base_Column_List" />
+			  ,
+    		 <include refid="Blob_Column_List" />
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='Y'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+		</where>
+		ORDER BY
+		DeploymentTime DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="getRecycleInfoCountByPageColumnID" resultType="int">
+		SELECT
+			COUNT(ArticleID)
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='Y'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+		</where>
+	</select>
+	
+	<!-- 条件分页未审核-->
+	<select id="getNotAudit"
+		resultMap="BaseResultMap">
+		SELECT
+			 <include refid="Base_Column_List" />
+			  ,
+    		<include refid="Blob_Column_List" />
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='N'
+			AND
+			IsAuditPassed = 'N'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+			
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+		</where>
+		ORDER BY
+		DeploymentTime DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="getNotAuditCount" resultType="int">
+		SELECT
+			COUNT(ArticleID)
+		FROM
+		ArticleInfo
+		<where>
+			IsDelete='N'
+			AND
+			IsAuditPassed = 'N'
+				<if test="pagecolumnid != null">
+					AND (PageColumnID=#{pagecolumnid})
+				</if>
+			
+
+				<if test="articletitle != null">
+					AND (ArticleTitle like '%${articletitle}%')
+				</if>
+		</where>
+	</select>
+  <!-- 自动回收过期文章,直播课程栏目的文章不回收 -->
+  <select id="getOverdueArticleList" resultMap="BaseResultMap">
+  <![CDATA[ SELECT * FROM ArticleInfo WHERE IsDelete='N' AND IsAuditPassed = 'Y' AND PageColumnID != '4' AND DeadlineTime < #{nowDate}]]>
+  </select>
+  
+</mapper>

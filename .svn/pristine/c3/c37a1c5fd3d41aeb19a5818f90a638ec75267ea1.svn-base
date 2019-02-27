@@ -1,0 +1,104 @@
+package com.jy.service.function.enterprise.recruitment.rz;
+
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+
+/**
+ * @ClassName:  EnterpriseJobVacancyService   
+ * @Description:企业招聘职位服务接口  
+ * @author: cheng fei
+ * @date:   2018-09-05 10:51
+ */
+public interface EnterpriseJobVacancyService {
+	
+	
+	/**
+	 * 查询企业招聘
+	 * @param account_id 账号ID,和企业ID二选一(用于企业)
+	 * @param enterprise_id  企业ID,和账号ID二选一(用于官网)
+	 * @param is_open 当前职业是否打开
+	 * @param search 关键词
+	 * @param page 页码
+	 * @param page_size 每页条数  
+	 * @return
+	 */
+	Result getEnterpriseJobVacancyList(Long account_id, Integer enterprise_id, String is_open, String isAuditPassed, String search, Integer page,Integer page_size);
+
+
+	/**
+	 * 发布企业招聘职位
+	 * @param accountInfo
+	 * @param enterprisejobvacancy
+	 * @return
+	 * @throws MyException 
+	 */
+	Result insertEnterpriseJobVacancy(AccountInfo accountInfo, Enterprisejobvacancy enterprisejobvacancy) throws MyException;
+
+	
+	/**
+	 * 修改企业招聘职位
+	 * @param accountInfo
+	 * @param enterprisejobvacancy
+	 * @return
+	 * @throws MyException 
+	 */
+	Result updateEnterpriseJobVacancy(AccountInfo accountInfo, Enterprisejobvacancy enterprisejobvacancy) throws MyException;
+
+
+	/**
+	 * 查询企业招聘职位
+	 * @param enterprise_job_vacancy_id
+	 * @return
+	 */
+	Result getEnterpriseJobVacancy(Integer enterprise_job_vacancy_id);
+
+	
+	/**
+	 * 获取企业职位下拉列表
+	 * @param accountInfo
+	 * @param search
+	 * @param isOpen
+	 * @param isAuditPassed
+	 * @return
+	 */
+	Result getEnterpriseJobVacancySelect(AccountInfo accountInfo, String search, String isOpen, String isAuditPassed);
+
+	/**
+	 * 查询所有企业职位列表
+	 * @param accountInfo
+	 * @param search
+	 * @param page_size 
+	 * @param page 
+	 * @return
+	 */
+	Result getEnterpriseJobVacancyListAll(AccountInfo accountInfo, String search, Integer page, Integer page_size);
+
+	/**
+	 * 查询企业职位总数信息
+	 * @param accountInfo 当前登陆人员
+	 * @return
+	 */
+	Result getCount(AccountInfo accountInfo);
+
+	/**
+	 * 关闭/开启企业职位
+	 * @param accountInfo 当前登陆人员
+	 * @param jobIDS 职位ID列表用","号隔开
+	 * @param status 职位状态,"Y"开启, "N"关闭
+	 * @return
+	 */
+	Result updateEnterpriseJobVacancyOpenOrClose(AccountInfo accountInfo, String jobIDS, String status) throws MyException;
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/6 13:39
+	 * 描述 : 删除企业职位
+	 * @param accountInfo 当前登陆人员
+	 * @param jobIDS  职位ID列表用","号隔开
+	 * @return
+	 */
+	Result updateEnterpriseJobVacancyDelete(AccountInfo accountInfo, String jobIDS) throws MyException;
+}

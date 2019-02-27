@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.inMail.MessageMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.inMail.Message" >
+    <id column="Id" property="id" jdbcType="INTEGER" />
+    <result column="SendID" property="sendid" jdbcType="BIGINT" />
+    <result column="RecID" property="recid" jdbcType="BIGINT" />
+    <result column="MessageId" property="messageid" jdbcType="INTEGER" />
+    <result column="ReadingStatus" property="readingstatus" jdbcType="INTEGER" />
+    <result column="DeleteStatus" property="deletestatus" jdbcType="INTEGER" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    Id, SendID, RecID, MessageId, ReadingStatus, DeleteStatus, CreatePersonID, CreateBy, 
+    CreateTime, UpdatePersonID, UpdateBy, UpdateTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.inMail.MessageExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Message
+    where Id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Message
+    where Id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.inMail.MessageExample" >
+    delete from Message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.inMail.Message" >
+    insert into Message (Id, SendID, RecID, 
+      MessageId, ReadingStatus, DeleteStatus, 
+      CreatePersonID, CreateBy, CreateTime, 
+      UpdatePersonID, UpdateBy, UpdateTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{sendid,jdbcType=BIGINT}, #{recid,jdbcType=BIGINT}, 
+      #{messageid,jdbcType=INTEGER}, #{readingstatus,jdbcType=INTEGER}, #{deletestatus,jdbcType=INTEGER}, 
+      #{createpersonid,jdbcType=BIGINT}, #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.inMail.Message" >
+    insert into Message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="sendid != null" >
+        SendID,
+      </if>
+      <if test="recid != null" >
+        RecID,
+      </if>
+      <if test="messageid != null" >
+        MessageId,
+      </if>
+      <if test="readingstatus != null" >
+        ReadingStatus,
+      </if>
+      <if test="deletestatus != null" >
+        DeleteStatus,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sendid != null" >
+        #{sendid,jdbcType=BIGINT},
+      </if>
+      <if test="recid != null" >
+        #{recid,jdbcType=BIGINT},
+      </if>
+      <if test="messageid != null" >
+        #{messageid,jdbcType=INTEGER},
+      </if>
+      <if test="readingstatus != null" >
+        #{readingstatus,jdbcType=INTEGER},
+      </if>
+      <if test="deletestatus != null" >
+        #{deletestatus,jdbcType=INTEGER},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.inMail.MessageExample" resultType="java.lang.Integer" >
+    select count(*) from Message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Message
+    <set >
+      <if test="record.id != null" >
+        Id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.sendid != null" >
+        SendID = #{record.sendid,jdbcType=BIGINT},
+      </if>
+      <if test="record.recid != null" >
+        RecID = #{record.recid,jdbcType=BIGINT},
+      </if>
+      <if test="record.messageid != null" >
+        MessageId = #{record.messageid,jdbcType=INTEGER},
+      </if>
+      <if test="record.readingstatus != null" >
+        ReadingStatus = #{record.readingstatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.deletestatus != null" >
+        DeleteStatus = #{record.deletestatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Message
+    set Id = #{record.id,jdbcType=INTEGER},
+      SendID = #{record.sendid,jdbcType=BIGINT},
+      RecID = #{record.recid,jdbcType=BIGINT},
+      MessageId = #{record.messageid,jdbcType=INTEGER},
+      ReadingStatus = #{record.readingstatus,jdbcType=INTEGER},
+      DeleteStatus = #{record.deletestatus,jdbcType=INTEGER},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.inMail.Message" >
+    update Message
+    <set >
+      <if test="sendid != null" >
+        SendID = #{sendid,jdbcType=BIGINT},
+      </if>
+      <if test="recid != null" >
+        RecID = #{recid,jdbcType=BIGINT},
+      </if>
+      <if test="messageid != null" >
+        MessageId = #{messageid,jdbcType=INTEGER},
+      </if>
+      <if test="readingstatus != null" >
+        ReadingStatus = #{readingstatus,jdbcType=INTEGER},
+      </if>
+      <if test="deletestatus != null" >
+        DeleteStatus = #{deletestatus,jdbcType=INTEGER},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.inMail.Message" >
+    update Message
+    set SendID = #{sendid,jdbcType=BIGINT},
+      RecID = #{recid,jdbcType=BIGINT},
+      MessageId = #{messageid,jdbcType=INTEGER},
+      ReadingStatus = #{readingstatus,jdbcType=INTEGER},
+      DeleteStatus = #{deletestatus,jdbcType=INTEGER},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 条件分页未审核-->
+	<select id="getMailList"
+		resultMap="BaseResultMap">
+		SELECT
+			  Id, SendID, RecID, 
+		      MessageId, ReadingStatus, DeleteStatus, 
+		      CreatePersonID, CreateBy, CreateTime, 
+		      UpdatePersonID, UpdateBy, UpdateTime
+		FROM
+		Message
+		where RecID = #{recid,jdbcType=INTEGER}
+		ORDER BY
+		Id DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="getCountMailList" resultType="int">
+		SELECT
+			count(Id)
+		FROM
+			Message
+		where RecID = #{recid,jdbcType=INTEGER}
+	</select>
+  
+  
+</mapper>

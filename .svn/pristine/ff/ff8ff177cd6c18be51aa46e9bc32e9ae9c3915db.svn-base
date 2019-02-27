@@ -1,0 +1,109 @@
+package com.jy.service.function.enterprise.enterpriseFunction;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.function.enterprise.enterpriseFunction.EnterprisejobdeployapplicationMapper;
+import com.jy.dao.function.enterprise.enterpriseFunction.JobAuditManageViewMapper;
+import com.jy.dao.function.enterprise.recruitment.EnterprisejobvacancyMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.enterpriseFunction.Enterprisejobdeployapplication;
+import com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageView;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+import com.jy.service.base.BaseService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @ClassName: JobAuditManageServiceImpl
+ * @Description:岗位审核处理ServiceImpl
+ * @author: chenye
+ * @date: 2018-09-05 11:20
+ */
+@Service
+public class JobAuditManageServiceImpl extends BaseService implements JobAuditManageService {
+
+	@Resource
+	private JobAuditManageViewMapper jobAuditManageViewMapper;
+	@Resource
+	private EnterprisejobdeployapplicationMapper enterprisejobdeployapplicationMapper;
+
+	@Resource
+	private EnterprisejobvacancyMapper enterprisejobvacancyMapper;
+
+	@Override
+	public Result updateJobApplication(AccountInfo accountInfo, String AUTHORITY_CODE, Integer ejdapplicationid, Integer applicationstatusid) throws MyException {
+
+		//检测参数
+		if (applicationstatusid != 2 && applicationstatusid != 3 ){
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		if (ejdapplicationid == null || applicationstatusid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		Enterprisejobdeployapplication enterprisejobdeployapplication = enterprisejobdeployapplicationMapper.selectByPrimaryKey(ejdapplicationid);
+		enterprisejobdeployapplication.setApplicationstatusid(applicationstatusid);
+		enterprisejobdeployapplication.setHandletime(new Date());
+		int i = enterprisejobdeployapplicationMapper.updateByPrimaryKeySelective(enterprisejobdeployapplication);
+		if (i < 1) {
+			throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		//修改职位表为已审核
+        Enterprisejobvacancy enterprisejobvacancy = new Enterprisejobvacancy();
+        enterprisejobvacancy.setEjobvacancyid(enterprisejobdeployapplication.getEjobvacancyid());
+        if (applicationstatusid == 2){
+        	enterprisejobvacancy.setIsauditpassed("Y");
+		}else if (applicationstatusid == 3){
+			enterprisejobvacancy.setIsauditpassed("D");
+		}
+
+        enterprisejobvacancy.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+        enterprisejobvacancy.setUpdateby(accountInfo.getAccount().getName());
+        enterprisejobvacancy.setUpdatetmie(new Date());
+
+        i = enterprisejobvacancyMapper.updateByPrimaryKeySelective(enterprisejobvacancy);
+        if (i < 1){
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        return Result.succee();
+	}
+
+	@Override
+	public Result getJobApplicationList(AccountInfo accountInfo, String AUTHORITY_CODE, String applicationstatusname,
+			String search, String applicationtime, Integer page, Integer pageSize) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		// 处理参数
+		search = this.checkSearch(search);
+		applicationtime = this.checkSearchTime(applicationtime);
+
+		List<JobAuditManageView> rows = jobAuditManageViewMapper.selectJobApplicationList(applicationstatusname,
+				applicationtime, search, (page - 1) * pageSize, pageSize);
+		int count = jobAuditManageViewMapper.selectCountJobApplicationList(applicationstatusname, applicationtime,
+				search);
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", rows);
+		map.put("count", count);
+		return Result.succee(map);
+	}
+
+}

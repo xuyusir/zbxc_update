@@ -1,0 +1,589 @@
+package com.jy.controller.content.product.course;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.controller.base.BaseController;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.Constant;
+import com.jy.entiy.content.product.course.*;
+import com.jy.service.content.product.CourseService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 课程增删改查控制层
+ * 
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/course")
+@Api(tags = "content.product.product.CourseController", description = "内容-产品-课程-课程模块")
+public class CourseController extends BaseController {
+
+	@Resource
+	CourseService courseService;
+
+	@RequestMapping(value = "/updateSection", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改课程章节信息", httpMethod = "PUT", produces = "application/json")
+	public Result updateSection(
+			@ApiParam(value = "课程章节ID", required = true) Long sectionid,
+			@ApiParam(value = "课程章节标题", required = false) String sectiontitle,
+			@ApiParam(value = "是否免费", required = false) String IsFree,
+			@ApiParam(value = "视频位置信息ID", required = false) Long FileID,
+			HttpServletRequest request) throws MyException {
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+
+		Section section = new Section();
+		section.setSectionid(sectionid);
+		section.setSectiontitle(sectiontitle);
+		section.setUpdateby(info.getAccount().getName());
+		section.setUpdatepersonid(info.getAccount().getAccountid());
+		section.setUpdatetime(new Date());
+		section.setIsfree(IsFree);
+		section.setFileid(FileID);
+
+		return courseService.updateSection(info, section);
+	}
+
+	@RequestMapping(value = "/updateChapter", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改课程章目信息", httpMethod = "PUT", produces = "application/json")
+	public Result updateChapter(
+			@ApiParam(value = "课程章目ID", required = true) Long charpterid,
+			@ApiParam(value = "课程章目标题", required = false) String charptertitle,
+			HttpServletRequest request) throws MyException {
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+
+		Coursechapter chapter = new Coursechapter();
+		chapter.setCharpterid(charpterid);
+		chapter.setCharptertitle(charptertitle);
+		chapter.setUpdateby(info.getAccount().getName());
+		chapter.setUpdatepersonid(info.getAccount().getAccountid());
+		chapter.setUpdatetime(new Date());
+		return courseService.updateChapter(info, chapter);
+	}
+
+	@RequestMapping(value = "/updateCourse", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改课程信息", httpMethod = "PUT", produces = "application/json")
+	public Result updateCourse(
+			@ApiParam(value = "课程ID", required = true) Long courseid,
+			@ApiParam(value = "课程标题", required = false) String coursecode,
+			@ApiParam(value = "课程摘要", required = false) String courseabstract,
+			@ApiParam(value = "课程有效天数", required = false) Integer ValidDays,
+			@ApiParam(value = "课程讲义保存位置ID", required = false) Long FileID,
+			@ApiParam(value = "课程缩略图ID", required = false) Long Image,
+			@ApiParam(value = "主讲老师", required = false) String teacher,
+			HttpServletRequest request) throws MyException {
+		Course course = new Course();
+		course.setCourseid(courseid);
+		course.setCourseabstract(courseabstract);
+		course.setValiddays(ValidDays);
+		course.setFileid(FileID);
+		course.setImage(Image);
+		course.setTeacher(teacher);
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.updateCourse(info, course);
+	}
+
+	@RequestMapping(value = "/deleteSection", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除课程章节", httpMethod = "DELETE", produces = "application/json")
+	public Result deleteSection(
+			@ApiParam(value = "课程章节ID", required = false)Long  SectionID,
+			HttpServletRequest request) throws MyException {
+
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.deleteSection(info, SectionID);
+	}
+
+	@RequestMapping(value = "/deleteCourseCharpter", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除课程章目", httpMethod = "DELETE", produces = "application/json")
+	public Result deleteCourseCharpter(
+			@ApiParam(value = "课程章目ID", required = false) Long CharpterID,
+			HttpServletRequest request) throws MyException {
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.deleteCourseCharpter(info, CharpterID);
+	}
+
+	@RequestMapping(value = "/deleteCourse", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除课程", httpMethod = "DELETE", produces = "application/json")
+	public Result deleteCourse(
+			@ApiParam(value = "课程ID", required = false) String CourseID,
+			HttpServletRequest request) throws MyException {
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.deleteCourse(info, CourseID);
+	}
+
+	@RequestMapping(value = "/addSection", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "添加章节信息", httpMethod = "POST", produces = "application/json")
+	public Result addSection(@ApiParam(
+			value = "课程章目ID", required = true) Long CharpterID,
+			@ApiParam(value = "节的标题", required = true) String SectionTitle,
+			@ApiParam(value = "是否免费试看（Y/N）", required = true) String IsFree,
+			@ApiParam(value = "视频位置信息ID", required = false) Long FileID,
+			HttpServletRequest request) throws MyException {
+		Map<String, Object> param = new HashMap<>();
+		param.put("CharpterID", CharpterID);
+		param.put("SectionTitle", SectionTitle);
+		param.put("IsFree", IsFree);
+		param.put("FileID", FileID);
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.addSection(param, info);
+	}
+
+	@RequestMapping(value = "/addCourseCharpter", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "添加章目信息", httpMethod = "POST", produces = "application/json")
+	public Result addCourseCharpter(@ApiParam(value = "章目标题", required = true) String CharpterTitle,
+			@ApiParam(value = "课程ID", required = true) Long CourseID,
+			HttpServletRequest request) throws MyException {
+		Map<String, Object> param = new HashMap<>();
+		param.put("CharpterTitle", CharpterTitle);
+		param.put("CourseID", CourseID);
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.addCourseCharpter(param, info);
+	}
+
+	@RequestMapping(value = "/addCourse", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "添加课程信息", httpMethod = "POST", produces = "application/json")
+	public Result addCourse(
+			@ApiParam(value = "课程名称", required = true) String CourseTitle,
+			@ApiParam(value = "课程讲义保存位置ID", required = false) Long FileID,
+			@ApiParam(value = "课程缩略图ID", required = false) Long Image,
+			@ApiParam(value = "课程简介", required = true) String CourseAbstract,
+			@ApiParam(value = "课程有效天数", required = false) Integer ValidDays,
+			@ApiParam(value = "主讲老师", required = false) String teacher,
+			HttpServletRequest request) throws MyException {
+		Map<String, Object> param = new HashMap<>();
+		if (ValidDays<1) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		param.put("CourseTitle", CourseTitle);
+		param.put("CourseAbstract", CourseAbstract);
+		param.put("FileID", FileID);
+		param.put("ValidDays", ValidDays);
+		param.put("Image", Image);
+		AccountInfo info = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.addCourse(param, info);
+	}
+
+	/**
+	 * 查询课程信息
+	 * 
+	 * @return
+	 * @throws MyException 
+	 */
+	@RequestMapping(value = "/getCourse", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程信息", httpMethod = "POST", produces = "application/json")
+	public Result getCourse(
+			@ApiParam(value = "分页参数（页数）", required = false) Integer page,
+			@ApiParam(value = "分页参数（每页条数）", required = false) Integer pageSize,
+			@ApiParam(value = "产品ID", required = false) Integer ProductId,
+			@ApiParam(value = "课程标题（可模糊查询）", required = false) String CourseTitle,
+			@ApiParam(value = "课程ID,格式:id1,id2,id3....", required = false) String CourseID,
+			HttpServletRequest request) throws MyException {
+		Map<String, Object> param = new HashMap<>();
+		param.put("ProductId", ProductId);
+		param.put("page", page);
+		param.put("pageSize", pageSize);
+		if (CourseTitle != null) {
+			param.put("CourseTitle", "%" + CourseTitle + "%");
+		}
+		param.put("CourseID", CourseID);
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.getCourse(param,accountInfo);
+	}
+	
+	/**
+	 * 查询课程所有章节列表
+	 * 
+	 * @return
+	 * @throws MyException 
+	 */
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程所有章节列表", httpMethod = "POST", produces = "application/json")
+	public Result list(
+			@ApiParam(value = "课程ID", required = false) Long CourseID,
+			HttpServletRequest request) throws MyException {
+		return courseService.list(CourseID,getAccountInfo());
+	}
+	
+	/**
+	 * 查询免费试看课程信息
+	 * 
+	 * @return
+	 * @throws MyException 
+	 */
+	@RequestMapping(value = "/freeCourse", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询免费试看课程信息", httpMethod = "POST", produces = "application/json")
+	public Result freeCourse(
+			@ApiParam(value = "产品ID", required = false) Long ProductID,
+			HttpServletRequest request) throws MyException {
+		return courseService.freeCourse(ProductID);
+	}
+	
+	
+
+	@RequestMapping(value = "/getCourseCharpter", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程章目信息", httpMethod = "POST", produces = "application/json")
+	public Result getCourseCharpter(
+			@ApiParam(value = "课程ID", required = false) Long CourseID,
+			@ApiParam(value = "课程ID", required = false) Long CharpterID
+			) {
+		return courseService.getCourseCharpter(CourseID);
+	}
+
+	@RequestMapping(value = "/getCourseCharpter/get", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程章目信息", httpMethod = "POST", produces = "application/json")
+	public Result getCourseCharpter(
+			@ApiParam(value = "章目ID", required = false) Long CharpterID
+			) throws MyException {
+		return courseService.getCharpter(CharpterID,getAccountInfo());
+	}
+	
+	@RequestMapping(value = "/getCourseSection", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程章节信息", httpMethod = "POST", produces = "application/json")
+	public Result getCourseSection(
+			@ApiParam(value = "课程章目ID", required = true) Long CharpterID,
+			HttpServletRequest request
+			) throws MyException {
+		AccountInfo accountInfo =(AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.getCourseSection(CharpterID,accountInfo);
+	}
+	
+	@RequestMapping(value = "/getSection", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程章节信息", httpMethod = "POST", produces = "application/json")
+	public Result getSection(
+			@ApiParam(value = "课程章目ID", required = true) Long SectionID,
+			HttpServletRequest request
+			) throws MyException {
+		AccountInfo accountInfo =(AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.getSection(SectionID,accountInfo);
+	}
+
+	/************************************
+	 * 笔记部分
+	 * 
+	 * @throws MyException
+	 ********************************************************/
+	@RequestMapping(value = "/addPersonCourseNote", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "增加笔记", httpMethod = "POST", produces = "application/json")
+	public Result addPersonCourseNote(
+			@ApiParam(value = "笔记标题", required = true) String NoteTitle,
+			@ApiParam(value = "笔记内容", required = true) String NoteRecord,
+			@ApiParam(value = "章节信息ID", required = true) Long SectionID,
+			@ApiParam(value = "视频时间节点", required = true) Integer Time,
+			HttpServletRequest request)
+			throws MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Personcoursenote note = new Personcoursenote();
+
+		note.setAccountid(accountInfo.getAccount().getAccountid());
+		note.setCreateby(accountInfo.getAccount().getName());
+		note.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		note.setCreatetime(new Date());
+		note.setNoterecord(NoteRecord);
+		note.setNotetitle(NoteTitle);
+		note.setSectionid(SectionID);
+		note.setTime(Time);
+
+		return courseService.addPersonCourseNote(note);
+	}
+
+	@RequestMapping(value = "/deletePersonCourseNote/{CourseNoteID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除笔记", httpMethod = "DELETE", produces = "application/json")
+	public Result deletePersonCourseNote(@PathVariable @ApiParam(value = "笔记ID", required = true) Long CourseNoteID,
+			HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+
+		return courseService.deletePersonCourseNote(accountInfo, CourseNoteID);
+	}
+
+	@RequestMapping(value = "/updatePersonCourseNote", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改笔记", httpMethod = "PUT", produces = "application/json")
+	public Result updatePersonCourseNote(@ApiParam(value = "笔记ID", required = true) Long CourseNoteID,
+			@ApiParam(value = "笔记标题", required = true) String NoteTitle,
+			@ApiParam(value = "笔记内容", required = true) String NoteRecord, HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Personcoursenote note = new Personcoursenote();
+		note.setCoursenoteid(CourseNoteID);
+		note.setNoterecord(NoteRecord);
+		note.setNotetitle(NoteTitle);
+		note.setUpdateby(accountInfo.getAccount().getName());
+		note.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+		note.setUpdatetime(new Date());
+
+		if (accountInfo.getAccount().getAccountid() == null) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		return courseService.updatePersonCourseNote(note);
+	}
+
+	@RequestMapping(value = "/getPersonCourseNote", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询笔记", httpMethod = "POST", produces = "application/json")
+	public Result updatePersonCourseNote(@ApiParam(value = "笔记ID", required = false) Long CourseNoteID,
+			@ApiParam(value = "笔记标题(模糊查询)", required = false) String NoteTitle,
+			@ApiParam(value = "用户ID", required = false) Long AccountID,
+			@ApiParam(value = "课程ID", required = false) Long CourseID,
+			@ApiParam(value = "课程章节ID", required = false) Long CharpterID,
+			@ApiParam(value = "课程章目ID", required = false) Long SectionID, HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Personcoursenote note = new Personcoursenote();
+		note.setCoursenoteid(CourseNoteID);
+		note.setNotetitle(NoteTitle);
+		note.setAccountid(accountInfo.getAccount().getAccountid());
+		note.setCourseid(CourseID);
+		note.setCharpterid(CharpterID);
+		note.setSectionid(SectionID);
+		return courseService.getPersonCourseNote(note);
+	}
+
+	/**********************************
+	 * 反馈信息
+	 *********************************************/
+
+	@RequestMapping(value = "/addCourseFeedback", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "添加课程反馈信息", httpMethod = "POST", produces = "application/json")
+	public Result addCourseFeedback(
+			@ApiParam(value = "反馈信息", required = false) String Feedback,
+			@ApiParam(value = "课程ID", required = true) Long CourseID,
+			@ApiParam(value = "评级（一行到五星1，2，3，4，5）", required = true) Integer FeedbackLevel,
+			@ApiParam(value = "标记，若为1，则查询此课程是否已经反馈", required = true) String flag,
+			HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Coursefeedback feedbake = new Coursefeedback();
+		feedbake.setFeedback(Feedback);
+		feedbake.setCourseid(CourseID);
+		feedbake.setFeedbacklevel(FeedbackLevel);
+		return courseService.addCourseFeedback(accountInfo, feedbake,flag);
+	}
+
+	@RequestMapping(value = "/getCourseFeedback", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程反馈信息", httpMethod = "POST", produces = "application/json")
+	public Result getCourseFeedback(
+			@ApiParam(value = "课程ID", required = true) Long CourseID,
+			@ApiParam(value = "分页参数页数", required = false) Integer page,
+			@ApiParam(value = "分页参数每页条数", required = false) Integer pageSize,
+			HttpServletRequest request 
+			) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("CourseID", CourseID);
+		param.put("page", page);
+		param.put("pageSize", pageSize);
+		return courseService.getCourseFeedback(param);
+	}
+
+	/*@RequestMapping(value = "/deleteCourseFeedback/{CourseFeedbackID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除课程反馈信息", httpMethod = "DELETE", produces = "application/json")
+	public Result deleteCourseFeedback(
+			@PathVariable @ApiParam(value = "反馈人信息ID", required = true) Long CourseFeedbackID,
+			HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+
+		return courseService.deleteCourseFeedback(CourseFeedbackID, accountInfo, CONTROLLER_CODE);
+	}
+
+	@RequestMapping(value = "/updateCourseFeedback", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改课程反馈信息", httpMethod = "PUT", produces = "application/json")
+	public Result updateCourseFeedback(@ApiParam(value = "反馈人信息ID", required = true) Long CourseFeedbackID,
+			@ApiParam(value = "反馈信息", required = true) String Feedback,
+			@ApiParam(value = "评级（一行到五星1，2，3，4，5）", required = true) Integer FeedbackLevel,
+			HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Coursefeedback feedback = new Coursefeedback();
+		feedback.setCoursefeedbackid(CourseFeedbackID);
+		feedback.setFeedback(Feedback);
+		feedback.setFeedbacklevel(FeedbackLevel);
+
+		return courseService.updateCourseFeedback(feedback, accountInfo);
+	}*/
+
+	/**************************************
+	 * 我的课程
+	 * @throws MyException 
+	 ******************************************************/
+
+	/*
+	 * 添加个人课程，1.用户购买产品时添加 2.管理员添加3.已有产品中添加课程时手动选择是否为已购买此产品客户添加
+	 */
+	/*@RequestMapping(value = "/addPersonCourse", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "添加个人课程信息", httpMethod = "POST", produces = "application/json")
+	public Result addPersonCourse(@ApiParam(value = "被添加课程ID", required = true) Long CourseID,
+			@ApiParam(value = "被添加课程的用户ID", required = true) Long AccountID,
+			@ApiParam(value = "备注", required = false) String Remark,
+			@ApiParam(value = "产品ID", required = true) Long ProductID, HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Personcourse pc = new Personcourse();
+		pc.setAccountid(AccountID);
+		pc.setCourseid(CourseID);
+		pc.setRemark(Remark);
+		pc.setProductid(ProductID);
+		return courseService.addPersonCourse(pc, accountInfo, CONTROLLER_CODE);
+	}
+
+	@RequestMapping(value = "/deletePersonCourse/{CourseID}/{AccountID}/{ProductID}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除个人课程信息", httpMethod = "DELETE", produces = "application/json")
+	public Result deletePersonCourse(@PathVariable @ApiParam(value = "课程ID", required = true) Long CourseID,
+			@PathVariable @ApiParam(value = "用户ID", required = true) Long AccountID,
+			@PathVariable @ApiParam(value = "产品ID", required = true) Long ProductID, HttpServletRequest request) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+
+		return courseService.deletePersonCourse(accountInfo, AccountID, CourseID, ProductID, CONTROLLER_CODE);
+	}*/
+
+	@RequestMapping(value = "/service", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "申请激活课程服务", httpMethod = "PUT", produces = "application/json")
+	public Result updatePersonCourse(
+			@ApiParam(value = "自增长主键", required = true) Long PersonCourseID,
+			HttpServletRequest request) throws MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+	
+		return courseService.service(accountInfo, PersonCourseID);
+	}
+	
+
+	@RequestMapping(value = "/selectPersonCourse", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询个人课程信息", httpMethod = "POST", produces = "application/json")
+	public Result updatePersonCourse(
+			@ApiParam(value = "激活状态（1已激活，2未激活,3已过期）", required = true) Integer IsActive,
+			@ApiParam(value = "课程ID", required = true) Long CourseID,
+			@ApiParam(value = "分页参数页数", required = true) Integer page,
+			@ApiParam(value = "分页参数每页条数", required = true) Integer pageSize,
+			HttpServletRequest request ) {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.selectPersonCourse(accountInfo, IsActive,page,pageSize,CourseID);
+	}
+
+
+	
+	@RequestMapping(value = "/deleteHandouts", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "删除讲义或缩略图", httpMethod = "POST", produces = "application/json")
+	public Result deleteHandouts(
+			@ApiParam(value = "课程ID", required = false) Long CourseID,
+			@ApiParam(value = "图片或讲义ID", required = false) Long FileID,
+			HttpServletRequest request
+			) throws MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return courseService.deleteHandouts(CourseID,accountInfo,FileID);
+
+	}
+	
+	@RequestMapping(value = "/downHandouts", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "下载讲义", httpMethod = "GET", produces = "application/json")
+	public Result getHandouts(
+			@ApiParam(value = "课程ID", required = true) Long CourseID,
+			HttpServletRequest request,
+			HttpServletResponse response
+			) throws IOException, MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Result result = courseService.getHandouts(CourseID,accountInfo);
+		if (result.getStatus()==200) {
+			Course course = (Course)result.getData() ;
+			if (course!=null) {
+				super.baseDownloadFile(response, course.getFileid());
+			}
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/handouts", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "回显讲义信息", httpMethod = "POST", produces = "application/json")
+	public Result getHandouts(
+			@ApiParam(value = "课程ID", required = false) Long CourseID
+			) throws IOException, MyException {
+		return courseService.getHangouts(CourseID,getAccountInfo());
+	}
+	
+	@RequestMapping(value = "/remember", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "记忆播放时间增加修改", httpMethod = "POST", produces = "application/json")
+	public Result getHandouts(
+			@ApiParam(value = "章节ID", required = true) Long PersonCourseID,
+			@ApiParam(value = "章节ID", required = true) Long SectionID,
+			@ApiParam(value = "记忆时间，单位秒", required = false) Integer Time,
+			HttpServletRequest request 
+			) throws MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		Sectionremembertime sectionremembertime = new Sectionremembertime();
+		if (PersonCourseID == null || SectionID == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		sectionremembertime.setSectionid(SectionID);
+		sectionremembertime.setPersoncourseid(PersonCourseID);
+		sectionremembertime.setTime(Time);
+		return courseService.remember(accountInfo,sectionremembertime);
+	}
+	
+	@RequestMapping(value = "/move", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "章目/章节，上移/下移", httpMethod = "POST", produces = "application/json")
+	public Result move(
+		@ApiParam(value = "章目自增长主键", required = false) Long SectionID,
+		@ApiParam(value = "章目自增长主键", required = false) Long CharpterID,
+		@ApiParam(value = "移动类型，1上移，2下移", required = true) Integer type
+			) throws MyException {
+		return courseService.move(SectionID,CharpterID,type,getAccountInfo());
+	}
+	
+	@RequestMapping(value = "/noteNumber", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询课程笔记数量", httpMethod = "POST", produces = "application/json")
+	public Result move(
+			@ApiParam(value = "课程主键", required = false) Long CourseID
+			) {
+		return courseService.noteNumber(getAccountInfo(),CourseID);
+	}
+	
+	@RequestMapping(value = "/course/select", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "查询我的课程列表下拉列表", httpMethod = "POST", produces = "application/json")
+	public Result move(
+			) throws MyException {
+		return courseService.select(getAccountInfo());
+	}
+}

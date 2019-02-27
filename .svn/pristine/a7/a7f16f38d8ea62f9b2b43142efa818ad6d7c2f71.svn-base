@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.course.SectionremembertimeMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.product.course.Sectionremembertime" >
+    <id column="SectionRememberTimeID" property="sectionremembertimeid" jdbcType="BIGINT" />
+    <result column="PersonCourseID" property="personcourseid" jdbcType="BIGINT" />
+    <result column="SectionID" property="sectionid" jdbcType="BIGINT" />
+    <result column="Time" property="time" jdbcType="INTEGER" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SectionRememberTimeID, PersonCourseID, SectionID, Time, UpdateTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.product.course.SectionremembertimeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SectionRememberTime
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from SectionRememberTime
+    where SectionRememberTimeID = #{sectionremembertimeid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from SectionRememberTime
+    where SectionRememberTimeID = #{sectionremembertimeid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.product.course.SectionremembertimeExample" >
+    delete from SectionRememberTime
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.product.course.Sectionremembertime" >
+    insert into SectionRememberTime (SectionRememberTimeID, PersonCourseID, 
+      SectionID, Time, UpdateTime
+      )
+    values (#{sectionremembertimeid,jdbcType=BIGINT}, #{personcourseid,jdbcType=BIGINT}, 
+      #{sectionid,jdbcType=BIGINT}, #{time,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.product.course.Sectionremembertime" >
+    <selectKey keyProperty="sectionremembertimeid" order="AFTER" resultType="Long">
+    	SELECT LAST_INSERT_ID();
+    </selectKey>
+    insert into SectionRememberTime
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sectionremembertimeid != null" >
+        SectionRememberTimeID,
+      </if>
+      <if test="personcourseid != null" >
+        PersonCourseID,
+      </if>
+      <if test="sectionid != null" >
+        SectionID,
+      </if>
+      <if test="time != null" >
+        Time,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sectionremembertimeid != null" >
+        #{sectionremembertimeid,jdbcType=BIGINT},
+      </if>
+      <if test="personcourseid != null" >
+        #{personcourseid,jdbcType=BIGINT},
+      </if>
+      <if test="sectionid != null" >
+        #{sectionid,jdbcType=BIGINT},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.product.course.SectionremembertimeExample" resultType="java.lang.Integer" >
+    select count(*) from SectionRememberTime
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SectionRememberTime
+    <set >
+      <if test="record.sectionremembertimeid != null" >
+        SectionRememberTimeID = #{record.sectionremembertimeid,jdbcType=BIGINT},
+      </if>
+      <if test="record.personcourseid != null" >
+        PersonCourseID = #{record.personcourseid,jdbcType=BIGINT},
+      </if>
+      <if test="record.sectionid != null" >
+        SectionID = #{record.sectionid,jdbcType=BIGINT},
+      </if>
+      <if test="record.time != null" >
+        Time = #{record.time,jdbcType=INTEGER},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SectionRememberTime
+    set SectionRememberTimeID = #{record.sectionremembertimeid,jdbcType=BIGINT},
+      PersonCourseID = #{record.personcourseid,jdbcType=BIGINT},
+      SectionID = #{record.sectionid,jdbcType=BIGINT},
+      Time = #{record.time,jdbcType=INTEGER},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.product.course.Sectionremembertime" >
+    update SectionRememberTime
+    <set >
+      <if test="personcourseid != null" >
+        PersonCourseID = #{personcourseid,jdbcType=BIGINT},
+      </if>
+      <if test="sectionid != null" >
+        SectionID = #{sectionid,jdbcType=BIGINT},
+      </if>
+      <if test="time != null" >
+        Time = #{time,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SectionRememberTimeID = #{sectionremembertimeid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.product.course.Sectionremembertime" >
+    update SectionRememberTime
+    set PersonCourseID = #{personcourseid,jdbcType=BIGINT},
+      SectionID = #{sectionid,jdbcType=BIGINT},
+      Time = #{time,jdbcType=INTEGER},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where SectionRememberTimeID = #{sectionremembertimeid,jdbcType=BIGINT}
+  </update>
+</mapper>

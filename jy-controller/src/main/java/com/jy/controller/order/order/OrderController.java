@@ -1,0 +1,386 @@
+package com.jy.controller.order.order;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.controller.base.BaseController;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.Constant;
+import com.jy.entiy.order.order.Orders;
+import com.jy.service.order.OrdersService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+/**
+ * 订单管理
+ * 
+ * @ClassName:OrderController
+ * @Description:
+ * @author:liuhong
+ * @date:2018年8月17日
+ */
+
+@Controller
+@RequestMapping("/order")
+@Api(tags = "OrderController", description = "订单模块")
+public class OrderController extends BaseController {
+	@Resource
+	OrdersService ordersService;
+
+	/**
+	 * 获取订单列表
+	 * 
+	 * @param page
+	 * @param pageSize
+	 * @param request
+	 * @return
+	 * @throws MyException
+	 */
+	@RequestMapping(value = "list", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "获取订单信息", httpMethod = "POST", produces = "application/json")
+	public Result getOrder(@ApiParam(value = "分页参数页数", required = false) Integer page,
+			@ApiParam(value = "分页参数每页条数", required = false) Integer pageSize,
+			@ApiParam(value = "订单状态1，未付款；2，待确认；3，已确认；4，已关闭，5已删除；", required = false) String orderStatus,
+			@ApiParam(value = "模糊查询条件(订单编号、姓名、手机号)", required = false) String s,
+			@ApiParam(value = "订单提交日期", required = false) String date, HttpServletRequest request) throws MyException {
+		Map<String, Object> param = new HashMap<>();
+		if (page != null && pageSize != null) {
+			param.put("start", page * pageSize - pageSize);
+			param.put("end", pageSize);
+		}
+		param.put("page", page);
+		param.put("pageSize", pageSize);
+		if (s != null && !s.equals("")) {
+			param.put("s", "%" + s + "%");
+		}
+		param.put("orderStatus", orderStatus);
+
+		if (date != null && !date.equals("")) {
+			date = date.substring(0, 10);
+			param.put("date", "%" + date + "%");
+		}
+
+		AccountInfo account = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return ordersService.getOrder(param, account);
+	}
+
+	/**
+	 * 生成订单
+	 * 
+	 * @param request
+	 * @param orderName
+	 * @param cartItems
+	 * @return
+	 * @throws MyException
+	 */
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "生成订单", httpMethod = "POST", produces = "application/json")
+	public Result addOrder(
+			@ApiParam(value = "产品ID(无此参数，则从购物车生成订单，生成后删除购物车)", required = false) Long ProductID,
+			@ApiParam(value = "购物车详情ID(和产品ID两个参数有且只能由一个)", required = false) String ids,
+			HttpServletRequest request) throws MyException {
+		AccountInfo account = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return ordersService.addOrder(account, ProductID,ids);
+	}
+
+	/**
+	 * 往已有订单中添加订单详情订单
+	 * 
+	 * @param request
+	 * @param orderName
+	 * @param cartItems
+	 * @return
+	 * 
+	 * @RequestMapping(value = "/addOrderdetails", method = RequestMethod.POST)
+	 * @ResponseBody
+	 * @ApiOperation(value = "往已有订单中添加订单详情订单", httpMethod = "POST", produces =
+	 *                     "application/json") public Result
+	 *                     addOrderdetails(HttpServletRequest request,
+	 * @ApiParam(value =
+	 *                 "商品信息列表字段包括(orderid(订单id),productid(产品ID),quantity(数量),unitprice(单价),discount(折扣))json串传",
+	 *                 required = true) @RequestBody List<Orderdetails> orderDetail)
+	 *                 { AccountInfo account = (AccountInfo)
+	 *                 request.getAttribute(Constant.ACCOUNTINFO); return
+	 *                 ordersService.addOrderdetails(account, orderDetail); }
+	 */
+
+	/*
+	 * @RequestMapping(value = "/deleteOrderdetails/{orderdetailsID}", method =
+	 * RequestMethod.DELETE)
+	 * 
+	 * @ResponseBody
+	 * 
+	 * @ApiOperation(value = "删除订单详情信息", httpMethod = "DELETE", produces =
+	 * "application/json") public Result deleteOrderdetails(
+	 * 
+	 * @PathVariable @ApiParam(value = "订单详情ID", required = true) Long
+	 * orderdetailsID, HttpServletRequest request ) { AccountInfo accountInfo
+	 * =(AccountInfo) request.getAttribute(Constant.ACCOUNTINFO); return
+	 * ordersService.deleteOrderdetails(orderdetailsID,accountInfo); }
+	 */
+
+	/**
+	 * 删除订单信息
+	 * 
+	 * @param orderId
+	 * @return
+	 * @throws MyException
+	 */
+	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "删除订单信息", httpMethod = "DELETE", produces = "application/json")
+	public Result deleteOrder(@ApiParam(value = "订单ID,多个ID(id1,id2,id3...)", required = true) String ids,
+			HttpServletRequest request) throws MyException {
+		AccountInfo account = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return ordersService.deleteOrder(ids, account);
+	}
+
+	/*
+	 * @RequestMapping(value = "/getOrderStatus", method = RequestMethod.GET)
+	 * 
+	 * @ResponseBody
+	 * 
+	 * @ApiOperation(value = "获取订单状态", httpMethod = "GET", produces =
+	 * "application/json") public Result getOrderStatus( ) { return
+	 * ordersService.getOrderStatus(); }
+	 */
+
+	/**
+	 * 获取订单详情
+	 * 
+	 * @param orderId
+	 * @return
+	 * @throws MyException
+	 */
+	/*
+	 * @RequestMapping(value = "/getOrderDetails", method = RequestMethod.GET)
+	 * 
+	 * @ResponseBody
+	 * 
+	 * @ApiOperation(value = "获取订单详情", httpMethod = "GET", produces =
+	 * "application/json") public Result getOrderDetails(
+	 * 
+	 * @ApiParam(value = "订单Id", required = true) Long OrderID,
+	 * 
+	 * @ApiParam(value = "订单详情Id", required = true) Long OrderDetailsID,
+	 * 
+	 * @ApiParam(value = "是否删除（Y/N）", required = true) String IsDelete,
+	 * 
+	 * @ApiParam(value = "订单状态（若是多个状态则按1，2，3...格式传）", required = false) String
+	 * orderStatus,
+	 * 
+	 * @ApiParam(value = "支付状态（若是多个状态则按1，2，3...格式传）", required = false) String
+	 * payStatusID, HttpServletRequest reuqest) { Map<String,Object> param = new
+	 * HashMap<>(); if (orderStatus != null) { orderStatus = "(" + orderStatus +
+	 * ")"; param.put("OrderStatusID", orderStatus); } if (payStatusID != null) {
+	 * payStatusID = "(" + payStatusID + ")"; param.put("PayStatusID", payStatusID);
+	 * } param.put("OrderID", OrderID); param.put("OrderDetailsID", OrderDetailsID);
+	 * AccountInfo account = (AccountInfo)
+	 * reuqest.getAttribute(Constant.ACCOUNTINFO); return
+	 * ordersService.getOrderDetails(param, account); }
+	 */
+
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改订单信息", httpMethod = "PUT", produces = "application/json")
+	public Result putOrder(@ApiParam(value = "订单Id", required = true) Long orderId,
+			@ApiParam(value = "订单状态1，未付款；2，待确认；3，已确认；4，已关闭，5已删除；", required = false) Integer OrderStatusID,
+			@ApiParam(value = "订单总价", required = false) BigDecimal AmountPrice, HttpServletRequest reuqest)
+			throws MyException {
+		AccountInfo account = (AccountInfo) reuqest.getAttribute(Constant.ACCOUNTINFO);
+		Orders order = new Orders();
+		order.setOrderid(orderId);
+		order.setOrderstatus(OrderStatusID);
+		order.setAmountprice(AmountPrice);
+		return ordersService.putOrder(account, order);
+	}
+
+	/*
+	 * @RequestMapping(value = "/putOrderdetails", method = RequestMethod.PUT)
+	 * 
+	 * @ResponseBody
+	 * 
+	 * @ApiOperation(value = "修改订单详情信息", httpMethod = "PUT", produces =
+	 * "application/json") public Result putOrderdetails(
+	 * 
+	 * @ApiParam(value = "订单详情Id", required = true) Long OrderDetailsID,
+	 * 
+	 * @ApiParam(value = "产品ID", required = false) Long ProductID,
+	 * 
+	 * @ApiParam(value = "单价", required = false) BigDecimal UnitPrice,
+	 * 
+	 * @ApiParam(value = "数量", required = false) Integer Quantity,
+	 * 
+	 * @ApiParam(value = "折扣", required = false) Float Discount,
+	 * 
+	 * @ApiParam(value = "订单状态", required = false) Integer OrderStatusID,
+	 * 
+	 * @ApiParam(value = "支付状态", required = false) Integer PayStatusID,
+	 * HttpServletRequest reuqest) { AccountInfo account = (AccountInfo)
+	 * reuqest.getAttribute(Constant.ACCOUNTINFO); Orderdetails details = new
+	 * Orderdetails(); details.setOrderdetailsid(OrderDetailsID);
+	 * details.setProductid(ProductID); details.setUnitprice(UnitPrice);
+	 * details.setQuantity(Quantity); details.setDiscount(Discount);
+	 * details.setOrderstatusid(OrderStatusID); details.setPaystatusid(PayStatusID);
+	 * return ordersService.putOrderdetails(account,details); }
+	 */
+
+	@RequestMapping(value = "/pay")
+	@ResponseBody
+	@ApiOperation(value = "订单支付接口", produces = "application/json")
+	public void payMoney(@ApiParam(value = "订单Id", required = true) Long orderId,
+			@ApiParam(value = "返回地址URL", required = true) String url1,
+			@ApiParam(value = "返回地址URL", required = true) String url2,
+			@ApiParam(value = "地址ip", required = true) String ip, HttpServletResponse response)
+			throws ServletException, IOException {
+		AccountInfo accountInfo = getAccountInfo();
+		//String base_url = this.getRequest().getRequestURL().toString().replace("pay", "signPays");
+		Map<String, String> param = ordersService.payMoney(orderId, accountInfo);
+		if (param.get("result").equals("true")) {
+			super.doPost(response, param, url1, ip);
+		}
+	}
+
+	@RequestMapping(value = "/signPays")
+	@ApiOperation(value = "支付异步验签接口", produces = "application/json")
+	public String payMoney1(HttpServletRequest request, HttpServletResponse httpResponse) throws IOException {
+		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String[]> requestParams = request.getParameterMap();
+		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+			String name = (String) iter.next();
+			String[] values = (String[]) requestParams.get(name);
+			String valueStr = "";
+			for (int i = 0; i < values.length; i++) {
+				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+			}
+			// 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+			//valueStr = new String(valueStr.getBytes("ISO-8859-1"), "UTF-8");
+			System.out.println(name+":"+valueStr);
+			params.put(name, valueStr);
+		}
+		if (super.payResult(params)) {
+			ordersService.paySucess(params);
+			httpResponse.setContentType("text/html;charset=UTF-8");
+			httpResponse.getWriter().write("Success");
+			httpResponse.getWriter().flush();
+			httpResponse.getWriter().close();
+		} else {
+			httpResponse.setContentType("text/html;charset=UTF-8");
+			httpResponse.getWriter().write("Error");
+			httpResponse.getWriter().flush();
+			httpResponse.getWriter().close();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/signPay", method = RequestMethod.POST)
+	@ApiOperation(value = "支付同步验签接口", httpMethod = "POST", produces = "application/json")
+	public String payMoney(@ApiParam(value = "charset", required = true) String charset,
+			@ApiParam(value = "out_trade_no", required = true) String out_trade_no,
+			@ApiParam(value = "method", required = true) String method,
+			@ApiParam(value = "total_amount", required = true) String total_amount,
+			@ApiParam(value = "sign", required = true) String sign,
+			@ApiParam(value = "trade_no", required = true) String trade_no,
+			@ApiParam(value = "auth_app_id", required = true) String auth_app_id,
+			@ApiParam(value = "app_id", required = true) String app_id,
+			@ApiParam(value = "sign_type", required = true) String sign_type,
+			@ApiParam(value = "seller_id", required = true) String seller_id,
+			@ApiParam(value = "version", required = true) String version,
+			@ApiParam(value = "timestamp", required = true) String timestamp, HttpServletResponse httpResponse)
+			throws ServletException, IOException {
+		Map<String, String> param = new HashMap<>();
+		param.put("charset", charset);
+		param.put("out_trade_no", out_trade_no);
+		param.put("method", method);
+		param.put("total_amount", total_amount);
+		param.put("sign", sign);
+		param.put("trade_no", trade_no);
+		param.put("auth_app_id", auth_app_id);
+		param.put("app_id", app_id);
+		param.put("sign_type", sign_type);
+		param.put("seller_id", seller_id);
+		param.put("timestamp", timestamp);
+		param.put("version", version);
+		for (String string : param.keySet()) {
+			System.out.println(string + ":" + param.get(string));
+		}
+		if (super.payResult(param)) {
+			if (ordersService.paySucess(param).getStatus() == 200) {
+				httpResponse.setContentType("text/html;charset=UTF-8");
+				httpResponse.getWriter().write("Success");
+				httpResponse.getWriter().flush();
+				httpResponse.getWriter().close();
+			} else {
+				httpResponse.setContentType("text/html;charset=UTF-8");
+				httpResponse.getWriter().write("Error");
+				httpResponse.getWriter().flush();
+				httpResponse.getWriter().close();
+			}
+		} else {
+			httpResponse.setContentType("text/html;charset=UTF-8");
+			httpResponse.getWriter().write("Error");
+			httpResponse.getWriter().flush();
+			httpResponse.getWriter().close();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/orderscolse", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "修改订单自动关闭时间", httpMethod = "PUT", produces = "application/json")
+	public Result orderscolse(@ApiParam(value = "自动关闭时间，单位分钟", required = true) Integer time,
+			HttpServletRequest request) throws MyException {
+		AccountInfo accountInfo = (AccountInfo) request.getAttribute(Constant.ACCOUNTINFO);
+		return ordersService.orderscolse(accountInfo, time);
+	}
+
+	@RequestMapping(value = "/orderscolse", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "查询订单自动关闭时间", httpMethod = "GET", produces = "application/json")
+	public Result orderscolse() throws MyException {
+		return ordersService.orderscolse();
+	}
+
+	@RequestMapping(value = "/exportOrders", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "导出订单", httpMethod = "GET", produces = "application/json")
+	public void exportOrders(
+			@ApiParam(value = "订单状态1，未付款；2，待确认；3，已确认；4，已关闭，5已删除；", required = false) Integer OrderStatus,
+			@ApiParam(value = "模糊查询条件(订单编号、姓名、手机号)", required = false) String s,
+			@ApiParam(value = "订单提交日期", required = false) String date,
+			HttpServletResponse response
+			) throws MyException, IOException {
+		AccountInfo accountInfo = getAccountInfo();
+		HSSFWorkbook workbook = ordersService.exportOrders(OrderStatus,accountInfo,s,date);
+		OutputStream out = null;
+		out = response.getOutputStream();
+		String fileName = "中博星辰订单.xls";// 文件名
+		response.setContentType("application/x-msdownload");
+		response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+		workbook.write(out);
+		out.close();
+	}
+
+}

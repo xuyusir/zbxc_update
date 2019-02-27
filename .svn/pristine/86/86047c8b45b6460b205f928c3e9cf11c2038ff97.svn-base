@@ -1,0 +1,32 @@
+# redis 配置
+
+# 内网
+# redis.host=10.0.104.54
+# redis.port=8084
+# REDIS_PASSWORD=2f7ead25-de4b-485b-8f89-d738555ca45f
+
+# 外网
+# redis.host=113.204.232.42
+# redis.port=28084
+# REDIS_PASSWORD=2f7ead25-de4b-485b-8f89-d738555ca45f
+
+# 135redis
+# redis.host = 10.0.101.216
+# redis.port = 6379
+# REDIS_PASSWORD=2f7ead25-de4b-485b-8f89-d738555ca45f
+
+# 本机redis
+ redis.host = 192.168.47.128
+ redis.port = 6379
+ REDIS_PASSWORD=2f7ead25-de4b-485b-8f89-d738555ca45f
+
+# 服务器部署地址
+# redis.host = r-wz9a201514f49eb4.redis.rds.aliyuncs.com
+# redis.port = 6379
+# REDIS_PASSWORD = e4b485b8f89d738555ca45f@
+
+#redis使用类型 1.测试-前端01   2.客户使用-前端02
+REDIS_TYPE = 1
+
+
+

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.account.authority.AuthorityMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.account.authority.Authority" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="MenuID" property="menuid" jdbcType="INTEGER" />
+    <result column="Name" property="name" jdbcType="VARCHAR" />
+    <result column="Code" property="code" jdbcType="VARCHAR" />
+    <result column="DisplayOrder" property="displayorder" jdbcType="INTEGER" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, MenuID, Name, Code, DisplayOrder, Remark, CreatePersonID, CreateBy, CreateTime, 
+    UpdatePersonID, UpdateBy, UpdateTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.account.authority.AuthorityExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Authority
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Authority
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Authority
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.account.authority.AuthorityExample" >
+    delete from Authority
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.account.authority.Authority" >
+    insert into Authority (ID, MenuID, Name, 
+      Code, DisplayOrder, Remark, 
+      CreatePersonID, CreateBy, CreateTime, 
+      UpdatePersonID, UpdateBy, UpdateTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{menuid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{displayorder,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.account.authority.Authority" >
+    insert into Authority
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="menuid != null" >
+        MenuID,
+      </if>
+      <if test="name != null" >
+        Name,
+      </if>
+      <if test="code != null" >
+        Code,
+      </if>
+      <if test="displayorder != null" >
+        DisplayOrder,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="menuid != null" >
+        #{menuid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="displayorder != null" >
+        #{displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.account.authority.AuthorityExample" resultType="java.lang.Integer" >
+    select count(*) from Authority
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Authority
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.menuid != null" >
+        MenuID = #{record.menuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null" >
+        Name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        Code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayorder != null" >
+        DisplayOrder = #{record.displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Authority
+    set ID = #{record.id,jdbcType=INTEGER},
+      MenuID = #{record.menuid,jdbcType=INTEGER},
+      Name = #{record.name,jdbcType=VARCHAR},
+      Code = #{record.code,jdbcType=VARCHAR},
+      DisplayOrder = #{record.displayorder,jdbcType=INTEGER},
+      Remark = #{record.remark,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.account.authority.Authority" >
+    update Authority
+    <set >
+      <if test="menuid != null" >
+        MenuID = #{menuid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        Name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        Code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="displayorder != null" >
+        DisplayOrder = #{displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.account.authority.Authority" >
+    update Authority
+    set MenuID = #{menuid,jdbcType=INTEGER},
+      Name = #{name,jdbcType=VARCHAR},
+      Code = #{code,jdbcType=VARCHAR},
+      DisplayOrder = #{displayorder,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getIdByCode" resultType="int">
+  	SELECT ID FROM Authority WHERE Code = #{code}
+  </select>
+</mapper>

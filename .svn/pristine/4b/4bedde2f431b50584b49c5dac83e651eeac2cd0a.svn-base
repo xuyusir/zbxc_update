@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.OfflinesigninMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.Offlinesignin" >
+    <id column="OfflineSignInID" property="offlinesigninid" jdbcType="BIGINT" />
+    <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <result column="SigninCheckID" property="signincheckid" jdbcType="BIGINT" />
+    <result column="ActivityName" property="activityname" jdbcType="VARCHAR" />
+    <result column="ActivityTime" property="activitytime" jdbcType="TIMESTAMP" />
+    <result column="ActivityLocation" property="activitylocation" jdbcType="VARCHAR" />
+    <result column="SignInTime" property="signintime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    OfflineSignInID, AccountID, SigninCheckID, ActivityName, ActivityTime, ActivityLocation, 
+    SignInTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.OfflinesigninExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from OfflineSignIn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from OfflineSignIn
+    where OfflineSignInID = #{offlinesigninid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from OfflineSignIn
+    where OfflineSignInID = #{offlinesigninid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.OfflinesigninExample" >
+    delete from OfflineSignIn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.Offlinesignin" >
+    insert into OfflineSignIn (OfflineSignInID, AccountID, SigninCheckID, 
+      ActivityName, ActivityTime, ActivityLocation, 
+      SignInTime)
+    values (#{offlinesigninid,jdbcType=BIGINT}, #{accountid,jdbcType=BIGINT}, #{signincheckid,jdbcType=BIGINT}, 
+      #{activityname,jdbcType=VARCHAR}, #{activitytime,jdbcType=TIMESTAMP}, #{activitylocation,jdbcType=VARCHAR}, 
+      #{signintime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.Offlinesignin" >
+    insert into OfflineSignIn
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="offlinesigninid != null" >
+        OfflineSignInID,
+      </if>
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+      <if test="signincheckid != null" >
+        SigninCheckID,
+      </if>
+      <if test="activityname != null" >
+        ActivityName,
+      </if>
+      <if test="activitytime != null" >
+        ActivityTime,
+      </if>
+      <if test="activitylocation != null" >
+        ActivityLocation,
+      </if>
+      <if test="signintime != null" >
+        SignInTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="offlinesigninid != null" >
+        #{offlinesigninid,jdbcType=BIGINT},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="signincheckid != null" >
+        #{signincheckid,jdbcType=BIGINT},
+      </if>
+      <if test="activityname != null" >
+        #{activityname,jdbcType=VARCHAR},
+      </if>
+      <if test="activitytime != null" >
+        #{activitytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activitylocation != null" >
+        #{activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="signintime != null" >
+        #{signintime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.OfflinesigninExample" resultType="java.lang.Integer" >
+    select count(*) from OfflineSignIn
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update OfflineSignIn
+    <set >
+      <if test="record.offlinesigninid != null" >
+        OfflineSignInID = #{record.offlinesigninid,jdbcType=BIGINT},
+      </if>
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+      <if test="record.signincheckid != null" >
+        SigninCheckID = #{record.signincheckid,jdbcType=BIGINT},
+      </if>
+      <if test="record.activityname != null" >
+        ActivityName = #{record.activityname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activitytime != null" >
+        ActivityTime = #{record.activitytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.activitylocation != null" >
+        ActivityLocation = #{record.activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.signintime != null" >
+        SignInTime = #{record.signintime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update OfflineSignIn
+    set OfflineSignInID = #{record.offlinesigninid,jdbcType=BIGINT},
+      AccountID = #{record.accountid,jdbcType=BIGINT},
+      SigninCheckID = #{record.signincheckid,jdbcType=BIGINT},
+      ActivityName = #{record.activityname,jdbcType=VARCHAR},
+      ActivityTime = #{record.activitytime,jdbcType=TIMESTAMP},
+      ActivityLocation = #{record.activitylocation,jdbcType=VARCHAR},
+      SignInTime = #{record.signintime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.person.Offlinesignin" >
+    update OfflineSignIn
+    <set >
+      <if test="accountid != null" >
+        AccountID = #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="signincheckid != null" >
+        SigninCheckID = #{signincheckid,jdbcType=BIGINT},
+      </if>
+      <if test="activityname != null" >
+        ActivityName = #{activityname,jdbcType=VARCHAR},
+      </if>
+      <if test="activitytime != null" >
+        ActivityTime = #{activitytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activitylocation != null" >
+        ActivityLocation = #{activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="signintime != null" >
+        SignInTime = #{signintime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where OfflineSignInID = #{offlinesigninid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.person.Offlinesignin" >
+    update OfflineSignIn
+    set AccountID = #{accountid,jdbcType=BIGINT},
+      SigninCheckID = #{signincheckid,jdbcType=BIGINT},
+      ActivityName = #{activityname,jdbcType=VARCHAR},
+      ActivityTime = #{activitytime,jdbcType=TIMESTAMP},
+      ActivityLocation = #{activitylocation,jdbcType=VARCHAR},
+      SignInTime = #{signintime,jdbcType=TIMESTAMP}
+    where OfflineSignInID = #{offlinesigninid,jdbcType=BIGINT}
+  </update>
+</mapper>

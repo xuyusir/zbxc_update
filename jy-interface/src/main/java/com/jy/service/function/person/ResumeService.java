@@ -1,0 +1,331 @@
+package com.jy.service.function.person;
+
+import java.util.Map;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.person.Customresume;
+import com.jy.entiy.function.person.Practicalexpirence;
+import com.jy.entiy.function.person.Qualificationcertificate;
+import com.jy.entiy.function.person.Workexpirence;
+import com.jy.entiy.function.person.resume.Resumeinfo;
+
+/**
+ * 简历模块业务逻辑层接口
+ * @author liuhong
+ * @date: 2018年8月29日 下午3:19:02
+ * @Package: com.jy.service.resume
+ */
+public interface ResumeService {
+
+	/**
+	 * 添加个人标准简历
+	 * @param resumeinfo
+	 * @param accountInfo
+	 * @param CONTROLLER_CODE
+	 * @return
+	 */
+	//public Result addResumeInfo(Resumeinfo resumeinfo,AccountInfo accountInfo,Map<String, Object> param);
+
+	/**
+	 * 修改个人标准简历
+	 * @param resumeinfo
+	 * @param accountInfo
+	 * @return
+	 * @throws MyException
+	 */
+	public Result updateResumeInfo(Resumeinfo resumeinfo,AccountInfo accountInfo,Map<String, String> param,Long FileinfoID) throws MyException;
+
+	/**
+	 * 查看简历
+	 * @param accountInfo
+	 * @return
+	 * @throws MyException
+	 */
+	public Result getResumeInfo(AccountInfo accountInfo,Map<String, Object> param, boolean isTalentPool) throws MyException;
+
+	/**
+	 * 增加实践经历
+	 * @return
+	 */
+	public Result addPracticalExpirence(Practicalexpirence practicalexpirence,AccountInfo accountInfo);
+
+	/**
+	 * 修改实践经历
+	 * @param accountInfo
+	 * @param practicalexpirence
+	 * @return
+	 */
+	public Result updatePracticalExpirence(AccountInfo accountInfo,Practicalexpirence practicalexpirence);
+
+	/**
+	 * 查询实践经历
+	 * @param accountInfo
+	 * @param practicalexpirence
+	 * @return
+	 */
+	public Result getPracticalExpirence(AccountInfo accountInfo,Practicalexpirence practicalexpirence, boolean isTalentPool) throws MyException;
+
+	/**
+	 * 删除实践经历
+	 * @return
+	 */
+	public Result deletePracticalExpirence(AccountInfo accountInfo,Long PracticeID);
+
+	/**
+	 * 新增工作经验信息
+	 * @param accountInfo
+	 * @param workexpirence
+	 * @return
+	 */
+	public Result addWorkExpirence(AccountInfo accountInfo,Workexpirence workexpirence);
+
+	/**
+	 * 修改工作经验内容
+	 * @param accountInfo
+	 * @param workexpirence
+	 * @return
+	 */
+	public Result updateWorkExpirence(AccountInfo accountInfo,Workexpirence workexpirence);
+
+	/**
+	 * 查询工作经验
+	 * @param accountInfo
+	 * @param workexpirence
+	 * @return
+	 * @throws MyException
+	 */
+	public Result getWorkExpirence(AccountInfo accountInfo,Workexpirence workexpirences, boolean getWorkExpirence) throws MyException;
+
+	/**
+	 * 删除工作经验信息
+	 * @param accountInfo
+	 * @param workexpirence
+	 * @return
+	 */
+	public Result deleteWorkExpirence(AccountInfo accountInfo,Long workexpirenceid);
+
+	/**
+	 * 添加证书
+	 * @return
+	 */
+	public Result addQualificationCertificate(AccountInfo accountInfo,Qualificationcertificate qualificationcertificate);
+
+	/**
+	 * 修改证书信息
+	 * @param accountInfo
+	 * @param qualificationcertificate
+	 * @return
+	 */
+	public Result updateQualificationCertificate(AccountInfo accountInfo,Qualificationcertificate qualificationcertificate );
+
+	/**
+	 * 查询证书
+	 * @param accountInfo
+	 * @param qualificationcertificate
+	 * @return
+	 * @throws MyException
+	 */
+	public Result getQualificationcertificate(AccountInfo accountInfo,Qualificationcertificate qualificationcertificate, boolean isTalentPool) throws MyException;
+
+	/**
+	 * 删除证书
+	 * @param accountInfo
+	 * @param QCID
+	 * @return
+	 */
+	public Result deleteQualificationcertificate(AccountInfo accountInfo,Integer QCID);
+
+	/**
+	 * 个性简历文档上传
+	 * @param accountInfo
+	 * @param uploadFile
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result customresume(AccountInfo accountInfo,Customresume customresume) throws MyException;
+
+	/**
+	 * 个性简历新增其他类型文件
+	 * @param accountInfo
+	 * @param FileID
+	 * @return
+	 * @throws MyException
+	 */
+	public Result customOther(AccountInfo accountInfo,Long FileID) throws MyException;
+
+	/**
+	 * 个性简历删除其他类型文件
+	 * @param FileID
+	 * @param accountInfo
+	 * @return
+	 * @throws MyException
+	 */
+	public Result customOther(Long FileID,AccountInfo accountInfo) throws MyException;
+
+	/**
+	 * 删除个性简历中的文档
+	 * @param accountInfo
+	 * @param CustomResumeID
+	 * @return
+	 */
+	public Result deleteCustomresume(AccountInfo accountInfo,Long FileID );
+
+	/**
+	 * 查询个性简历
+	 * @param param
+	 * @return
+	 * @throws MyException
+	 */
+	public Result getCustomresume(Long AccountID,AccountInfo accountInfo, boolean isTalentPool) throws MyException;
+
+
+
+	/**
+	 * 导出PDF简历
+	 * @param accountInfo 当前登陆人员
+	 * @param accountID 简历所属账号ID
+	 * @return
+	 */
+	public Result exportPDF(AccountInfo accountInfo, Long accountID) throws Exception;
+
+	/**
+	 * 报告文件上传
+	 * @param accountInfo
+	 * @param uploadFile
+	 * @throws MyException
+	 */
+	public Result personExamineReport(AccountInfo accountInfo,Long FileID,Integer PersonReportTypeID,String CONTROLLER_CODE,Long AccountID) throws MyException;
+
+	/**
+	 * 删除报告文件
+	 * @param accountInfo
+	 * @param PExamineReportID
+	 * @return
+	 */
+	public Result deletePersonExamineReport(AccountInfo accountInfo,Long PExamineReportID);
+
+	/**
+	 * 查询报告文件信息
+	 * @param accountInfo
+	 * @param param
+	 * @return
+	 * @throws MyException
+	 */
+	public Result getPersonExamineReport(AccountInfo accountInfo,Long AccountID,Long PExamineReportID) throws MyException;
+
+	/**
+	 * 增加投递申请
+	 * @param accountInfo
+	 * @param EJobVacancyID
+	 * @param Remark
+	 * @return
+	 */
+	public Result addDeliver(AccountInfo accountInfo,Integer EJobVacancyID,String Remark);
+
+	/**
+	 * 修改投递申请
+	 * @param accountInfo
+	 * @param param
+	 * @return
+	 */
+	public Result updateDeliver(AccountInfo accountInfo,Map<String, Object> param);
+
+	/**
+	 * 查询我的投递状态
+	 * @param accountInfo
+	 * @param pageCount
+	 * @param pageNumber
+	 * @return
+	 */
+	public Result getDeliver(AccountInfo accountInfo,Integer pageCount,Integer pageNumber,Integer PDeliveryStatusID);
+
+	/**
+	 * 查询线下签到情况
+	 * @return
+	 */
+	public Result getOfflineSignIn(AccountInfo accountInfo);
+
+	/**
+	 * 查询个人服务状态
+	 * @param accountInfo
+	 * @return
+	 */
+	public Result getPersonServices(AccountInfo accountInfo);
+
+	/**
+	 * 申请修改简历服务
+	 * @param accountInfo
+	 * @return
+	 */
+	public Result applyUpdateResume(AccountInfo accountInfo);
+
+	/**
+	 * 查询是否正在申请服务
+	 * @return
+	 */
+	public Result isPersonServices(AccountInfo accountInfo,Integer type);
+
+	/**
+	 * 单面预约申请
+	 * @param accountInfo
+	 * @param AppointServiceID
+	 * @return
+	 */
+	public Result applyMockInterview(AccountInfo accountInfo,Long AppointServiceID);
+
+	/**
+	 * 本森测评服务申请
+	 * @param accountInfo
+	 * @return
+	 */
+	public Result applyBeiSen(AccountInfo accountInfo);
+
+	/**
+	 * 群面模拟
+	 * @param accountInfo
+	 * @return
+	 */
+	public Result mockInterview(AccountInfo accountInfo);
+
+	/**
+	 * 线下课程服务申请
+	 * @param accountInfo
+	 * @return
+	 */
+	public Result offlineCourse(AccountInfo accountInfo);
+
+	/**
+	 * ICDL报考服务申请
+	 * @param accountInfo
+	 * @param AppointServiceID
+	 * @return
+	 */
+	public Result icdlTEST(AccountInfo accountInfo,Long AppointServiceID);
+
+	/**
+	 * 激活课程服务申请
+	 * @param accountInfo
+	 * @param CourseID
+	 * @return
+	 */
+	public Result activateCourst(AccountInfo accountInfo,Long CourseID);
+
+	/**
+	 * 查询预约服务
+	 * @param type
+	 * @return
+	 */
+	public Result appointServiceConfig(String type);
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/23 16:12
+	 * 描述 : 上传简历HTML页面代码到服务器
+	 * @param accountID 简历所属账号ID
+	 * @param htmlCode 页面代码
+	 * @return
+	 */
+	Result uploadHtmlCode(Long accountID, String htmlCode);
+}

@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.staff.StafftrackpathMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.staff.Stafftrackpath">
+		<id column="StaffTrackPathID" property="stafftrackpathid"
+			jdbcType="BIGINT" />
+		<result column="TrainingTypeID" property="trainingtypeid"
+			jdbcType="INTEGER" />
+		<result column="TrackPathTypeID" property="trackpathtypeid"
+			jdbcType="INTEGER" />
+		<result column="AccountID" property="accountid"
+			jdbcType="BIGINT" />
+		<result column="TrainingStartDate" property="trainingstartdate"
+			jdbcType="TIMESTAMP" />
+		<result column="TrainingEndDate" property="trainingenddate"
+			jdbcType="TIMESTAMP" />
+		<result column="TrainingStartHour" property="trainingstarthour"
+			jdbcType="INTEGER" />
+		<result column="TrainingStartMinute"
+			property="trainingstartminute" jdbcType="INTEGER" />
+		<result column="TrainingEndHour" property="trainingendhour"
+			jdbcType="INTEGER" />
+		<result column="TrainingEndMinute" property="trainingendminute"
+			jdbcType="INTEGER" />
+		<result column="TrainingLocation" property="traininglocation"
+			jdbcType="VARCHAR" />
+		<result column="TrainingProject" property="trainingproject"
+			jdbcType="VARCHAR" />
+		<result column="TrainingTeacher" property="trainingteacher"
+			jdbcType="VARCHAR" />
+		<result column="TrainingContent" property="trainingcontent"
+			jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+		<result column="Date" property="date" jdbcType="TIMESTAMP" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="AdjustmentType" property="adjustmenttype"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		StaffTrackPathID, TrainingTypeID, TrackPathTypeID, AccountID, TrainingStartDate,
+		TrainingEndDate, TrainingStartHour, TrainingStartMinute,
+		TrainingEndHour, TrainingEndMinute,
+		TrainingLocation, TrainingProject, TrainingTeacher, TrainingContent, CreateTime,
+		CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID, Date,
+		Remark, AdjustmentType
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.staff.StafftrackpathExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from StaffTrackPath
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from StaffTrackPath
+		where StaffTrackPathID = #{stafftrackpathid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from StaffTrackPath
+		where StaffTrackPathID = #{stafftrackpathid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.staff.StafftrackpathExample">
+		delete from StaffTrackPath
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.staff.Stafftrackpath">
+		insert into StaffTrackPath (StaffTrackPathID, TrainingTypeID,
+		TrackPathTypeID, AccountID, TrainingStartDate,
+		TrainingEndDate, TrainingStartHour, TrainingStartMinute,
+		TrainingEndHour, TrainingEndMinute, TrainingLocation,
+		TrainingProject, TrainingTeacher, TrainingContent,
+		CreateTime, CreateBy, CreatePersonID,
+		UpdateTime, UpdateBy, UpdatePersonID,
+		Date, Remark, AdjustmentType
+		)
+		values (#{stafftrackpathid,jdbcType=BIGINT},
+		#{trainingtypeid,jdbcType=INTEGER},
+		#{trackpathtypeid,jdbcType=INTEGER}, #{accountid,jdbcType=BIGINT},
+		#{trainingstartdate,jdbcType=TIMESTAMP},
+		#{trainingenddate,jdbcType=TIMESTAMP},
+		#{trainingstarthour,jdbcType=INTEGER},
+		#{trainingstartminute,jdbcType=INTEGER},
+		#{trainingendhour,jdbcType=INTEGER},
+		#{trainingendminute,jdbcType=INTEGER},
+		#{traininglocation,jdbcType=VARCHAR},
+		#{trainingproject,jdbcType=VARCHAR},
+		#{trainingteacher,jdbcType=VARCHAR},
+		#{trainingcontent,jdbcType=VARCHAR},
+		#{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT},
+		#{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+		#{updatepersonid,jdbcType=BIGINT},
+		#{date,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{adjustmenttype,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.staff.Stafftrackpath">
+		<selectKey keyProperty="stafftrackpathid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into StaffTrackPath
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="stafftrackpathid != null">
+				StaffTrackPathID,
+			</if>
+			<if test="trainingtypeid != null">
+				TrainingTypeID,
+			</if>
+			<if test="trackpathtypeid != null">
+				TrackPathTypeID,
+			</if>
+			<if test="accountid != null">
+				AccountID,
+			</if>
+			<if test="trainingstartdate != null">
+				TrainingStartDate,
+			</if>
+			<if test="trainingenddate != null">
+				TrainingEndDate,
+			</if>
+			<if test="trainingstarthour != null">
+				TrainingStartHour,
+			</if>
+			<if test="trainingstartminute != null">
+				TrainingStartMinute,
+			</if>
+			<if test="trainingendhour != null">
+				TrainingEndHour,
+			</if>
+			<if test="trainingendminute != null">
+				TrainingEndMinute,
+			</if>
+			<if test="traininglocation != null">
+				TrainingLocation,
+			</if>
+			<if test="trainingproject != null">
+				TrainingProject,
+			</if>
+			<if test="trainingteacher != null">
+				TrainingTeacher,
+			</if>
+			<if test="trainingcontent != null">
+				TrainingContent,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+			<if test="date != null">
+				Date,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="adjustmenttype != null">
+				AdjustmentType,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="stafftrackpathid != null">
+				#{stafftrackpathid,jdbcType=BIGINT},
+			</if>
+			<if test="trainingtypeid != null">
+				#{trainingtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="trackpathtypeid != null">
+				#{trackpathtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null">
+				#{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="trainingstartdate != null">
+				#{trainingstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainingenddate != null">
+				#{trainingenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainingstarthour != null">
+				#{trainingstarthour,jdbcType=INTEGER},
+			</if>
+			<if test="trainingstartminute != null">
+				#{trainingstartminute,jdbcType=INTEGER},
+			</if>
+			<if test="trainingendhour != null">
+				#{trainingendhour,jdbcType=INTEGER},
+			</if>
+			<if test="trainingendminute != null">
+				#{trainingendminute,jdbcType=INTEGER},
+			</if>
+			<if test="traininglocation != null">
+				#{traininglocation,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingproject != null">
+				#{trainingproject,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingteacher != null">
+				#{trainingteacher,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingcontent != null">
+				#{trainingcontent,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="date != null">
+				#{date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="adjustmenttype != null">
+				#{adjustmenttype,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.staff.StafftrackpathExample"
+		resultType="java.lang.Integer">
+		select count(*) from StaffTrackPath
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update StaffTrackPath
+		<set>
+			<if test="record.stafftrackpathid != null">
+				StaffTrackPathID = #{record.stafftrackpathid,jdbcType=BIGINT},
+			</if>
+			<if test="record.trainingtypeid != null">
+				TrainingTypeID = #{record.trainingtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.trackpathtypeid != null">
+				TrackPathTypeID = #{record.trackpathtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.accountid != null">
+				AccountID = #{record.accountid,jdbcType=BIGINT},
+			</if>
+			<if test="record.trainingstartdate != null">
+				TrainingStartDate = #{record.trainingstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.trainingenddate != null">
+				TrainingEndDate = #{record.trainingenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.trainingstarthour != null">
+				TrainingStartHour = #{record.trainingstarthour,jdbcType=INTEGER},
+			</if>
+			<if test="record.trainingstartminute != null">
+				TrainingStartMinute = #{record.trainingstartminute,jdbcType=INTEGER},
+			</if>
+			<if test="record.trainingendhour != null">
+				TrainingEndHour = #{record.trainingendhour,jdbcType=INTEGER},
+			</if>
+			<if test="record.trainingendminute != null">
+				TrainingEndMinute = #{record.trainingendminute,jdbcType=INTEGER},
+			</if>
+			<if test="record.traininglocation != null">
+				TrainingLocation = #{record.traininglocation,jdbcType=VARCHAR},
+			</if>
+			<if test="record.trainingproject != null">
+				TrainingProject = #{record.trainingproject,jdbcType=VARCHAR},
+			</if>
+			<if test="record.trainingteacher != null">
+				TrainingTeacher = #{record.trainingteacher,jdbcType=VARCHAR},
+			</if>
+			<if test="record.trainingcontent != null">
+				TrainingContent = #{record.trainingcontent,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.date != null">
+				Date = #{record.date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.remark != null">
+				Remark = #{record.remark,jdbcType=VARCHAR},
+			</if>
+			<if test="record.adjustmenttype != null">
+				AdjustmentType = #{record.adjustmenttype,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update StaffTrackPath
+		set StaffTrackPathID = #{record.stafftrackpathid,jdbcType=BIGINT},
+		TrainingTypeID = #{record.trainingtypeid,jdbcType=INTEGER},
+		TrackPathTypeID = #{record.trackpathtypeid,jdbcType=INTEGER},
+		AccountID = #{record.accountid,jdbcType=BIGINT},
+		TrainingStartDate = #{record.trainingstartdate,jdbcType=TIMESTAMP},
+		TrainingEndDate = #{record.trainingenddate,jdbcType=TIMESTAMP},
+		TrainingStartHour = #{record.trainingstarthour,jdbcType=INTEGER},
+		TrainingStartMinute = #{record.trainingstartminute,jdbcType=INTEGER},
+		TrainingEndHour = #{record.trainingendhour,jdbcType=INTEGER},
+		TrainingEndMinute = #{record.trainingendminute,jdbcType=INTEGER},
+		TrainingLocation = #{record.traininglocation,jdbcType=VARCHAR},
+		TrainingProject = #{record.trainingproject,jdbcType=VARCHAR},
+		TrainingTeacher = #{record.trainingteacher,jdbcType=VARCHAR},
+		TrainingContent = #{record.trainingcontent,jdbcType=VARCHAR},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+		Date = #{record.date,jdbcType=TIMESTAMP},
+		Remark = #{record.remark,jdbcType=VARCHAR},
+		AdjustmentType = #{record.adjustmenttype,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.staff.Stafftrackpath">
+		update StaffTrackPath
+		<set>
+			<if test="trainingtypeid != null">
+				TrainingTypeID = #{trainingtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="trackpathtypeid != null">
+				TrackPathTypeID = #{trackpathtypeid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null">
+				AccountID = #{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="trainingstartdate != null">
+				TrainingStartDate = #{trainingstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainingenddate != null">
+				TrainingEndDate = #{trainingenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainingstarthour != null">
+				TrainingStartHour = #{trainingstarthour,jdbcType=INTEGER},
+			</if>
+			<if test="trainingstartminute != null">
+				TrainingStartMinute = #{trainingstartminute,jdbcType=INTEGER},
+			</if>
+			<if test="trainingendhour != null">
+				TrainingEndHour = #{trainingendhour,jdbcType=INTEGER},
+			</if>
+			<if test="trainingendminute != null">
+				TrainingEndMinute = #{trainingendminute,jdbcType=INTEGER},
+			</if>
+			<if test="traininglocation != null">
+				TrainingLocation = #{traininglocation,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingproject != null">
+				TrainingProject = #{trainingproject,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingteacher != null">
+				TrainingTeacher = #{trainingteacher,jdbcType=VARCHAR},
+			</if>
+			<if test="trainingcontent != null">
+				TrainingContent = #{trainingcontent,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="date != null">
+				Date = #{date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="adjustmenttype != null">
+				AdjustmentType = #{adjustmenttype,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where StaffTrackPathID = #{stafftrackpathid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.staff.Stafftrackpath">
+		update StaffTrackPath
+		set TrainingTypeID = #{trainingtypeid,jdbcType=INTEGER},
+		TrackPathTypeID = #{trackpathtypeid,jdbcType=INTEGER},
+		AccountID = #{accountid,jdbcType=BIGINT},
+		TrainingStartDate = #{trainingstartdate,jdbcType=TIMESTAMP},
+		TrainingEndDate = #{trainingenddate,jdbcType=TIMESTAMP},
+		TrainingStartHour = #{trainingstarthour,jdbcType=INTEGER},
+		TrainingStartMinute = #{trainingstartminute,jdbcType=INTEGER},
+		TrainingEndHour = #{trainingendhour,jdbcType=INTEGER},
+		TrainingEndMinute = #{trainingendminute,jdbcType=INTEGER},
+		TrainingLocation = #{traininglocation,jdbcType=VARCHAR},
+		TrainingProject = #{trainingproject,jdbcType=VARCHAR},
+		TrainingTeacher = #{trainingteacher,jdbcType=VARCHAR},
+		TrainingContent = #{trainingcontent,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+		Date = #{date,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR},
+		AdjustmentType = #{adjustmenttype,jdbcType=VARCHAR}
+		where StaffTrackPathID = #{stafftrackpathid,jdbcType=BIGINT}
+	</update>
+</mapper>

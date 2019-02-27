@@ -1,0 +1,32 @@
+package com.jy.dao.function.enterprise.enterpriseFunction;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.jy.entiy.function.enterprise.enterpriseFunction.Talentpoolapplication;
+import com.jy.entiy.function.enterprise.enterpriseFunction.TalentpoolapplicationExample;
+
+public interface TalentpoolapplicationMapper {
+    int countByExample(TalentpoolapplicationExample example);
+
+    int deleteByExample(TalentpoolapplicationExample example);
+
+    int deleteByPrimaryKey(Integer talentpoolapplicationid);
+
+    int insert(Talentpoolapplication record);
+
+    int insertSelective(Talentpoolapplication record);
+
+    List<Talentpoolapplication> selectByExample(TalentpoolapplicationExample example);
+
+    Talentpoolapplication selectByPrimaryKey(Integer talentpoolapplicationid);
+
+    int updateByExampleSelective(@Param("record") Talentpoolapplication record, @Param("example") TalentpoolapplicationExample example);
+
+    int updateByExample(@Param("record") Talentpoolapplication record, @Param("example") TalentpoolapplicationExample example);
+
+    int updateByPrimaryKeySelective(Talentpoolapplication record);
+
+    int updateByPrimaryKey(Talentpoolapplication record);
+}

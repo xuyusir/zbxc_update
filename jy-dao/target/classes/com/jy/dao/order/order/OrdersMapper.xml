@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.order.order.OrdersMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.order.order.Orders">
+		<id column="OrderID" property="orderid" jdbcType="BIGINT" />
+		<result column="AccountID" property="accountid"
+			jdbcType="BIGINT" />
+		<result column="OrderCode" property="ordercode"
+			jdbcType="VARCHAR" />
+		<result column="OrderDate" property="orderdate"
+			jdbcType="TIMESTAMP" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+		<result column="OrderStatus" property="orderstatus"
+			jdbcType="INTEGER" />
+		<result column="AmountPrice" property="amountprice"
+			jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		OrderID, AccountID, OrderCode, OrderDate, CreateTime, CreatePersonID,
+		UpdateTime,
+		UpdatePersonID, OrderStatus, AmountPrice
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.order.order.OrdersExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from Orders
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from Orders
+		where OrderID = #{orderid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from Orders
+		where OrderID = #{orderid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.order.order.OrdersExample">
+		delete from Orders
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.order.order.Orders">
+		insert into Orders (OrderID, AccountID, OrderCode,
+		OrderDate, CreateTime, CreatePersonID,
+		UpdateTime, UpdatePersonID, OrderStatus,
+		AmountPrice)
+		values (#{orderid,jdbcType=BIGINT}, #{accountid,jdbcType=BIGINT},
+		#{ordercode,jdbcType=VARCHAR},
+		#{orderdate,jdbcType=TIMESTAMP}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT},
+		#{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT},
+		#{orderstatus,jdbcType=INTEGER},
+		#{amountprice,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.order.order.Orders">
+		<selectKey keyProperty="orderid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into Orders
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderid != null">
+				OrderID,
+			</if>
+			<if test="accountid != null">
+				AccountID,
+			</if>
+			<if test="ordercode != null">
+				OrderCode,
+			</if>
+			<if test="orderdate != null">
+				OrderDate,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+			<if test="orderstatus != null">
+				OrderStatus,
+			</if>
+			<if test="amountprice != null">
+				AmountPrice,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orderid != null">
+				#{orderid,jdbcType=BIGINT},
+			</if>
+			<if test="accountid != null">
+				#{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="ordercode != null">
+				#{ordercode,jdbcType=VARCHAR},
+			</if>
+			<if test="orderdate != null">
+				#{orderdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="orderstatus != null">
+				#{orderstatus,jdbcType=INTEGER},
+			</if>
+			<if test="amountprice != null">
+				#{amountprice,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.order.order.OrdersExample"
+		resultType="java.lang.Integer">
+		select count(*) from Orders
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update Orders
+		<set>
+			<if test="record.orderid != null">
+				OrderID = #{record.orderid,jdbcType=BIGINT},
+			</if>
+			<if test="record.accountid != null">
+				AccountID = #{record.accountid,jdbcType=BIGINT},
+			</if>
+			<if test="record.ordercode != null">
+				OrderCode = #{record.ordercode,jdbcType=VARCHAR},
+			</if>
+			<if test="record.orderdate != null">
+				OrderDate = #{record.orderdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.orderstatus != null">
+				OrderStatus = #{record.orderstatus,jdbcType=INTEGER},
+			</if>
+			<if test="record.amountprice != null">
+				AmountPrice = #{record.amountprice,jdbcType=DECIMAL},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update Orders
+		set OrderID = #{record.orderid,jdbcType=BIGINT},
+		AccountID = #{record.accountid,jdbcType=BIGINT},
+		OrderCode = #{record.ordercode,jdbcType=VARCHAR},
+		OrderDate = #{record.orderdate,jdbcType=TIMESTAMP},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+		OrderStatus = #{record.orderstatus,jdbcType=INTEGER},
+		AmountPrice = #{record.amountprice,jdbcType=DECIMAL}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.order.order.Orders">
+		update Orders
+		<set>
+			<if test="accountid != null">
+				AccountID = #{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="ordercode != null">
+				OrderCode = #{ordercode,jdbcType=VARCHAR},
+			</if>
+			<if test="orderdate != null">
+				OrderDate = #{orderdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="orderstatus != null">
+				OrderStatus = #{orderstatus,jdbcType=INTEGER},
+			</if>
+			<if test="amountprice != null">
+				AmountPrice = #{amountprice,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where OrderID = #{orderid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.order.order.Orders">
+		update Orders
+		set AccountID = #{accountid,jdbcType=BIGINT},
+		OrderCode = #{ordercode,jdbcType=VARCHAR},
+		OrderDate = #{orderdate,jdbcType=TIMESTAMP},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+		OrderStatus = #{orderstatus,jdbcType=INTEGER},
+		AmountPrice = #{amountprice,jdbcType=DECIMAL}
+		where OrderID = #{orderid,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectOrders" parameterType="map"
+		resultType="com.jy.entiy.order.order.Orders">
+		SELECT
+		a.*
+		FROM
+		Orders a,
+		Account b
+		WHERE
+		a.AccountID = b.AccountID
+		<if test="s != null">
+			and (
+			b.Name like #{s}
+			or
+			b.Phone like #{s}
+			or
+			a.OrderCode like #{s}
+
+			)
+		</if>
+		<if test="orderStatus != null">
+			and a.OrderStatus = #{orderStatus}
+		</if>
+		<if test="date != null">
+			and a.OrderDate like #{date}
+		</if>
+		Order BY a.CreateTime DESC
+		<if test="start != null">
+			LIMIT #{start},#{end}
+		</if>
+	</select>
+
+	<select id="selectOrdersCount" parameterType="map"
+		resultType="Integer">
+		SELECT
+		count(*)
+		FROM
+		Orders a,
+		Account b
+		WHERE
+		a.AccountID = b.AccountID
+		<if test="s != null">
+			and (
+			b.Name like #{s}
+			or
+			b.Phone like #{s}
+			or
+			a.OrderCode like #{s}
+
+			)
+		</if>
+		<if test="orderStatus != null">
+			and a.OrderStatus = #{orderStatus}
+		</if>
+		<if test="date != null">
+			and a.OrderDate like #{date}
+		</if>
+	</select>
+</mapper>

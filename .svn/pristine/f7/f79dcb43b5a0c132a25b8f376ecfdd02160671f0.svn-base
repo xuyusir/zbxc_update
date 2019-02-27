@@ -1,0 +1,413 @@
+package com.jy.service.function.marketingFunction.registrationManagement;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.common.utils.ExcelUtils;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.function.marketingFunction.registrationManagement.PersonsigninMapper;
+import com.jy.dao.function.marketingFunction.registrationManagement.SignincheckMapper;
+import com.jy.entiy.account.account.Account;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin;
+import com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample;
+import com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample.Criteria;
+import com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck;
+import com.jy.service.base.BaseService;
+import com.jy.service.function.marketingFunction.votingManagement.Qr_code;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import javax.annotation.Resource;
+import java.io.*;
+import java.nio.file.Files;
+import java.text.ParseException;
+import java.util.*;
+
+/**
+ * @ClassName: RegistrationManageServiceImpl
+ * @Description:签到管理实现类
+ * @author: chenye
+ * @date: 2018-09-12 15:21
+ */
+@Service
+public class RegistrationManageServiceImpl extends BaseService implements RegistrationManageService {
+
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_MARKETING_FUNCTION";
+
+	private static final String TABLE_NAME = "SigninCheck";
+	
+	private static final int STAUTS = 2;// 状态为禁止
+
+	// 签到地址
+
+	private static final String webRegistrationUrl = "/sign_in";
+
+	@Value("${FASTDFS_SERVISE}")
+	private String FASTDFS_SERVISE;
+	// pc端服务器地址
+	@Value("${WEB_SERVER_URL}")
+	private String WEB_SERVER_URL;
+	// 移动端服务器地址
+	@Value("${MOBILE_SERVER_URL}")
+	private String MOBILE_SERVER_URL;
+
+	@Resource
+	private AccountMapper accountMapper;
+
+	@Resource
+	private PersonsigninMapper personsigninMapper;
+
+	@Resource
+	private SignincheckMapper signincheckMapper;
+
+	@Override
+	public Result getActivityList(AccountInfo accountInfo, String AUTHORITY_CODE, Integer votestatusid, String search,
+			Integer page, Integer pageSize) throws MyException {
+
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 处理参数
+		search = this.checkSearch(search);
+		if(votestatusid != null) {
+			if(votestatusid == 0) {
+				votestatusid = null;
+			}
+			
+		}
+		List<Signincheck> rows = signincheckMapper.selectSignincheckList(votestatusid, search, (page - 1) * pageSize,
+				pageSize);
+		int count = signincheckMapper.selectCountSignincheckList(votestatusid, search);
+		
+		if(rows != null && rows.size() != 0) {
+			for (Signincheck signincheck : rows) {
+				if(signincheck.getTwodimensionpath() != null) {
+					signincheck.setTwodimensionpath(aliyunOSSClientUtil.getUrl(signincheck.getTwodimensionpath()));
+				}
+			}
+		}
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", rows);
+		map.put("count", count);
+		aliyunOSSClientUtil.closeOSSClient();
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result addActivity(AccountInfo accountInfo, String AUTHORITY_CODE, Signincheck signincheck, String qRpath)
+			throws MyException, IOException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 参数非空检查
+		if (StringUtils.isBlank(signincheck.getActivitylocation()) || StringUtils.isBlank(signincheck.getActivename())
+				|| signincheck.getActivetime() == null || signincheck.getVoteparticipanttypeid() == null
+				|| signincheck.getVotestatusid() == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		signincheck.setCreateby(accountInfo.getAccount().getName());
+		signincheck.setCreatetime(new Date());
+		signincheck.setCreatepersonid(accountInfo.getAccount().getAccountid());
+
+		int i = signincheckMapper.insertSelective(signincheck);
+
+		/**
+		 * 二维码生成
+		 *
+		 */
+		Qr_code qr_code = new Qr_code();
+		// 移动端地址
+		qr_code.getQrCodeImg(
+				MOBILE_SERVER_URL + webRegistrationUrl + "?signincheckid=" + signincheck.getSignincheckid(), qRpath);
+
+		File f = new File(qRpath);
+		FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(f.toPath()), false, f.getName(),
+				(int) f.length(), f.getParentFile());
+		InputStream input = new FileInputStream(f);
+		OutputStream os = fileItem.getOutputStream();
+		IOUtils.copy(input, os);
+		MultipartFile mulFile = new CommonsMultipartFile(fileItem);
+		// 取扩展名
+		String fileName = mulFile.getOriginalFilename();
+		String extName = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+		String rqCodeFolder = createRQCodeFolder();
+		// 执行上传
+		String fileFullPath = aliyunOSSClientUtil.uploadFile(rqCodeFolder, fileName, mulFile.getSize(), mulFile.getInputStream());
+		if (StringUtils.isBlank(fileFullPath)) {
+			return Result.build(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+
+		Fileinfo fileinfo = new Fileinfo();
+		fileinfo.setType(4);// 二维码图片
+		fileinfo.setFilename(fileName);
+		fileinfo.setFiletype(extName);
+		fileinfo.setFilefullpath(fileFullPath);
+		fileinfo.setFilepath(rqCodeFolder);
+		fileinfo.setFilesize(mulFile.getSize() + "");
+		fileinfo.setCreateby(accountInfo.getAccount().getName());
+		fileinfo.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		fileinfo.setCreatetime(new Date());
+
+		// 添加到数据库
+		int fileNum = fileinfoMapper.insertSelective(fileinfo);
+
+		// 插入失败删除文件
+		if (fileNum < 1) {
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			return Result.build(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+		if (fileinfo.getFileid() != null) {// 将图片id插入文件引用表
+			this.addUseFile(fileinfo.getFileid(), TABLE_NAME, (long) signincheck.getSignincheckid());
+		}
+
+		signincheck.setTwodimensionpath(fileFullPath);// 二维码地址
+		signincheckMapper.updateByPrimaryKeySelective(signincheck);
+		// 数据库操作日志
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+					"上传文件:[ " + fileName + " ]", DB_LOG_TYPE);
+		} catch (Exception e) {
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			throw new MyException(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log = "添加了一个活动 : [ ";
+		log += StringUtils.isBlank(signincheck.getActivename()) ? "" : "活动名字=" + signincheck.getActivename() + ",";
+		log += signincheck.getSignincheckid() == null ? "" : "活动id=" + signincheck.getSignincheckid() + ",";
+		log += StringUtils.isBlank(signincheck.getCreateby()) ? "" : "创建者=" + signincheck.getCreateby() + ",";
+		log += signincheck.getCreatepersonid() == null ? "" : "创建者id=" + signincheck.getCreatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+		}catch (Exception e){
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			e.printStackTrace();
+			throw  new RuntimeException("插入数据库操作日志失败!");
+		}
+		aliyunOSSClientUtil.closeOSSClient();
+		return Result.succee();
+	}
+
+	@Override
+	public Result updateActivity(AccountInfo accountInfo, String AUTHORITY_CODE, Signincheck signincheck)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (signincheck.getSignincheckid() == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		signincheck.setUpdateby(accountInfo.getAccount().getName());
+		signincheck.setUpdatetime(new Date());
+		signincheck.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+
+		int i = signincheckMapper.updateByPrimaryKeySelective(signincheck);
+		if (i < 1) {
+			throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log = "修改了一个活动 : [ ";
+		log += StringUtils.isBlank(signincheck.getActivename()) ? "" : "活动名字=" + signincheck.getActivename() + ",";
+		log += signincheck.getSignincheckid() == null ? "" : "活动id=" + signincheck.getSignincheckid() + ",";
+		log += StringUtils.isBlank(signincheck.getUpdateby()) ? "" : "修改者=" + signincheck.getUpdateby() + ",";
+		log += signincheck.getUpdatepersonid() == null ? "" : "修改者id=" + signincheck.getUpdatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+		return Result.succee();
+	}
+
+	@Override
+	public Result deleteActivity(AccountInfo accountInfo, String AUTHORITY_CODE, Integer signincheckid)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (signincheckid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Signincheck selectByPrimaryKey = signincheckMapper.selectByPrimaryKey(signincheckid);
+		if (selectByPrimaryKey == null) {
+			return Result.build(ResultEnum.DATA_NOT_EXIST);
+		}
+		int i = signincheckMapper.deleteByPrimaryKey(signincheckid);
+		PersonsigninExample personsigninExample = new PersonsigninExample();
+		Criteria createCriteria = personsigninExample.createCriteria();
+		createCriteria.andSignincheckidEqualTo(signincheckid);
+		//删除签到记录
+		personsigninMapper.deleteByExample(personsigninExample);
+		if (i < 1) {
+			throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+		}
+		// 插入数据库操作日志
+		String log = "删除了一个活动 :  活动id为";
+		log += signincheckid;
+		log += "删除者";
+		log += accountInfo.getAccount().getName();
+
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+		return Result.succee();
+	}
+
+	@Override
+	public Result getActivityInfo(AccountInfo accountInfo, String AUTHORITY_CODE, Integer signincheckid)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (signincheckid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Signincheck signincheck = signincheckMapper.selectByPrimaryKey(signincheckid);
+		return Result.succee(signincheck);
+	}
+
+	@Override
+	public Result exportList(AccountInfo accountInfo, String AUTHORITY_CODE, Integer signincheckid, String url)
+			throws MyException, ParseException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		PersonsigninExample personsigninExample = new PersonsigninExample();
+		com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample.Criteria createCriteria = personsigninExample
+				.createCriteria();
+		createCriteria.andSignincheckidEqualTo(signincheckid);
+		List<Personsignin> personsigninList = personsigninMapper.selectByExample(personsigninExample);
+
+		Map<String, List<List<String>>> map = new HashMap<>();
+		List<List<String>> list = new ArrayList<>();
+		List<String> list2 = new ArrayList<>();
+		list2.add("活动名称");
+		list2.add("活动时间");
+		list2.add("活动地点");
+		list2.add("姓名");
+		list2.add("电话");
+		list2.add("签到时间");
+
+		list.add(list2);
+		for (Personsignin personsignin : personsigninList) {
+			Long accountid = personsignin.getAccountid();
+			Account account = accountMapper.selectByPrimaryKey(accountid);
+			Signincheck signincheck = signincheckMapper.selectByPrimaryKey(signincheckid);
+
+			List<String> list3 = new ArrayList<>();
+			list3.add(signincheck.getActivename() + "");
+			if(signincheck.getActivetime() != null) {
+				String Activetime = DateUtils.dateFormat(signincheck.getActivetime(), DateUtils.DATE_TIME_PATTERN);
+				list3.add(Activetime + "");
+			}else {
+				list3.add(signincheck.getActivetime() + "");
+				}
+			
+			list3.add(signincheck.getActivitylocation() + "");
+			list3.add(account.getName() + "");
+			list3.add(account.getPhone() + "");
+			if(personsignin.getSigintime() != null) {
+				//时间字符串只取到秒
+				String substring = personsignin.getSigintime().substring(0, personsignin.getSigintime().length() - 2);
+				list3.add(substring + "");
+			}else {
+				list3.add(personsignin.getSigintime() + "");
+			}
+			
+
+			list.add(list3);
+		}
+		map.put("活动签到表", list);
+
+		HSSFWorkbook workbook = ExcelUtils.getExcelFileStream(map);
+		return Result.succee(workbook);
+	}
+
+	@Override
+	public Result exportListView(AccountInfo accountInfo, String AUTHORITY_CODE, Integer signincheckid)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		PersonsigninExample personsigninExample = new PersonsigninExample();
+		com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample.Criteria createCriteria = personsigninExample
+				.createCriteria();
+		createCriteria.andSignincheckidEqualTo(signincheckid);
+		List<Personsignin> personsigninList = personsigninMapper.selectByExample(personsigninExample);
+		return Result.succee(personsigninList);
+	}
+
+	@Override
+	public Result signin(AccountInfo accountInfo, Integer signincheckid)
+			throws MyException, ParseException {
+		if (signincheckid == null || accountInfo == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Signincheck signincheck = signincheckMapper.selectByPrimaryKey(signincheckid);
+		if(signincheck.getVotestatusid() == STAUTS) {
+			return Result.build(20001, 400, "该活动已结束!");
+		}
+		if (signincheck != null && signincheck.getVoteparticipanttypeid() != null) {
+			Boolean ismember = accountInfo.getAccount().getIsmember();
+			if (ismember != null && !ismember && signincheck.getVoteparticipanttypeid() == 2) {
+				return Result.build(20001, 400, "该活动仅供会员参与!");
+			} else {
+				Personsignin personsignin = new Personsignin();
+				personsignin.setAccountid(accountInfo.getAccount().getAccountid());
+				personsignin.setSignincheckid(signincheckid);
+
+				String sigintime = DateUtils.dateFormat(new Date(), DateUtils.DATE_TIME_PATTERN);
+				personsignin.setSigintime(sigintime);
+				PersonsigninExample personsigninExample = new PersonsigninExample();
+				Criteria createCriteria = personsigninExample.createCriteria();
+				createCriteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+				createCriteria.andSignincheckidEqualTo(signincheckid);
+				int countByExample = personsigninMapper.countByExample(personsigninExample);
+				if(countByExample != 0) {
+					return Result.build(200, 200, "该活动你已经签过到了!");
+				}
+				
+				int i = personsigninMapper.insertSelective(personsignin);
+				if (i < 1) {
+					throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+				}
+			}
+		}else {
+			return Result.build(20001, 400, "没有该活动!");
+		}
+
+		return Result.succee();
+	}
+
+}

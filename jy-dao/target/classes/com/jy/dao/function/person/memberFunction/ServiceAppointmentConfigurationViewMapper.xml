@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.memberFunction.ServiceAppointmentConfigurationViewMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationView" >
+    <result column="AppointServiceID" property="appointserviceid" jdbcType="BIGINT" />
+    <result column="AppointDate" property="appointdate" jdbcType="TIMESTAMP" />
+    <result column="TimePhase" property="timephase" jdbcType="VARCHAR" />
+    <result column="AppointTeacher" property="appointteacher" jdbcType="VARCHAR" />
+    <result column="AppointTotalNum" property="appointtotalnum" jdbcType="INTEGER" />
+    <result column="AppointLeftNum" property="appointleftnum" jdbcType="INTEGER" />
+    <result column="AppointServiceName" property="appointservicename" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    AppointServiceID, AppointDate, TimePhase, AppointTeacher, AppointTotalNum, AppointLeftNum
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationViewExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Service_appointment_configuration_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationViewExample" >
+    delete from Service_appointment_configuration_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationView" >
+    insert into Service_appointment_configuration_view (AppointServiceID, AppointDate, TimePhase, 
+      AppointTeacher, AppointTotalNum, AppointLeftNum
+      )
+    values (#{appointserviceid,jdbcType=BIGINT}, #{appointdate,jdbcType=TIMESTAMP}, #{timephase,jdbcType=VARCHAR}, 
+      #{appointteacher,jdbcType=VARCHAR}, #{appointtotalnum,jdbcType=INTEGER}, #{appointleftnum,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationView" >
+    insert into Service_appointment_configuration_view
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="appointserviceid != null" >
+        AppointServiceID,
+      </if>
+      <if test="appointdate != null" >
+        AppointDate,
+      </if>
+      <if test="timephase != null" >
+        TimePhase,
+      </if>
+      <if test="appointteacher != null" >
+        AppointTeacher,
+      </if>
+      <if test="appointtotalnum != null" >
+        AppointTotalNum,
+      </if>
+      <if test="appointleftnum != null" >
+        AppointLeftNum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="appointserviceid != null" >
+        #{appointserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="appointdate != null" >
+        #{appointdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timephase != null" >
+        #{timephase,jdbcType=VARCHAR},
+      </if>
+      <if test="appointteacher != null" >
+        #{appointteacher,jdbcType=VARCHAR},
+      </if>
+      <if test="appointtotalnum != null" >
+        #{appointtotalnum,jdbcType=INTEGER},
+      </if>
+      <if test="appointleftnum != null" >
+        #{appointleftnum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.memberFunction.ServiceAppointmentConfigurationViewExample" resultType="java.lang.Integer" >
+    select count(*) from Service_appointment_configuration_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Service_appointment_configuration_view
+    <set >
+      <if test="record.appointserviceid != null" >
+        AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="record.appointdate != null" >
+        AppointDate = #{record.appointdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.timephase != null" >
+        TimePhase = #{record.timephase,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointteacher != null" >
+        AppointTeacher = #{record.appointteacher,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointtotalnum != null" >
+        AppointTotalNum = #{record.appointtotalnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.appointleftnum != null" >
+        AppointLeftNum = #{record.appointleftnum,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Service_appointment_configuration_view
+    set AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT},
+      AppointDate = #{record.appointdate,jdbcType=TIMESTAMP},
+      TimePhase = #{record.timephase,jdbcType=VARCHAR},
+      AppointTeacher = #{record.appointteacher,jdbcType=VARCHAR},
+      AppointTotalNum = #{record.appointtotalnum,jdbcType=INTEGER},
+      AppointLeftNum = #{record.appointleftnum,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+   <select id="selectServiceAppointmentConfigurationList" resultMap="BaseResultMap">
+		SELECT
+		   AppointServiceID, AppointDate, TimePhase, 
+      	   AppointTeacher, AppointTotalNum, AppointLeftNum,AppointServiceName
+		FROM
+			Service_appointment_configuration_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="appointdate != null">
+					AND (AppointDate = #{appointdate})
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		AppointDate DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountServiceAppointmentConfigurationList" resultType="int">
+		SELECT
+			count(AppointServiceID)
+		FROM
+			Service_appointment_configuration_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="appointdate != null">
+					AND (AppointDate = #{appointdate})
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+			</trim>
+		</where>
+  	</select>
+  	<!-- 已完成的服务 -->
+  	<select id="selectServiceAppointmentendList" resultMap="BaseResultMap">
+		SELECT
+		   AppointServiceID, AppointDate, TimePhase, 
+      	   AppointTeacher, AppointTotalNum, AppointLeftNum,AppointServiceName
+		FROM
+			Service_appointment_configuration_view
+		<where>
+				<if test="appointdate != null">
+					(AppointDate = #{appointdate})
+				</if>
+				<if test="nowDate != null">
+					 <![CDATA[AND ((AppointDate <= #{nowDate})]]>  
+				</if>
+				<if test="nowTimePhase != null">
+					<![CDATA[OR ( AppointDate = #{nowDate} AND (TimePhase <= #{nowTimePhase})))]]>  
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+		</where>
+		ORDER BY
+		AppointDate DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountServiceAppointmentendList" resultType="int">
+		SELECT
+			count(AppointServiceID)
+		FROM
+			Service_appointment_configuration_view
+		<where>
+				<if test="appointdate != null">
+					(AppointDate = #{appointdate})
+				</if>
+				<if test="nowDate != null">
+					 <![CDATA[AND ((AppointDate <= #{nowDate})]]>  
+				</if>
+				<if test="nowTimePhase != null">
+					<![CDATA[OR ( AppointDate = #{nowDate} AND (TimePhase <= #{nowTimePhase})))]]>  
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+		</where>
+  	</select>
+  
+  	<!-- 正在进行的服务 -->
+  	<select id="selectServiceAppointmentingList" resultMap="BaseResultMap">
+		SELECT
+		   AppointServiceID, AppointDate, TimePhase, 
+      	   AppointTeacher, AppointTotalNum, AppointLeftNum,AppointServiceName
+		FROM
+			Service_appointment_configuration_view
+		<where>
+				<if test="appointdate != null">
+					(AppointDate like '%${appointdate}%')
+				</if>
+				<if test="nowDate != null">
+					 <![CDATA[AND ((AppointDate > #{nowDate})]]>  
+				</if>
+				<if test="nowTimePhase != null">
+					<![CDATA[OR ( AppointDate = #{nowDate} AND (TimePhase > #{nowTimePhase})))]]>  
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+		</where>
+		ORDER BY
+		AppointDate DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountServiceAppointmentingList" resultType="int">
+		SELECT
+			count(AppointServiceID)
+		FROM
+			Service_appointment_configuration_view
+		<where>
+				<if test="appointdate != null">
+					(AppointDate like '%${appointdate}%')
+				</if>
+					<if test="nowDate != null">
+					 <![CDATA[AND ((AppointDate > #{nowDate})]]>  
+				</if>
+				<if test="nowTimePhase != null">
+					<![CDATA[OR ( AppointDate = #{nowDate} AND (TimePhase > #{nowTimePhase})))]]>  
+				</if>
+				<if test="search != null">
+					AND (AppointTeacher like #{search})
+				</if>
+		</where>
+  	</select>
+  
+</mapper>

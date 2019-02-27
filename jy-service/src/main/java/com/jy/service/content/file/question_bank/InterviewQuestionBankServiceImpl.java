@@ -1,0 +1,364 @@
+package com.jy.service.content.file.question_bank;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.redis.JedisClient;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.JsonUtils;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.file.file.UsefileMapper;
+import com.jy.dao.content.file.question_bank.BusinessMapper;
+import com.jy.dao.content.file.question_bank.CompanyinfoMapper;
+import com.jy.dao.content.file.question_bank.InterviewquestionbankMapper;
+import com.jy.dao.content.file.question_bank.InterviewquestionbankdownloadauthorityMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.file.question_bank.Companyinfo;
+import com.jy.entiy.content.file.question_bank.Interviewquestionbank;
+import com.jy.entiy.content.file.question_bank.InterviewquestionbankExample;
+import com.jy.entiy.content.file.question_bank.Interviewquestionbankdownloadauthority;
+import com.jy.service.base.BaseService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * @ClassName: InterviewQuestionBankServiceImpl
+ * @Description:面经题库接口实现类
+ * @author: cheng fei
+ * @date: 2018-09-21 15:33
+ */
+@Service
+public class InterviewQuestionBankServiceImpl extends BaseService implements InterviewQuestionBankService {
+
+    //数据库操作日志类型
+    private static final String DB_LOG_TYPE = "DB_LOG_FILE_UPLOAD";
+
+    //文件引用表名
+    private static final String TABLE_NAME = "InterviewQuestionBank";
+
+    private static final Integer[] AUTHORITYS = {1, 2, 3};
+
+    @Resource
+    private InterviewquestionbankMapper interviewquestionbankMapper;
+
+    @Resource
+    private FileinfoMapper fileinfoMapper;
+
+    @Resource
+    private UsefileMapper usefileMapper;
+
+    @Resource
+    private CompanyinfoMapper companyinfoMapper;
+
+    @Resource
+    private BusinessMapper businessMapper;
+
+    @Resource
+    private JedisClient jedisClient;
+
+    @Value("${REDIS_PASSWORD}")
+    private String REDIS_PASSWORD;
+
+    @Resource
+    private InterviewquestionbankdownloadauthorityMapper interviewquestionbankdownloadauthorityMapper;
+
+    @Override
+    public Result insertInterviewQuestionBank(AccountInfo accountInfo, String AUTHORITY_CODE, MultipartFile uploadFile, Integer company_id) throws Exception {
+        // 取扩展名
+        String fileName = uploadFile.getOriginalFilename();
+        String extName = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+        String folder = getfolder(company_id, new Date());
+
+        //上传文件
+        String fileFullPath = aliyunOSSClientUtil.uploadFile(folder, fileName, uploadFile.getSize(), uploadFile.getInputStream(), accountInfo.getAccount().getAccountid());
+
+
+        if (StringUtils.isBlank(fileFullPath)) {
+            return Result.build(ResultEnum.UPLOAD_FILE_ERROR);
+        }
+
+        Fileinfo fileinfo = new Fileinfo();
+        //type 0是图片,1是文件,2是视频,3是面经题库
+        fileinfo.setType(3);
+        fileinfo.setFilename(fileName);
+        fileinfo.setFiletype(extName);
+        fileinfo.setFilefullpath(fileFullPath);
+        fileinfo.setFilepath(folder);
+        fileinfo.setFilesize(uploadFile.getSize() + "");
+        fileinfo.setCreateby(accountInfo.getAccount().getName());
+        fileinfo.setCreatepersonid(accountInfo.getAccount().getAccountid());
+        fileinfo.setCreatetime(new Date());
+
+        //添加到数据库
+        int i = fileinfoMapper.insertSelective(fileinfo);
+
+        // 插入失败删除文件
+        if (i < 1) {
+            aliyunOSSClientUtil.deleteFile(fileFullPath);
+            throw new MyException(ResultEnum.UPLOAD_FILE_ERROR);
+        }
+
+        //数据库操作日志
+        try {
+            this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+                    "上传文件:[ " + fileName + " ]", DB_LOG_TYPE);
+        } catch (Exception e) {
+            aliyunOSSClientUtil.deleteFile(fileFullPath);
+            throw new MyException(ResultEnum.UPLOAD_FILE_ERROR);
+        }
+
+        Interviewquestionbank interviewquestionbank = new Interviewquestionbank();
+        interviewquestionbank.setCompanyid(company_id);
+        interviewquestionbank.setFileid(fileinfo.getFileid());
+        interviewquestionbank.setCreatepersonid(accountInfo.getAccount().getAccountid());
+        interviewquestionbank.setCreateby(accountInfo.getAccount().getName());
+        interviewquestionbank.setCreatetime(new Date());
+
+        //插入数据库
+        i = interviewquestionbankMapper.insertSelective(interviewquestionbank);
+        if (i < 1) {
+            aliyunOSSClientUtil.deleteFile(fileFullPath);
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+        //数据库操作日志
+        String log = "面经题库[ " + companyinfoMapper.getCompanyNameByCompanyID(company_id) + " ]公司下上传了文件: [ " + fileName + " ]";
+        dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+        //添加文件引用
+        addUseFile(fileinfo.getFileid(), TABLE_NAME, interviewquestionbank.getInterviewqbid());
+
+        //关闭阿里云OSS连接
+        aliyunOSSClientUtil.closeOSSClient();
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result getInterviewQuestionBankList(AccountInfo accountInfo, Integer company_id,
+                                               String search, Integer page, Integer page_size) throws MyException {
+
+        search = this.checkSearch(search);
+
+        List<Map<String, String>> list = interviewquestionbankMapper.getInterviewQuestionBankList(company_id, search, (page - 1) * page_size, page_size);
+
+        //获取阿里云OSS文件地址
+        for (Map<String, String> map : list) {
+            if (map.get("FileSize") != null && StringUtils.isNotBlank(map.get("FileSize").toString())){
+                map.put("FileSize", aliyunOSSClientUtil.getUrl(map.get("FileSize").toString()));
+            }
+        }
+        aliyunOSSClientUtil.closeOSSClient();
+
+        int count = interviewquestionbankMapper.getInterviewQuestionBankCount(company_id, search);
+        Map<String, Object> map = new HashMap<>();
+        map.put("rows", list);
+        map.put("count", count);
+        return Result.succee(map);
+    }
+
+    @Override
+    public Result updateFileName(AccountInfo accountInfo, String AUTHORITY_CODE, Long fileID, String fileName) throws MyException {
+
+        //检测权限
+        Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+        if (checkAuthority.getStatus() != 200) {
+            return checkAuthority;
+        }
+
+        Fileinfo fileinfo = new Fileinfo();
+        fileinfo.setFileid(fileID);
+        fileinfo.setFilename(fileName);
+
+        fileinfo.setUpdateby(accountInfo.getAccount().getName());
+        fileinfo.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+        fileinfo.setUpdatetime(new Date());
+
+        int i = fileinfoMapper.updateByPrimaryKeySelective(fileinfo);
+        if (i < 1) {
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result deleteInterviewQuestionBank(AccountInfo accountInfo, String AUTHORITY_CODE, String ids) throws MyException {
+
+        //检测权限
+        Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+        if (checkAuthority.getStatus() != 200) {
+            return checkAuthority;
+        }
+
+        String[] split = ids.split(",");
+        for (String fileIDStr : split) {
+            if (!StringUtils.isNumeric(fileIDStr)) {
+                return Result.build(ResultEnum.PARAMETER_ERROR);
+            }
+            InterviewquestionbankExample example = new InterviewquestionbankExample();
+            InterviewquestionbankExample.Criteria criteria = example.createCriteria();
+            criteria.andFileidEqualTo(Long.parseLong(fileIDStr));
+            List<Interviewquestionbank> list = interviewquestionbankMapper.selectByExample(example);
+            if (list == null || list.size() == 0) {
+                continue;
+            }
+            Interviewquestionbank interviewquestionbank = list.get(0);
+            int i = interviewquestionbankMapper.deleteByPrimaryKey(interviewquestionbank.getInterviewqbid());
+            if (i < 1) {
+                throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+            }
+
+            String company_name = companyinfoMapper.getCompanyNameByCompanyID(interviewquestionbank.getCompanyid());
+            String file_name = fileinfoMapper.getFileNameByFileID(interviewquestionbank.getFileid());
+
+            //数据库操作日志
+            String log = "删除了面经题库[ " + company_name + " ]公司文件[ " + file_name + " ]";
+            this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+            //删除文件引用
+            this.deleteFile(accountInfo, DB_LOG_TYPE, interviewquestionbank.getFileid(), TABLE_NAME, interviewquestionbank.getInterviewqbid());
+        }
+        return Result.succee();
+    }
+
+    @Override
+    public Result getInterviewQuestionBankFile(Long interview_question_bank_id, String token) {
+
+        //查询下载权限
+        List<Interviewquestionbankdownloadauthority> list = interviewquestionbankdownloadauthorityMapper.selectByExample(null);
+        //是否有下载权限
+        boolean flag = false;
+        if (list == null || list.size() == 0){
+            flag = true;
+        }else {
+            Integer downLoadAuthority = list.get(0).getDownloadauthority();
+            //面经题库下载权限:1任何人,2:已登录用户,3:会员
+            if (downLoadAuthority == 1){
+                flag = true;
+            } else {
+                //取登陆用户信息
+                String json = jedisClient.get(token, REDIS_PASSWORD);
+                if (StringUtils.isNotBlank(json)){
+                    AccountInfo accountInfo = JsonUtils.jsonToPojo(json, AccountInfo.class);
+                    if (downLoadAuthority == 2){
+                        flag = true;
+                    }else if (downLoadAuthority == 3 && accountInfo.getAccount().getIsmember()){
+                        flag = true;
+                    }
+                }
+            }
+        }
+        if (flag){
+            Interviewquestionbank interviewquestionbank = interviewquestionbankMapper.selectByPrimaryKey(interview_question_bank_id);
+            return Result.succee(fileinfoMapper.selectByPrimaryKey(interviewquestionbank.getFileid()));
+        }else {
+            return Result.succee();
+        }
+
+    }
+
+    @Override
+    public Result updateDownloadAuthority(AccountInfo accountInfo, String authorityCode, Integer authority) throws MyException {
+
+        //检测权限
+        Result result = this.checkAuthority(accountInfo, authorityCode);
+        if (result.getStatus().intValue() != ResultEnum.SUCCESS.getStatus()) {
+            return result;
+        }
+
+        //检测参数
+        if (!Arrays.asList(AUTHORITYS).contains(authority)) {
+            return result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        //查询数据库
+        List<Interviewquestionbankdownloadauthority> list = interviewquestionbankdownloadauthorityMapper.selectByExample(null);
+        if (list == null || list.size() == 0) {
+            //没有设置权限,添加权限
+            Interviewquestionbankdownloadauthority interviewquestionbankdownloadauthority = new Interviewquestionbankdownloadauthority();
+            interviewquestionbankdownloadauthority.setDownloadauthority(authority);
+            interviewquestionbankdownloadauthority.setCreatepersonid(accountInfo.getAccount().getAccountid());
+            interviewquestionbankdownloadauthority.setCreatetime(new Date());
+            interviewquestionbankdownloadauthority.setCreateby(accountInfo.getAccount().getName());
+
+            int i = interviewquestionbankdownloadauthorityMapper.insertSelective(interviewquestionbankdownloadauthority);
+            if (i < 1) {
+                throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+            }
+        }else {
+
+            Interviewquestionbankdownloadauthority interviewquestionbankdownloadauthority = list.get(0);
+            interviewquestionbankdownloadauthority.setDownloadauthority(authority);
+            interviewquestionbankdownloadauthority.setUpdateby(accountInfo.getAccount().getName());
+            interviewquestionbankdownloadauthority.setUpdatetime(new Date());
+            interviewquestionbankdownloadauthority.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+
+            int i = interviewquestionbankdownloadauthorityMapper.updateByPrimaryKeySelective(interviewquestionbankdownloadauthority);
+            if (i< 1){
+                throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+            }
+
+        }
+        //添加数据库操作日志
+        String log = "面经题库就下载权限修改为[ " + getAuthorityName(authority) + " ]";
+        this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+        return result.succee();
+    }
+
+    @Override
+    public Result getDownloadAuthority() {
+
+        List<Interviewquestionbankdownloadauthority> list = interviewquestionbankdownloadauthorityMapper.selectByExample(null);
+        if (list == null || list.size() == 0){
+            return Result.succee();
+        }
+        return Result.succee(list.get(0).getDownloadauthority());
+    }
+
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/24 23:28
+     * 描述 : 获取文件目录
+     * @param company_id
+     * @param createDate
+     * @return
+     */
+    private String getfolder(Integer company_id, Date createDate){
+        Companyinfo companyinfo = companyinfoMapper.selectByPrimaryKey(company_id);
+        String businessName = businessMapper.getBusinessNameByBusinessID(companyinfo.getBusinessid());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+        String format = simpleDateFormat.format(createDate);
+        return "面经题库/" + businessName + "/" + companyinfo.getCompanyname() + "/" + format + "/";
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/12/5 14:19
+     * 描述 : 获取面经题库权名称
+     * @param authority
+     * @return
+     */
+    private String getAuthorityName(Integer authority) {
+        switch (authority) {
+            case 1:
+                return "所有人";
+            case 2:
+                return "注册用户";
+            case 3:
+                return "会员";
+            default:
+                return "";
+        }
+    }
+
+}

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.vedio.SectionvediobindMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.vedio.Sectionvediobind">
+		<id column="SectionVedioID" property="sectionvedioid"
+			jdbcType="BIGINT" />
+		<result column="SectionID" property="sectionid"
+			jdbcType="BIGINT" />
+		<result column="VedioID" property="vedioid" jdbcType="BIGINT" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="isFree" property="isfree" jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		SectionVedioID, SectionID, VedioID, Remark, isFree
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.vedio.SectionvediobindExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from SectionVedioBind
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from SectionVedioBind
+		where SectionVedioID = #{sectionvedioid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from SectionVedioBind
+		where SectionVedioID = #{sectionvedioid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.vedio.SectionvediobindExample">
+		delete from SectionVedioBind
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.vedio.Sectionvediobind">
+		insert into SectionVedioBind (SectionVedioID, SectionID, VedioID,
+		Remark, isFree)
+		values (#{sectionvedioid,jdbcType=BIGINT}, #{sectionid,jdbcType=BIGINT},
+		#{vedioid,jdbcType=BIGINT},
+		#{remark,jdbcType=VARCHAR}, #{isfree,jdbcType=CHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.vedio.Sectionvediobind">
+		<selectKey keyProperty="sectionvedioid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into SectionVedioBind
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sectionvedioid != null">
+				SectionVedioID,
+			</if>
+			<if test="sectionid != null">
+				SectionID,
+			</if>
+			<if test="vedioid != null">
+				VedioID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="isfree != null">
+				isFree,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="sectionvedioid != null">
+				#{sectionvedioid,jdbcType=BIGINT},
+			</if>
+			<if test="sectionid != null">
+				#{sectionid,jdbcType=BIGINT},
+			</if>
+			<if test="vedioid != null">
+				#{vedioid,jdbcType=BIGINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="isfree != null">
+				#{isfree,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.vedio.SectionvediobindExample"
+		resultType="java.lang.Integer">
+		select count(*) from SectionVedioBind
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update SectionVedioBind
+		<set>
+			<if test="record.sectionvedioid != null">
+				SectionVedioID = #{record.sectionvedioid,jdbcType=BIGINT},
+			</if>
+			<if test="record.sectionid != null">
+				SectionID = #{record.sectionid,jdbcType=BIGINT},
+			</if>
+			<if test="record.vedioid != null">
+				VedioID = #{record.vedioid,jdbcType=BIGINT},
+			</if>
+			<if test="record.remark != null">
+				Remark = #{record.remark,jdbcType=VARCHAR},
+			</if>
+			<if test="record.isfree != null">
+				isFree = #{record.isfree,jdbcType=CHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update SectionVedioBind
+		set SectionVedioID = #{record.sectionvedioid,jdbcType=BIGINT},
+		SectionID = #{record.sectionid,jdbcType=BIGINT},
+		VedioID = #{record.vedioid,jdbcType=BIGINT},
+		Remark = #{record.remark,jdbcType=VARCHAR},
+		isFree = #{record.isfree,jdbcType=CHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.vedio.Sectionvediobind">
+		update SectionVedioBind
+		<set>
+			<if test="sectionid != null">
+				SectionID = #{sectionid,jdbcType=BIGINT},
+			</if>
+			<if test="vedioid != null">
+				VedioID = #{vedioid,jdbcType=BIGINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="isfree != null">
+				isFree = #{isfree,jdbcType=CHAR},
+			</if>
+		</set>
+		where SectionVedioID = #{sectionvedioid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.vedio.Sectionvediobind">
+		update SectionVedioBind
+		set SectionID = #{sectionid,jdbcType=BIGINT},
+		VedioID = #{vedioid,jdbcType=BIGINT},
+		Remark = #{remark,jdbcType=VARCHAR},
+		isFree = #{isfree,jdbcType=CHAR}
+		where SectionVedioID = #{sectionvedioid,jdbcType=BIGINT}
+	</update>
+</mapper>

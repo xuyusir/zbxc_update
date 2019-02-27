@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.recruitment.EnterpriserecruitingprocessMapper" >
+    <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess" >
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+        <result column="PDeliveryStatusID" property="pdeliverystatusid" jdbcType="INTEGER" />
+        <result column="EnterpriseID" property="enterpriseid" jdbcType="INTEGER" />
+        <result column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER" />
+        <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+        <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+        <result column="ApplicationTime" property="applicationtime" jdbcType="TIMESTAMP" />
+        <result column="ConfirmEntryTime" property="confirmentrytime" jdbcType="DATE" />
+        <result column="InterviewDate" property="interviewdate" jdbcType="TIMESTAMP" />
+        <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List" >
+    ID, ApplicationStatusID, PDeliveryStatusID, EnterpriseID, EJobVacancyID, AccountID,
+    HandleTime, ApplicationTime, ConfirmEntryTime, InterviewDate, ServiceNo
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.enterprise.recruitment.EnterpriserecruitingprocessExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from enterpriserecruitingprocess
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from enterpriserecruitingprocess
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from enterpriserecruitingprocess
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.recruitment.EnterpriserecruitingprocessExample" >
+        delete from enterpriserecruitingprocess
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess" >
+    insert into enterpriserecruitingprocess (ID, ApplicationStatusID, PDeliveryStatusID,
+      EnterpriseID, EJobVacancyID, AccountID,
+      HandleTime, ApplicationTime, ConfirmEntryTime,
+      InterviewDate, ServiceNo)
+    values (#{id,jdbcType=BIGINT}, #{applicationstatusid,jdbcType=INTEGER}, #{pdeliverystatusid,jdbcType=INTEGER},
+      #{enterpriseid,jdbcType=INTEGER}, #{ejobvacancyid,jdbcType=INTEGER}, #{accountid,jdbcType=BIGINT},
+      #{handletime,jdbcType=TIMESTAMP}, #{applicationtime,jdbcType=TIMESTAMP}, #{confirmentrytime,jdbcType=DATE},
+      #{interviewdate,jdbcType=TIMESTAMP}, #{serviceno,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess" >
+        insert into enterpriserecruitingprocess
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                ID,
+            </if>
+            <if test="applicationstatusid != null" >
+                ApplicationStatusID,
+            </if>
+            <if test="pdeliverystatusid != null" >
+                PDeliveryStatusID,
+            </if>
+            <if test="enterpriseid != null" >
+                EnterpriseID,
+            </if>
+            <if test="ejobvacancyid != null" >
+                EJobVacancyID,
+            </if>
+            <if test="accountid != null" >
+                AccountID,
+            </if>
+            <if test="handletime != null" >
+                HandleTime,
+            </if>
+            <if test="applicationtime != null" >
+                ApplicationTime,
+            </if>
+            <if test="confirmentrytime != null" >
+                ConfirmEntryTime,
+            </if>
+            <if test="interviewdate != null" >
+                InterviewDate,
+            </if>
+            <if test="serviceno != null" >
+                ServiceNo,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="applicationstatusid != null" >
+                #{applicationstatusid,jdbcType=INTEGER},
+            </if>
+            <if test="pdeliverystatusid != null" >
+                #{pdeliverystatusid,jdbcType=INTEGER},
+            </if>
+            <if test="enterpriseid != null" >
+                #{enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="ejobvacancyid != null" >
+                #{ejobvacancyid,jdbcType=INTEGER},
+            </if>
+            <if test="accountid != null" >
+                #{accountid,jdbcType=BIGINT},
+            </if>
+            <if test="handletime != null" >
+                #{handletime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="applicationtime != null" >
+                #{applicationtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="confirmentrytime != null" >
+                #{confirmentrytime,jdbcType=DATE},
+            </if>
+            <if test="interviewdate != null" >
+                #{interviewdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="serviceno != null" >
+                #{serviceno,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.recruitment.EnterpriserecruitingprocessExample" resultType="java.lang.Integer" >
+        select count(*) from enterpriserecruitingprocess
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map" >
+        update enterpriserecruitingprocess
+        <set >
+            <if test="record.id != null" >
+                ID = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.applicationstatusid != null" >
+                ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+            </if>
+            <if test="record.pdeliverystatusid != null" >
+                PDeliveryStatusID = #{record.pdeliverystatusid,jdbcType=INTEGER},
+            </if>
+            <if test="record.enterpriseid != null" >
+                EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="record.ejobvacancyid != null" >
+                EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+            </if>
+            <if test="record.accountid != null" >
+                AccountID = #{record.accountid,jdbcType=BIGINT},
+            </if>
+            <if test="record.handletime != null" >
+                HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.applicationtime != null" >
+                ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.confirmentrytime != null" >
+                ConfirmEntryTime = #{record.confirmentrytime,jdbcType=DATE},
+            </if>
+            <if test="record.interviewdate != null" >
+                InterviewDate = #{record.interviewdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.serviceno != null" >
+                ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map" >
+        update enterpriserecruitingprocess
+        set ID = #{record.id,jdbcType=BIGINT},
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+        PDeliveryStatusID = #{record.pdeliverystatusid,jdbcType=INTEGER},
+        EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+        EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+        HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+        ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+        ConfirmEntryTime = #{record.confirmentrytime,jdbcType=DATE},
+        InterviewDate = #{record.interviewdate,jdbcType=TIMESTAMP},
+        ServiceNo = #{record.serviceno,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess" >
+        update enterpriserecruitingprocess
+        <set >
+            <if test="applicationstatusid != null" >
+                ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+            </if>
+            <if test="pdeliverystatusid != null" >
+                PDeliveryStatusID = #{pdeliverystatusid,jdbcType=INTEGER},
+            </if>
+            <if test="enterpriseid != null" >
+                EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="ejobvacancyid != null" >
+                EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+            </if>
+            <if test="accountid != null" >
+                AccountID = #{accountid,jdbcType=BIGINT},
+            </if>
+            <if test="handletime != null" >
+                HandleTime = #{handletime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="applicationtime != null" >
+                ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="confirmentrytime != null" >
+                ConfirmEntryTime = #{confirmentrytime,jdbcType=DATE},
+            </if>
+            <if test="interviewdate != null" >
+                InterviewDate = #{interviewdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="serviceno != null" >
+                ServiceNo = #{serviceno,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess" >
+    update enterpriserecruitingprocess
+    set ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      PDeliveryStatusID = #{pdeliverystatusid,jdbcType=INTEGER},
+      EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+      EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+      AccountID = #{accountid,jdbcType=BIGINT},
+      HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+      ConfirmEntryTime = #{confirmentrytime,jdbcType=DATE},
+      InterviewDate = #{interviewdate,jdbcType=TIMESTAMP},
+      ServiceNo = #{serviceno,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="getPersonDeliveryApplicationListByEnterprise" resultType="map">
+        SELECT
+        erg.ID AS id,
+        a.AccountID,
+        a.Name,
+        a.Phone,
+        (year(CURRENT_DATE) - r.Year) AS Age,
+        r.University,
+        r.Specialty,
+        ejv.EJobVacancyID AS jobID,
+        ejv.JobTitle,
+        erg.ApplicationTime,
+        erg.ConfirmEntryTime,
+        f.FileFullPath AS FilePath,
+        erg.ApplicationStatusID,
+        erg.InterviewDate
+        FROM
+        EnterpriseRecruitingProcess erg LEFT JOIN Account a ON erg.AccountID = a.AccountID
+        LEFT JOIN ResumeInfo r ON erg.AccountID = r.AccountID
+        LEFT JOIN EnterpriseJobVacancy ejv ON erg.EJobVacancyID = ejv.EJobVacancyID
+        LEFT JOIN  FileInfo f ON r.Photo = f.FileID
+        WHERE
+        erg.EnterpriseID = #{enterpriseID}
+        AND erg.PDeliveryStatusID = #{status}
+        <if test="jobID != null">
+            AND erg.EJobVacancyID = #{jobID}
+        </if>
+        <if test="search != null">
+            AND (
+            a.Name LIKE #{search} OR a.Phone LIKE #{search}
+            <if test="status == 2 or status == 1">
+                OR r.University LIKE #{search}
+            </if>
+            )
+        </if>
+        ORDER BY erg.ApplicationTime DESC
+    </select>
+
+    <!-- 查询企业职位申请总数 -->
+    <select id="getPersonDeliveryApplicationCountByPersonDeliveryStatusIDList" resultType="int">
+        SELECT
+        count(AccountID) AS count
+        FROM
+        EnterpriseRecruitingProcess
+        WHERE
+        EJobVacancyID = #{jobID}
+        <foreach collection="personDeliveryStatusIDList" item="status" open="AND PDeliveryStatusID in(" close=")" separator=",">
+            #{status}
+        </foreach>
+    </select>
+
+    <!-- 查询已投递的简历ID列表 -->
+    <select id="getAccountIDList" resultType="java.lang.Long">
+        SELECT DISTINCT
+            AccountID
+        FROM
+            EnterpriseRecruitingProcess
+        WHERE
+            EnterpriseID = #{enterpriseID}
+    </select>
+
+
+    <!-- 查询已投递的ID列表 -->
+    <select id="getHasHiredIDList" resultType="java.lang.Integer">
+      SELECT
+       erp.ID
+      FROM
+       EnterpriseAppraise ea   LEFT JOIN EnterpriseRecruitingProcess erp ON erp.AccountID = ea.AccountID AND erp.EJobVacancyID = ea.EJobVacancyID
+      WHERE
+       erp.EnterpriseID = #{enterpriseID}
+    </select>
+
+</mapper>

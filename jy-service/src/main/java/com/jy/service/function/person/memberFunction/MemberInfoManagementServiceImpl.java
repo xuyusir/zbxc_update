@@ -1,0 +1,139 @@
+package com.jy.service.function.person.memberFunction;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.function.person.PersonexaminereportMapper;
+import com.jy.dao.system.select.PersonreporttypeMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.person.Personexaminereport;
+import com.jy.entiy.function.person.PersonexaminereportExample;
+import com.jy.entiy.function.person.PersonexaminereportExample.Criteria;
+import com.jy.entiy.system.select.Personreporttype;
+import com.jy.service.base.BaseService;
+
+/**
+ * @ClassName: MemberInfoManagementService
+ * @Description:会员信息管理接口实现
+ * @author: chenye
+ * @date: 2018-09-04 10:57
+ */
+@Service
+public class MemberInfoManagementServiceImpl extends BaseService implements MemberInfoManagementService {
+	
+	// 菜单数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_REPORT";
+
+	@Resource
+	private AccountMapper accountMapper;
+
+	@Resource
+	private PersonreporttypeMapper personreporttypeMapper;
+
+	@Resource
+	private PersonexaminereportMapper personexaminereportMapper;
+
+	@Override
+	public Result getMemberInfoList(String AUTHORITY_CODE, AccountInfo accountInfo, String search, Integer page,
+			Integer pageSize) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 处理参数
+		search = this.checkSearch(search);
+		PageHelper.startPage(page, pageSize);
+		List<Map<String, Object>> personAccountList = accountMapper.getPersonAccountList(false, search, 1);
+		PageInfo<Map<String,Object>> info = new PageInfo<>(personAccountList);
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", info.getList());
+		map.put("count", info.getTotal());
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result loadPersonreporttype() {
+		List<Personreporttype> PersonreporttypeList = personreporttypeMapper.selectByExample(null);
+		return Result.succee(PersonreporttypeList);
+	}
+	
+	
+
+	@Override
+	public Result getMemberPersonreport(String AUTHORITY_CODE, AccountInfo accountInfo, Long accountid,
+			Integer personreporttypeid) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		PersonexaminereportExample example = new PersonexaminereportExample();
+		Criteria createCriteria = example.createCriteria();
+		if (accountid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		createCriteria.andAccountidEqualTo(accountid);
+		if (personreporttypeid != null) {
+			createCriteria.andPersonreporttypeidEqualTo(personreporttypeid);
+			List<Personexaminereport> PersonexaminereportList = personexaminereportMapper.selectByExample(example);
+			return Result.succee(PersonexaminereportList);
+		}
+		List<Personexaminereport> PersonexaminereportList = personexaminereportMapper.selectByExample(example);
+		return Result.succee(PersonexaminereportList);
+	}
+
+	@Override
+	public Result uploadReport(String AUTHORITY_CODE, AccountInfo accountInfo, Long accountID, Integer reportTypeID,
+			Long reportFileID) throws MyException {
+		// 检测权限
+				Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+				if (checkAuthority.getStatus() != 200) {
+					return checkAuthority;
+				}
+				if(accountID == null || reportTypeID == null || reportFileID == null) {
+					Result.build(ResultEnum.PARAMETER_ERROR);
+				}
+				
+				Personexaminereport personexaminereport = new Personexaminereport();
+				personexaminereport.setAccountid(accountID);
+				personexaminereport.setFileid(reportFileID);
+				personexaminereport.setPersonreporttypeid(reportTypeID);
+				personexaminereport.setCreateby(accountInfo.getAccount().getName());
+				personexaminereport.setCreatepersonid(accountInfo.getAccount().getAccountid());
+				personexaminereport.setCreatetime(new Date());
+				
+				//删除之前的报告
+				PersonexaminereportExample personexaminereportExample = new PersonexaminereportExample();
+				Criteria createCriteria = personexaminereportExample.createCriteria();
+				createCriteria.andAccountidEqualTo(accountID);
+				createCriteria.andPersonreporttypeidEqualTo(reportTypeID);
+				personexaminereportMapper.deleteByExample(personexaminereportExample);
+				int i = personexaminereportMapper.insert(personexaminereport);
+				if (i < 1) {
+					throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+				}
+				// 插入数据库操作日志
+				String log = "上传了报告 : [ ";
+				log += StringUtils.isBlank(personexaminereport.getCreateby()) ? "" : "创建人=" + personexaminereport.getCreateby() + ",";
+				log += personexaminereport.getFileid() == null ? 0 : "报告id=" + personexaminereport.getFileid() + ",";
+				log = log.substring(0, log.length() - 1) + " ]";
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+				
+		return Result.succee();
+	}
+
+}

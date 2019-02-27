@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.enterpriseFunction.JobAuditManageViewMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageView" >
+ 	<result column="EJDApplicationID" property="ejdapplicationid" jdbcType="INTEGER" />
+    <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    <result column="ApplicationTime" property="applicationtime" jdbcType="TIMESTAMP" />
+    <result column="EnterpriseName" property="enterprisename" jdbcType="VARCHAR" />
+    <result column="JobTitle" property="jobtitle" jdbcType="VARCHAR" />
+    <result column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER" />
+    <result column="JobPropertyName" property="jobpropertyname" jdbcType="VARCHAR" />
+    <result column="RecruitExpireDate" property="recruitexpiredate" jdbcType="TIMESTAMP" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ApplicationStatusName" property="applicationstatusname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ServiceNo, ApplicationTime, EnterpriseName, JobTitle, JobPropertyName, RecruitExpireDate, 
+    ApplicationStatusID, ApplicationStatusName
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageViewExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from job_audit_manage_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageViewExample" >
+    delete from job_audit_manage_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageView" >
+    insert into job_audit_manage_view (ServiceNo, ApplicationTime, EnterpriseName, 
+      JobTitle, JobPropertyName, RecruitExpireDate, 
+      ApplicationStatusID, ApplicationStatusName
+      )
+    values (#{serviceno,jdbcType=VARCHAR}, #{applicationtime,jdbcType=TIMESTAMP}, #{enterprisename,jdbcType=VARCHAR}, 
+      #{jobtitle,jdbcType=VARCHAR}, #{jobpropertyname,jdbcType=VARCHAR}, #{recruitexpiredate,jdbcType=TIMESTAMP}, 
+      #{applicationstatusid,jdbcType=INTEGER}, #{applicationstatusname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageView" >
+    insert into job_audit_manage_view
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="serviceno != null" >
+        ServiceNo,
+      </if>
+      <if test="applicationtime != null" >
+        ApplicationTime,
+      </if>
+      <if test="enterprisename != null" >
+        EnterpriseName,
+      </if>
+      <if test="jobtitle != null" >
+        JobTitle,
+      </if>
+      <if test="jobpropertyname != null" >
+        JobPropertyName,
+      </if>
+      <if test="recruitexpiredate != null" >
+        RecruitExpireDate,
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID,
+      </if>
+      <if test="applicationstatusname != null" >
+        ApplicationStatusName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="serviceno != null" >
+        #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationtime != null" >
+        #{applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enterprisename != null" >
+        #{enterprisename,jdbcType=VARCHAR},
+      </if>
+      <if test="jobtitle != null" >
+        #{jobtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="jobpropertyname != null" >
+        #{jobpropertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="recruitexpiredate != null" >
+        #{recruitexpiredate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="applicationstatusid != null" >
+        #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="applicationstatusname != null" >
+        #{applicationstatusname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.JobAuditManageViewExample" resultType="java.lang.Integer" >
+    select count(*) from job_audit_manage_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update job_audit_manage_view
+    <set >
+      <if test="record.serviceno != null" >
+        ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicationtime != null" >
+        ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.enterprisename != null" >
+        EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobtitle != null" >
+        JobTitle = #{record.jobtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobpropertyname != null" >
+        JobPropertyName = #{record.jobpropertyname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recruitexpiredate != null" >
+        RecruitExpireDate = #{record.recruitexpiredate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.applicationstatusid != null" >
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.applicationstatusname != null" >
+        ApplicationStatusName = #{record.applicationstatusname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update job_audit_manage_view
+    set ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+      JobTitle = #{record.jobtitle,jdbcType=VARCHAR},
+      JobPropertyName = #{record.jobpropertyname,jdbcType=VARCHAR},
+      RecruitExpireDate = #{record.recruitexpiredate,jdbcType=TIMESTAMP},
+      ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      ApplicationStatusName = #{record.applicationstatusname,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <select id="selectJobApplicationList" resultMap="BaseResultMap">
+		SELECT
+		  EJDApplicationID,EJobVacancyID,
+		  ServiceNo, ApplicationTime, EnterpriseName, 
+	      JobTitle, JobPropertyName, RecruitExpireDate, 
+	      ApplicationStatusID, ApplicationStatusName
+		FROM
+			job_audit_manage_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="applicationstatusname != null">
+					AND (ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="applicationtime != null">
+					AND (ApplicationTime like '%${applicationtime}%')
+				</if>
+				<if test="search != null">
+					AND (ServiceNo like #{search} OR JobTitle like #{search} OR EnterpriseName like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		EJDApplicationID DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountJobApplicationList" resultType="int">
+		SELECT
+			count(EJDApplicationID)
+		FROM
+			job_audit_manage_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="applicationstatusname != null">
+					AND (ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="applicationtime != null">
+					AND (ApplicationTime like '%${applicationtime}%')
+				</if>
+				<if test="search != null">
+					AND (ServiceNo like #{search} OR JobTitle like #{search} OR EnterpriseName like #{search})
+				</if>
+			</trim>
+		</where>
+  	</select>
+</mapper>

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.course.PersoncourseMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.content.product.course.Personcourse">
+		<id column="PersonCourseID" property="personcourseid"
+			jdbcType="BIGINT" />
+		<result column="CourseID" property="courseid" jdbcType="BIGINT" />
+		<result column="AccountID" property="accountid"
+			jdbcType="BIGINT" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="ExpireDate" property="expiredate"
+			jdbcType="TIMESTAMP" />
+		<result column="CourseProcess" property="courseprocess"
+			jdbcType="INTEGER" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+		<result column="IsActive" property="isactive"
+			jdbcType="INTEGER" />
+		<result column="ProductID" property="productid"
+			jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		PersonCourseID, CourseID, AccountID, Remark, CreateTime, CreateBy, UpdateTime,
+		UpdateBy,
+		CreatePersonID, ExpireDate, CourseProcess, UpdatePersonID, IsActive, ProductID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.content.product.course.PersoncourseExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from PersonCourse
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from PersonCourse
+		where PersonCourseID = #{personcourseid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from PersonCourse
+		where PersonCourseID = #{personcourseid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.content.product.course.PersoncourseExample">
+		delete from PersonCourse
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.content.product.course.Personcourse">
+		insert into PersonCourse (PersonCourseID, CourseID, AccountID,
+		Remark, CreateTime, CreateBy,
+		UpdateTime, UpdateBy, CreatePersonID,
+		ExpireDate, CourseProcess, UpdatePersonID,
+		IsActive, ProductID)
+		values (#{personcourseid,jdbcType=BIGINT}, #{courseid,jdbcType=BIGINT},
+		#{accountid,jdbcType=BIGINT},
+		#{remark,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR},
+		#{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+		#{createpersonid,jdbcType=BIGINT},
+		#{expiredate,jdbcType=TIMESTAMP}, #{courseprocess,jdbcType=INTEGER}, #{updatepersonid,jdbcType=BIGINT},
+		#{isactive,jdbcType=INTEGER}, #{productid,jdbcType=BIGINT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.content.product.course.Personcourse">
+		<selectKey keyProperty="personcourseid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+		insert into PersonCourse
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="personcourseid != null">
+				PersonCourseID,
+			</if>
+			<if test="courseid != null">
+				CourseID,
+			</if>
+			<if test="accountid != null">
+				AccountID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="expiredate != null">
+				ExpireDate,
+			</if>
+			<if test="courseprocess != null">
+				CourseProcess,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+			<if test="isactive != null">
+				IsActive,
+			</if>
+			<if test="productid != null">
+				ProductID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="personcourseid != null">
+				#{personcourseid,jdbcType=BIGINT},
+			</if>
+			<if test="courseid != null">
+				#{courseid,jdbcType=BIGINT},
+			</if>
+			<if test="accountid != null">
+				#{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="expiredate != null">
+				#{expiredate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="courseprocess != null">
+				#{courseprocess,jdbcType=INTEGER},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="isactive != null">
+				#{isactive,jdbcType=INTEGER},
+			</if>
+			<if test="productid != null">
+				#{productid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.content.product.course.PersoncourseExample"
+		resultType="java.lang.Integer">
+		select count(*) from PersonCourse
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update PersonCourse
+		<set>
+			<if test="record.personcourseid != null">
+				PersonCourseID = #{record.personcourseid,jdbcType=BIGINT},
+			</if>
+			<if test="record.courseid != null">
+				CourseID = #{record.courseid,jdbcType=BIGINT},
+			</if>
+			<if test="record.accountid != null">
+				AccountID = #{record.accountid,jdbcType=BIGINT},
+			</if>
+			<if test="record.remark != null">
+				Remark = #{record.remark,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.expiredate != null">
+				ExpireDate = #{record.expiredate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.courseprocess != null">
+				CourseProcess = #{record.courseprocess,jdbcType=INTEGER},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.isactive != null">
+				IsActive = #{record.isactive,jdbcType=INTEGER},
+			</if>
+			<if test="record.productid != null">
+				ProductID = #{record.productid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update PersonCourse
+		set PersonCourseID = #{record.personcourseid,jdbcType=BIGINT},
+		CourseID = #{record.courseid,jdbcType=BIGINT},
+		AccountID = #{record.accountid,jdbcType=BIGINT},
+		Remark = #{record.remark,jdbcType=VARCHAR},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		ExpireDate = #{record.expiredate,jdbcType=TIMESTAMP},
+		CourseProcess = #{record.courseprocess,jdbcType=INTEGER},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+		IsActive = #{record.isactive,jdbcType=INTEGER},
+		ProductID = #{record.productid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.content.product.course.Personcourse">
+		update PersonCourse
+		<set>
+			<if test="courseid != null">
+				CourseID = #{courseid,jdbcType=BIGINT},
+			</if>
+			<if test="accountid != null">
+				AccountID = #{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="expiredate != null">
+				ExpireDate = #{expiredate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="courseprocess != null">
+				CourseProcess = #{courseprocess,jdbcType=INTEGER},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="isactive != null">
+				IsActive = #{isactive,jdbcType=INTEGER},
+			</if>
+			<if test="productid != null">
+				ProductID = #{productid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where PersonCourseID = #{personcourseid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.content.product.course.Personcourse">
+		update PersonCourse
+		set CourseID = #{courseid,jdbcType=BIGINT},
+		AccountID = #{accountid,jdbcType=BIGINT},
+		Remark = #{remark,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		ExpireDate = #{expiredate,jdbcType=TIMESTAMP},
+		CourseProcess = #{courseprocess,jdbcType=INTEGER},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+		IsActive = #{isactive,jdbcType=INTEGER},
+		ProductID = #{productid,jdbcType=BIGINT}
+		where PersonCourseID = #{personcourseid,jdbcType=BIGINT}
+	</update>
+</mapper>

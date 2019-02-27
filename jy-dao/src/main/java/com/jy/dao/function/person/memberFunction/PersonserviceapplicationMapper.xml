@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.memberFunction.PersonserviceapplicationMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.memberFunction.Personserviceapplication" >
+    <id column="ServiceApplicationID" property="serviceapplicationid" jdbcType="BIGINT" />
+    <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <result column="CourseID" property="courseid" jdbcType="BIGINT" />
+    <result column="PersonServiceID" property="personserviceid" jdbcType="BIGINT" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ServiceApplicationName" property="serviceapplicationname" jdbcType="VARCHAR" />
+    <result column="ApplicationTime" property="applicationtime" jdbcType="TIMESTAMP" />
+    <result column="SuggestionTime" property="suggestiontime" jdbcType="TIMESTAMP" />
+    <result column="SuggestionReason" property="suggestionreason" jdbcType="VARCHAR" />
+    <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+    <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    <result column="AppointServiceID" property="appointserviceid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ServiceApplicationID, AccountID, CourseID, PersonServiceID, ApplicationStatusID, 
+    ServiceApplicationName, ApplicationTime, SuggestionTime, SuggestionReason, HandleTime, 
+    ServiceNo, AppointServiceID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.memberFunction.PersonserviceapplicationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from PersonServiceApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from PersonServiceApplication
+    where ServiceApplicationID = #{serviceapplicationid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from PersonServiceApplication
+    where ServiceApplicationID = #{serviceapplicationid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.memberFunction.PersonserviceapplicationExample" >
+    delete from PersonServiceApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.memberFunction.Personserviceapplication" >
+    insert into PersonServiceApplication (ServiceApplicationID, AccountID, CourseID, 
+      PersonServiceID, ApplicationStatusID, ServiceApplicationName, 
+      ApplicationTime, SuggestionTime, SuggestionReason, 
+      HandleTime, ServiceNo, AppointServiceID
+      )
+    values (#{serviceapplicationid,jdbcType=BIGINT}, #{accountid,jdbcType=BIGINT}, #{courseid,jdbcType=BIGINT}, 
+      #{personserviceid,jdbcType=BIGINT}, #{applicationstatusid,jdbcType=INTEGER}, #{serviceapplicationname,jdbcType=VARCHAR}, 
+      #{applicationtime,jdbcType=TIMESTAMP}, #{suggestiontime,jdbcType=TIMESTAMP}, #{suggestionreason,jdbcType=VARCHAR}, 
+      #{handletime,jdbcType=TIMESTAMP}, #{serviceno,jdbcType=VARCHAR}, #{appointserviceid,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.memberFunction.Personserviceapplication" >
+    <selectKey keyProperty="serviceapplicationid" order="AFTER" resultType="Long">
+    SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into PersonServiceApplication
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="serviceapplicationid != null" >
+        ServiceApplicationID,
+      </if>
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+      <if test="courseid != null" >
+        CourseID,
+      </if>
+      <if test="personserviceid != null" >
+        PersonServiceID,
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID,
+      </if>
+      <if test="serviceapplicationname != null" >
+        ServiceApplicationName,
+      </if>
+      <if test="applicationtime != null" >
+        ApplicationTime,
+      </if>
+      <if test="suggestiontime != null" >
+        SuggestionTime,
+      </if>
+      <if test="suggestionreason != null" >
+        SuggestionReason,
+      </if>
+      <if test="handletime != null" >
+        HandleTime,
+      </if>
+      <if test="serviceno != null" >
+        ServiceNo,
+      </if>
+      <if test="appointserviceid != null" >
+        AppointServiceID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="serviceapplicationid != null" >
+        #{serviceapplicationid,jdbcType=BIGINT},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="courseid != null" >
+        #{courseid,jdbcType=BIGINT},
+      </if>
+      <if test="personserviceid != null" >
+        #{personserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="applicationstatusid != null" >
+        #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="serviceapplicationname != null" >
+        #{serviceapplicationname,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationtime != null" >
+        #{applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="suggestiontime != null" >
+        #{suggestiontime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="suggestionreason != null" >
+        #{suggestionreason,jdbcType=VARCHAR},
+      </if>
+      <if test="handletime != null" >
+        #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serviceno != null" >
+        #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="appointserviceid != null" >
+        #{appointserviceid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.memberFunction.PersonserviceapplicationExample" resultType="java.lang.Integer" >
+    select count(*) from PersonServiceApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update PersonServiceApplication
+    <set >
+      <if test="record.serviceapplicationid != null" >
+        ServiceApplicationID = #{record.serviceapplicationid,jdbcType=BIGINT},
+      </if>
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+      <if test="record.courseid != null" >
+        CourseID = #{record.courseid,jdbcType=BIGINT},
+      </if>
+      <if test="record.personserviceid != null" >
+        PersonServiceID = #{record.personserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="record.applicationstatusid != null" >
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceapplicationname != null" >
+        ServiceApplicationName = #{record.serviceapplicationname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicationtime != null" >
+        ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.suggestiontime != null" >
+        SuggestionTime = #{record.suggestiontime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.suggestionreason != null" >
+        SuggestionReason = #{record.suggestionreason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.handletime != null" >
+        HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.serviceno != null" >
+        ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointserviceid != null" >
+        AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update PersonServiceApplication
+    set ServiceApplicationID = #{record.serviceapplicationid,jdbcType=BIGINT},
+      AccountID = #{record.accountid,jdbcType=BIGINT},
+      CourseID = #{record.courseid,jdbcType=BIGINT},
+      PersonServiceID = #{record.personserviceid,jdbcType=BIGINT},
+      ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      ServiceApplicationName = #{record.serviceapplicationname,jdbcType=VARCHAR},
+      ApplicationTime = #{record.applicationtime,jdbcType=TIMESTAMP},
+      SuggestionTime = #{record.suggestiontime,jdbcType=TIMESTAMP},
+      SuggestionReason = #{record.suggestionreason,jdbcType=VARCHAR},
+      HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.person.memberFunction.Personserviceapplication" >
+    update PersonServiceApplication
+    <set >
+      <if test="accountid != null" >
+        AccountID = #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="courseid != null" >
+        CourseID = #{courseid,jdbcType=BIGINT},
+      </if>
+      <if test="personserviceid != null" >
+        PersonServiceID = #{personserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="serviceapplicationname != null" >
+        ServiceApplicationName = #{serviceapplicationname,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationtime != null" >
+        ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="suggestiontime != null" >
+        SuggestionTime = #{suggestiontime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="suggestionreason != null" >
+        SuggestionReason = #{suggestionreason,jdbcType=VARCHAR},
+      </if>
+      <if test="handletime != null" >
+        HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serviceno != null" >
+        ServiceNo = #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="appointserviceid != null" >
+        AppointServiceID = #{appointserviceid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ServiceApplicationID = #{serviceapplicationid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.person.memberFunction.Personserviceapplication" >
+    update PersonServiceApplication
+    set AccountID = #{accountid,jdbcType=BIGINT},
+      CourseID = #{courseid,jdbcType=BIGINT},
+      PersonServiceID = #{personserviceid,jdbcType=BIGINT},
+      ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      ServiceApplicationName = #{serviceapplicationname,jdbcType=VARCHAR},
+      ApplicationTime = #{applicationtime,jdbcType=TIMESTAMP},
+      SuggestionTime = #{suggestiontime,jdbcType=TIMESTAMP},
+      SuggestionReason = #{suggestionreason,jdbcType=VARCHAR},
+      HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      ServiceNo = #{serviceno,jdbcType=VARCHAR},
+      AppointServiceID = #{appointserviceid,jdbcType=BIGINT}
+    where ServiceApplicationID = #{serviceapplicationid,jdbcType=BIGINT}
+  </update>
+</mapper>

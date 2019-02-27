@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.PersonexaminereportMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.function.person.Personexaminereport">
+		<id column="PExamineReportID" property="pexaminereportid"
+			jdbcType="BIGINT" />
+		<result column="PersonReportTypeID"
+			property="personreporttypeid" jdbcType="INTEGER" />
+		<result column="AccountID" property="accountid"
+			jdbcType="BIGINT" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="FileID" property="fileid" jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		PExamineReportID, PersonReportTypeID, AccountID, CreateBy, CreateTime, CreatePersonID,
+		UpdateBy, UpdateTime, FileID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.function.person.PersonexaminereportExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from PersonExamineReport
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from PersonExamineReport
+		where PExamineReportID = #{pexaminereportid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from PersonExamineReport
+		where PExamineReportID = #{pexaminereportid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.function.person.PersonexaminereportExample">
+		delete from PersonExamineReport
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.function.person.Personexaminereport">
+		insert into PersonExamineReport (PExamineReportID, PersonReportTypeID,
+		AccountID, CreateBy, CreateTime,
+		CreatePersonID, UpdateBy, UpdateTime,
+		FileID)
+		values (#{pexaminereportid,jdbcType=BIGINT},
+		#{personreporttypeid,jdbcType=INTEGER},
+		#{accountid,jdbcType=BIGINT}, #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{createpersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR},
+		#{updatetime,jdbcType=TIMESTAMP},
+		#{fileid,jdbcType=BIGINT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.function.person.Personexaminereport">
+		<selectKey keyProperty="pexaminereportid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into PersonExamineReport
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pexaminereportid != null">
+				PExamineReportID,
+			</if>
+			<if test="personreporttypeid != null">
+				PersonReportTypeID,
+			</if>
+			<if test="accountid != null">
+				AccountID,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="fileid != null">
+				FileID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="pexaminereportid != null">
+				#{pexaminereportid,jdbcType=BIGINT},
+			</if>
+			<if test="personreporttypeid != null">
+				#{personreporttypeid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null">
+				#{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fileid != null">
+				#{fileid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.function.person.PersonexaminereportExample"
+		resultType="java.lang.Integer">
+		select count(*) from PersonExamineReport
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update PersonExamineReport
+		<set>
+			<if test="record.pexaminereportid != null">
+				PExamineReportID = #{record.pexaminereportid,jdbcType=BIGINT},
+			</if>
+			<if test="record.personreporttypeid != null">
+				PersonReportTypeID = #{record.personreporttypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.accountid != null">
+				AccountID = #{record.accountid,jdbcType=BIGINT},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.fileid != null">
+				FileID = #{record.fileid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update PersonExamineReport
+		set PExamineReportID = #{record.pexaminereportid,jdbcType=BIGINT},
+		PersonReportTypeID = #{record.personreporttypeid,jdbcType=INTEGER},
+		AccountID = #{record.accountid,jdbcType=BIGINT},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		FileID = #{record.fileid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.function.person.Personexaminereport">
+		update PersonExamineReport
+		<set>
+			<if test="personreporttypeid != null">
+				PersonReportTypeID = #{personreporttypeid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null">
+				AccountID = #{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fileid != null">
+				FileID = #{fileid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where PExamineReportID = #{pexaminereportid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.function.person.Personexaminereport">
+		update PersonExamineReport
+		set PersonReportTypeID = #{personreporttypeid,jdbcType=INTEGER},
+		AccountID = #{accountid,jdbcType=BIGINT},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		FileID = #{fileid,jdbcType=BIGINT}
+		where PExamineReportID = #{pexaminereportid,jdbcType=BIGINT}
+	</update>
+
+	<!-- 查询增值报告地址 -->
+    <select id="getFilePath" resultType="java.lang.String">
+		SELECT
+			FileFullPath
+		FROM
+			 PersonExamineReport per
+			   LEFT JOIN FileInfo f ON per.FileID = f.FileID
+			   LEFT JOIN PersonReportType prt ON per.PersonReportTypeID = prt.PersonReportTypeID
+		WHERE
+			prt.Code = "PERSON_REPORT_TYPE_TAX_DECLARATION"
+			AND per.AccountID = #{accountID}
+    </select>
+</mapper>

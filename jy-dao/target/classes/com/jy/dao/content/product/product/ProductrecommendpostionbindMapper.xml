@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.product.ProductrecommendpostionbindMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.product.product.Productrecommendpostionbind" >
+    <id column="ProductRPID" property="productrpid" jdbcType="INTEGER" />
+    <result column="ProductID" property="productid" jdbcType="BIGINT" />
+    <result column="PostionNumber" property="postionnumber" jdbcType="INTEGER" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+    <result column="ColumnPostionID" property="columnpostionid" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ProductRPID, ProductID, PostionNumber, Remark, ColumnPostionID, CreateTime, CreateBy, 
+    CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.product.product.ProductrecommendpostionbindExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ProductRecommendPostionBind
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ProductRecommendPostionBind
+    where ProductRPID = #{productrpid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ProductRecommendPostionBind
+    where ProductRPID = #{productrpid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.product.product.ProductrecommendpostionbindExample" >
+    delete from ProductRecommendPostionBind
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.product.product.Productrecommendpostionbind" >
+    insert into ProductRecommendPostionBind (ProductRPID, ProductID, PostionNumber, 
+      Remark, ColumnPostionID, CreateTime, 
+      CreateBy, CreatePersonID, UpdateTime, 
+      UpdateBy, UpdatePersonID)
+    values (#{productrpid,jdbcType=INTEGER}, #{productid,jdbcType=BIGINT}, #{postionnumber,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{columnpostionid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.product.product.Productrecommendpostionbind" >
+    insert into ProductRecommendPostionBind
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productrpid != null" >
+        ProductRPID,
+      </if>
+      <if test="productid != null" >
+        ProductID,
+      </if>
+      <if test="postionnumber != null" >
+        PostionNumber,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="columnpostionid != null" >
+        ColumnPostionID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productrpid != null" >
+        #{productrpid,jdbcType=INTEGER},
+      </if>
+      <if test="productid != null" >
+        #{productid,jdbcType=BIGINT},
+      </if>
+      <if test="postionnumber != null" >
+        #{postionnumber,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="columnpostionid != null" >
+        #{columnpostionid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.product.product.ProductrecommendpostionbindExample" resultType="java.lang.Integer" >
+    select count(*) from ProductRecommendPostionBind
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ProductRecommendPostionBind
+    <set >
+      <if test="record.productrpid != null" >
+        ProductRPID = #{record.productrpid,jdbcType=INTEGER},
+      </if>
+      <if test="record.productid != null" >
+        ProductID = #{record.productid,jdbcType=BIGINT},
+      </if>
+      <if test="record.postionnumber != null" >
+        PostionNumber = #{record.postionnumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.columnpostionid != null" >
+        ColumnPostionID = #{record.columnpostionid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ProductRecommendPostionBind
+    set ProductRPID = #{record.productrpid,jdbcType=INTEGER},
+      ProductID = #{record.productid,jdbcType=BIGINT},
+      PostionNumber = #{record.postionnumber,jdbcType=INTEGER},
+      Remark = #{record.remark,jdbcType=VARCHAR},
+      ColumnPostionID = #{record.columnpostionid,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.product.product.Productrecommendpostionbind" >
+    update ProductRecommendPostionBind
+    <set >
+      <if test="productid != null" >
+        ProductID = #{productid,jdbcType=BIGINT},
+      </if>
+      <if test="postionnumber != null" >
+        PostionNumber = #{postionnumber,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="columnpostionid != null" >
+        ColumnPostionID = #{columnpostionid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ProductRPID = #{productrpid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.product.product.Productrecommendpostionbind" >
+    update ProductRecommendPostionBind
+    set ProductID = #{productid,jdbcType=BIGINT},
+      PostionNumber = #{postionnumber,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR},
+      ColumnPostionID = #{columnpostionid,jdbcType=INTEGER},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where ProductRPID = #{productrpid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,335 @@
+package com.jy.interceptor;
+
+import com.jy.common.redis.JedisClient;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.common.utils.JsonUtils;
+import com.jy.common.utils.MD5Utils;
+import com.jy.dao.system.web.info.SetwebinfoMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.Constant;
+import com.jy.entiy.system.web.info.Setwebinfo;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @ClassName: LoginInterceptor
+ * @Description:登录拦截器
+ * @author: chengfei
+ * @date: 2018-05-24 15:10
+ */
+public class LoginInterceptor implements HandlerInterceptor {
+
+	private static final  String  OPTIONS = "OPTIONS";
+
+	/**
+	 * 请求来源
+	 */
+	private String requestHome;
+
+	/**
+	 * 移动端开启状态的值 0关闭, 1 开启
+	 */
+	private static final String MOBILE_START = "1";
+
+	/**
+	 * 公共url,不需要进行appkey验证
+	 */
+	private List<String> publicUrl;
+
+	/**
+	 * 不拦截登陆地址列表,验证appkey
+	 */
+	private List<String> excludedUrls;
+
+	/**
+	 * 网站设置mapper
+	 */
+	@Resource
+	private SetwebinfoMapper setwebinfoMapper;
+
+	/**
+	 * redis
+	 */
+	@Resource
+	private JedisClient jedisClient;
+
+	/**
+	 * web端appkey
+	 */
+	@Value("${WEB_APP_KEY}")
+	private String WEB_APP_KEY;
+
+	/**
+	 * 移动端appkey
+	 */
+	@Value("${MOBILE_APP_KEY}")
+	private String MOBILE_APP_KEY;
+
+	/**
+	 * 微信端appkey
+	 */
+	@Value("${WE_CHAT_APP_KEY}")
+	private String WE_CHAT_APP_KEY;
+
+	@Value("${SESSION_EXPIRE}")
+	private Integer SESSION_EXPIRE;
+
+	@Value("${REDIS_PASSWORD}")
+	private String REDIS_PASSWORD;
+
+	@Value("${REQUEST_TIMEOUT}")
+	private Integer REQUEST_TIMEOUT;
+
+
+	public List<String> getPublicUrl() {
+		return publicUrl;
+	}
+
+	public void setPublicUrl(List<String> publicUrl) {
+		this.publicUrl = publicUrl;
+	}
+
+	public List<String> getExcludedUrls() {
+		return excludedUrls;
+	}
+
+	public void setExcludedUrls(List<String> excludedUrls) {
+		this.excludedUrls = excludedUrls;
+	}
+
+	/**
+	 *
+	 * 在业务处理器处理请求之前被调用 如果返回false 从当前的拦截器往回执行所有拦截器的afterCompletion(), 再退出拦截器链,
+	 * 如果返回true 执行下一个拦截器, 直到所有的拦截器都执行完毕 再执行被拦截的Controller 然后进入拦截器链,
+	 * 从最后一个拦截器往回执行所有的postHandle() 接着再从最后一个拦截器往回执行所有的afterCompletion()
+	 *
+	 * @param request
+	 *
+	 * @param response
+	 */
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
+
+		String method = request.getMethod();
+		// OPTIONS请求直接放行
+		if (OPTIONS.equals(method)) {
+			return true;
+		}
+
+		// 参数前后去空格
+		@SuppressWarnings("unchecked")
+		Map<String, Object> map = request.getParameterMap();
+		for (String string : map.keySet()) {
+			try {
+				map.put(string, ((String) map.get(string)).trim());
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+		AntPathMatcher matcher = new AntPathMatcher();
+
+		//判断是否是公共的,不需要任何鉴权的url
+		if (publicUrl!= null && publicUrl.size() > 0) {
+			for (String string : publicUrl) {
+				if (matcher.match(string, request.getServletPath())) {
+					return true;
+				}
+			}
+		}
+
+		//验证请求时间和当前时间不大于配置的超时时间
+		String request_time_str = request.getHeader("request_time");
+		if(StringUtils.isBlank(request_time_str)) {
+			request_time_str = request.getParameter("request_time");
+			if (StringUtils.isBlank(request_time_str)) {
+				return unauthorized(response);
+			}
+		}
+
+		Date date = new Date();
+		Date request_time = DateUtils.dateParse(request_time_str,DateUtils.DATE_TIME_PATTERN);
+		if (date.getTime() - request_time.getTime() > REQUEST_TIMEOUT) {
+			return requestTimeout(response);
+		}
+
+
+		//验证是否是合法请求
+		String sign = request.getHeader("sign");
+		if(StringUtils.isBlank(sign)) {
+			sign = request.getParameter("sign");
+			if (StringUtils.isBlank(sign)) {
+				return unauthorized(response);
+			}
+		}
+		if (StringUtils.isBlank(request_time_str) || StringUtils.isBlank(sign)) {
+			 return unauthorized(response);
+		}
+
+		//判断请求来源
+		String web_app_key_sign = MD5Utils.MD5(request_time_str + WEB_APP_KEY);
+		String mobile_app_key_sign = MD5Utils.MD5(request_time_str + MOBILE_APP_KEY);
+		String weChat_app_key_sign = MD5Utils.MD5(request_time_str + WE_CHAT_APP_KEY);
+
+		if (web_app_key_sign.equals(sign)){
+			//请求来源为web端
+			this.requestHome = Constant.WEB;
+		}else if (mobile_app_key_sign.equals(sign)){
+			//请求来源为移动端
+			this.requestHome = Constant.MOBILE;
+			//判断是否开启手机端
+			List<Setwebinfo> list = setwebinfoMapper.selectByExample(null);
+			//无网站配置数据
+			if (list == null || list.size() == 0) {
+				return mobileNotOpen(response);
+			}
+			//移动端未开启
+			if (!MOBILE_START.equals(list.get(0).getStart())) {
+				return mobileNotOpen(response);
+			}
+		}else if (weChat_app_key_sign.equals(sign)){
+			//请求来源为微信端
+			this.requestHome = Constant.WECHAT;
+		}else {
+			//不是以上来源,返回未授权
+			return unauthorized(response);
+		}
+
+		//将请求来源放入request作用域
+		request.setAttribute(Constant.REQUEST_HOME, this.requestHome);
+
+		//查询是否是不需要需要登录可访问的请求
+		if (excludedUrls != null && excludedUrls.size() > 0) {
+			for (String string : excludedUrls) {
+				if (matcher.match(string, request.getServletPath())) {
+					return true;
+				}
+			}
+		}
+
+		// 验证是否登录,未登录返回未授权
+		String token = request.getHeader("token");
+		if (StringUtils.isBlank(token)) {
+			token = request.getParameter("token");
+			if (StringUtils.isBlank(token)) {
+				return unauthorized(response);
+			}
+		}
+
+		String json = jedisClient.get(requestHome + Constant.SESSION_PRE + token, REDIS_PASSWORD);
+
+		if(StringUtils.isBlank(json)) {
+			return unauthorized(response);
+		}else if (Constant.LOST_CONNECTION.equals(json)){
+			return lostConnection(response);
+		}
+
+		//重置登陆有效时间
+		jedisClient.expire(requestHome + Constant.SESSION_PRE + token , SESSION_EXPIRE, REDIS_PASSWORD);
+
+		// 将登录账户信息放入request,方便以后使用
+		AccountInfo accountInfo = JsonUtils.jsonToPojo(json, AccountInfo.class);
+		//设置请求来源
+		accountInfo.setRequestHome(this.requestHome);
+		request.setAttribute(Constant.ACCOUNTINFO, accountInfo);
+		return true;
+	}
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/12/20 11:28
+	 * 描述 : 用户被挤下线
+ 	 * @param response
+	 * @return
+	 */
+	private boolean lostConnection(HttpServletResponse response) throws IOException {
+		String json = JsonUtils.objectToJson(Result.build(ResultEnum.ACCOUNT_LOST_CONNECTION));
+		response.setHeader("Content-Type", "application/json; charset=UTF-8");
+		response.getWriter().write(json);
+		return false;
+	}
+
+	/**
+	 * 移动端未开启
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean mobileNotOpen(HttpServletResponse response) throws IOException {
+		String json = JsonUtils.objectToJson(Result.build(ResultEnum.MOBILE_NOT_OPEN));
+		response.setHeader("Content-Type", "application/json; charset=UTF-8");
+		response.getWriter().write(json);
+		return false;
+	}
+
+	/**
+	 * 请求超时处理
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean requestTimeout(HttpServletResponse response) throws IOException {
+		String json = JsonUtils.objectToJson(Result.build(ResultEnum.REQUEST_TIMEOUT));
+		response.setHeader("Content-Type", "application/json; charset=UTF-8");
+		response.getWriter().write(json);
+		return false;
+	}
+
+	/**
+	 * 不是合法请求,或者未登录时
+	 *
+	 * @param response
+	 * @throws IOException
+	 */
+	private boolean unauthorized(HttpServletResponse response) throws IOException {
+		String json = JsonUtils.objectToJson(Result.build(ResultEnum.LOGIN_UNAUTHORIZED));
+		response.setHeader("Content-Type", "application/json; charset=UTF-8");
+		response.getWriter().write(json);
+		return false;
+	}
+
+	/**
+	 * 在业务处理器处理请求执行完成后,生成视图之前执行的动作
+	 * @param request
+	 * @param response
+	 * @param handler
+	 * @param modelAndView
+	 * @throws Exception
+	 */
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView) throws Exception {
+	}
+
+	/**
+	 *
+	 * 在DispatcherServlet完全处理完请求后被调用 当有拦截器抛出异常时, 会从当前拦截器往回执行所有的拦截器的afterCompletion()
+	 *
+	 * @param request
+	 *
+	 * @param response
+	 *
+	 * @param handler
+	 *
+	 */
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+
+	}
+
+}

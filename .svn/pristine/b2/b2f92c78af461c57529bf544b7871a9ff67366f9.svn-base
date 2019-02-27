@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.email.SetmailMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.email.Setmail" >
+    <id column="SetMailID" property="setmailid" jdbcType="INTEGER" />
+    <result column="MailServer" property="mailserver" jdbcType="VARCHAR" />
+    <result column="Port" property="port" jdbcType="INTEGER" />
+    <result column="SenderIP" property="senderip" jdbcType="VARCHAR" />
+    <result column="PassWord" property="password" jdbcType="VARCHAR" />
+    <result column="ReceptionIP" property="receptionip" jdbcType="VARCHAR" />
+    <result column="SendTest" property="sendtest" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SetMailID, MailServer, Port, SenderIP, PassWord, ReceptionIP, SendTest, CreateTime, 
+    CreatePersonID, UpdateTime, UpdatePersonID, CreateBy, UpdateBy
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.email.SetmailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SetMail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from SetMail
+    where SetMailID = #{setmailid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from SetMail
+    where SetMailID = #{setmailid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.email.SetmailExample" >
+    delete from SetMail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.email.Setmail" >
+    insert into SetMail (SetMailID, MailServer, Port, 
+      SenderIP, PassWord, ReceptionIP, 
+      SendTest, CreateTime, CreatePersonID, 
+      UpdateTime, UpdatePersonID, CreateBy, 
+      UpdateBy)
+    values (#{setmailid,jdbcType=INTEGER}, #{mailserver,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, 
+      #{senderip,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{receptionip,jdbcType=VARCHAR}, 
+      #{sendtest,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT}, #{createby,jdbcType=VARCHAR}, 
+      #{updateby,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.email.Setmail" >
+    insert into SetMail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="setmailid != null" >
+        SetMailID,
+      </if>
+      <if test="mailserver != null" >
+        MailServer,
+      </if>
+      <if test="port != null" >
+        Port,
+      </if>
+      <if test="senderip != null" >
+        SenderIP,
+      </if>
+      <if test="password != null" >
+        PassWord,
+      </if>
+      <if test="receptionip != null" >
+        ReceptionIP,
+      </if>
+      <if test="sendtest != null" >
+        SendTest,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="setmailid != null" >
+        #{setmailid,jdbcType=INTEGER},
+      </if>
+      <if test="mailserver != null" >
+        #{mailserver,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="senderip != null" >
+        #{senderip,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="receptionip != null" >
+        #{receptionip,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtest != null" >
+        #{sendtest,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.email.SetmailExample" resultType="java.lang.Integer" >
+    select count(*) from SetMail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SetMail
+    <set >
+      <if test="record.setmailid != null" >
+        SetMailID = #{record.setmailid,jdbcType=INTEGER},
+      </if>
+      <if test="record.mailserver != null" >
+        MailServer = #{record.mailserver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.port != null" >
+        Port = #{record.port,jdbcType=INTEGER},
+      </if>
+      <if test="record.senderip != null" >
+        SenderIP = #{record.senderip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        PassWord = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receptionip != null" >
+        ReceptionIP = #{record.receptionip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sendtest != null" >
+        SendTest = #{record.sendtest,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SetMail
+    set SetMailID = #{record.setmailid,jdbcType=INTEGER},
+      MailServer = #{record.mailserver,jdbcType=VARCHAR},
+      Port = #{record.port,jdbcType=INTEGER},
+      SenderIP = #{record.senderip,jdbcType=VARCHAR},
+      PassWord = #{record.password,jdbcType=VARCHAR},
+      ReceptionIP = #{record.receptionip,jdbcType=VARCHAR},
+      SendTest = #{record.sendtest,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.email.Setmail" >
+    update SetMail
+    <set >
+      <if test="mailserver != null" >
+        MailServer = #{mailserver,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        Port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="senderip != null" >
+        SenderIP = #{senderip,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        PassWord = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="receptionip != null" >
+        ReceptionIP = #{receptionip,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtest != null" >
+        SendTest = #{sendtest,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SetMailID = #{setmailid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.email.Setmail" >
+    update SetMail
+    set MailServer = #{mailserver,jdbcType=VARCHAR},
+      Port = #{port,jdbcType=INTEGER},
+      SenderIP = #{senderip,jdbcType=VARCHAR},
+      PassWord = #{password,jdbcType=VARCHAR},
+      ReceptionIP = #{receptionip,jdbcType=VARCHAR},
+      SendTest = #{sendtest,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      UpdateBy = #{updateby,jdbcType=VARCHAR}
+    where SetMailID = #{setmailid,jdbcType=INTEGER}
+  </update>
+</mapper>

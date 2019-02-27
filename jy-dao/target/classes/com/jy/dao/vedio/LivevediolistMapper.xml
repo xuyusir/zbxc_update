@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.vedio.LivevediolistMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.vedio.Livevediolist">
+		<id column="LiveVedioListID" property="livevediolistid"
+			jdbcType="BIGINT" />
+		<result column="LiveVedioStatusID" property="livevediostatusid"
+			jdbcType="INTEGER" />
+		<result column="LiveVedioTitle" property="livevediotitle"
+			jdbcType="VARCHAR" />
+		<result column="LiveVedioAbstract" property="livevedioabstract"
+			jdbcType="VARCHAR" />
+		<result column="CourseTitle" property="coursetitle"
+			jdbcType="VARCHAR" />
+		<result column="CourseAbstract" property="courseabstract"
+			jdbcType="VARCHAR" />
+		<result column="CourseContent" property="coursecontent"
+			jdbcType="VARCHAR" />
+		<result column="Teacher" property="teacher" jdbcType="VARCHAR" />
+		<result column="StartDate" property="startdate"
+			jdbcType="TIMESTAMP" />
+		<result column="StartTime" property="starttime"
+			jdbcType="INTEGER" />
+		<result column="EndTime" property="endtime" jdbcType="INTEGER" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CrearteBy" property="crearteby"
+			jdbcType="VARCHAR" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+		<result column="IsDirect" property="isdirect"
+			jdbcType="VARCHAR" />
+		<result column="MemoryTime" property="memorytime"
+			jdbcType="INTEGER" />
+		<result column="LongTime" property="longtime"
+			jdbcType="INTEGER" />
+		<result column="LiveVedioUrl" property="livevediourl"
+			jdbcType="VARCHAR" />
+		<result column="FileID" property="fileid" jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		LiveVedioListID, LiveVedioStatusID, LiveVedioTitle, LiveVedioAbstract, CourseTitle,
+		CourseAbstract, CourseContent, Teacher, StartDate, StartTime, EndTime,
+		CreateTime,
+		CrearteBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID, IsDirect,
+		MemoryTime,
+		LongTime, LiveVedioUrl, FileID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.vedio.LivevediolistExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from LiveVedioList
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from LiveVedioList
+		where LiveVedioListID = #{livevediolistid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from LiveVedioList
+		where LiveVedioListID = #{livevediolistid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.vedio.LivevediolistExample">
+		delete from LiveVedioList
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.vedio.Livevediolist">
+		insert into LiveVedioList (LiveVedioListID, LiveVedioStatusID,
+		LiveVedioTitle, LiveVedioAbstract, CourseTitle,
+		CourseAbstract, CourseContent, Teacher,
+		StartDate, StartTime, EndTime,
+		CreateTime, CrearteBy, CreatePersonID,
+		UpdateTime, UpdateBy, UpdatePersonID,
+		IsDirect, MemoryTime, LongTime,
+		LiveVedioUrl, FileID)
+		values (#{livevediolistid,jdbcType=BIGINT},
+		#{livevediostatusid,jdbcType=INTEGER},
+		#{livevediotitle,jdbcType=VARCHAR},
+		#{livevedioabstract,jdbcType=VARCHAR},
+		#{coursetitle,jdbcType=VARCHAR},
+		#{courseabstract,jdbcType=VARCHAR}, #{coursecontent,jdbcType=VARCHAR}, #{teacher,jdbcType=VARCHAR},
+		#{startdate,jdbcType=TIMESTAMP}, #{starttime,jdbcType=INTEGER},
+		#{endtime,jdbcType=INTEGER},
+		#{createtime,jdbcType=TIMESTAMP}, #{crearteby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT},
+		#{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+		#{updatepersonid,jdbcType=BIGINT},
+		#{isdirect,jdbcType=VARCHAR}, #{memorytime,jdbcType=INTEGER}, #{longtime,jdbcType=INTEGER},
+		#{livevediourl,jdbcType=VARCHAR}, #{fileid,jdbcType=BIGINT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.vedio.Livevediolist">
+		<selectKey keyProperty="livevediolistid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into LiveVedioList
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="livevediolistid != null">
+				LiveVedioListID,
+			</if>
+			<if test="livevediostatusid != null">
+				LiveVedioStatusID,
+			</if>
+			<if test="livevediotitle != null">
+				LiveVedioTitle,
+			</if>
+			<if test="livevedioabstract != null">
+				LiveVedioAbstract,
+			</if>
+			<if test="coursetitle != null">
+				CourseTitle,
+			</if>
+			<if test="courseabstract != null">
+				CourseAbstract,
+			</if>
+			<if test="coursecontent != null">
+				CourseContent,
+			</if>
+			<if test="teacher != null">
+				Teacher,
+			</if>
+			<if test="startdate != null">
+				StartDate,
+			</if>
+			<if test="starttime != null">
+				StartTime,
+			</if>
+			<if test="endtime != null">
+				EndTime,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="crearteby != null">
+				CrearteBy,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+			<if test="isdirect != null">
+				IsDirect,
+			</if>
+			<if test="memorytime != null">
+				MemoryTime,
+			</if>
+			<if test="longtime != null">
+				LongTime,
+			</if>
+			<if test="livevediourl != null">
+				LiveVedioUrl,
+			</if>
+			<if test="fileid != null">
+				FileID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="livevediolistid != null">
+				#{livevediolistid,jdbcType=BIGINT},
+			</if>
+			<if test="livevediostatusid != null">
+				#{livevediostatusid,jdbcType=INTEGER},
+			</if>
+			<if test="livevediotitle != null">
+				#{livevediotitle,jdbcType=VARCHAR},
+			</if>
+			<if test="livevedioabstract != null">
+				#{livevedioabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="coursetitle != null">
+				#{coursetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="courseabstract != null">
+				#{courseabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="coursecontent != null">
+				#{coursecontent,jdbcType=VARCHAR},
+			</if>
+			<if test="teacher != null">
+				#{teacher,jdbcType=VARCHAR},
+			</if>
+			<if test="startdate != null">
+				#{startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="starttime != null">
+				#{starttime,jdbcType=INTEGER},
+			</if>
+			<if test="endtime != null">
+				#{endtime,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="crearteby != null">
+				#{crearteby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="isdirect != null">
+				#{isdirect,jdbcType=VARCHAR},
+			</if>
+			<if test="memorytime != null">
+				#{memorytime,jdbcType=INTEGER},
+			</if>
+			<if test="longtime != null">
+				#{longtime,jdbcType=INTEGER},
+			</if>
+			<if test="livevediourl != null">
+				#{livevediourl,jdbcType=VARCHAR},
+			</if>
+			<if test="fileid != null">
+				#{fileid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.vedio.LivevediolistExample"
+		resultType="java.lang.Integer">
+		select count(*) from LiveVedioList
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update LiveVedioList
+		<set>
+			<if test="record.livevediolistid != null">
+				LiveVedioListID = #{record.livevediolistid,jdbcType=BIGINT},
+			</if>
+			<if test="record.livevediostatusid != null">
+				LiveVedioStatusID = #{record.livevediostatusid,jdbcType=INTEGER},
+			</if>
+			<if test="record.livevediotitle != null">
+				LiveVedioTitle = #{record.livevediotitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.livevedioabstract != null">
+				LiveVedioAbstract = #{record.livevedioabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="record.coursetitle != null">
+				CourseTitle = #{record.coursetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.courseabstract != null">
+				CourseAbstract = #{record.courseabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="record.coursecontent != null">
+				CourseContent = #{record.coursecontent,jdbcType=VARCHAR},
+			</if>
+			<if test="record.teacher != null">
+				Teacher = #{record.teacher,jdbcType=VARCHAR},
+			</if>
+			<if test="record.startdate != null">
+				StartDate = #{record.startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.starttime != null">
+				StartTime = #{record.starttime,jdbcType=INTEGER},
+			</if>
+			<if test="record.endtime != null">
+				EndTime = #{record.endtime,jdbcType=INTEGER},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.crearteby != null">
+				CrearteBy = #{record.crearteby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.isdirect != null">
+				IsDirect = #{record.isdirect,jdbcType=VARCHAR},
+			</if>
+			<if test="record.memorytime != null">
+				MemoryTime = #{record.memorytime,jdbcType=INTEGER},
+			</if>
+			<if test="record.longtime != null">
+				LongTime = #{record.longtime,jdbcType=INTEGER},
+			</if>
+			<if test="record.livevediourl != null">
+				LiveVedioUrl = #{record.livevediourl,jdbcType=VARCHAR},
+			</if>
+			<if test="record.fileid != null">
+				FileID = #{record.fileid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update LiveVedioList
+		set LiveVedioListID = #{record.livevediolistid,jdbcType=BIGINT},
+		LiveVedioStatusID = #{record.livevediostatusid,jdbcType=INTEGER},
+		LiveVedioTitle = #{record.livevediotitle,jdbcType=VARCHAR},
+		LiveVedioAbstract = #{record.livevedioabstract,jdbcType=VARCHAR},
+		CourseTitle = #{record.coursetitle,jdbcType=VARCHAR},
+		CourseAbstract = #{record.courseabstract,jdbcType=VARCHAR},
+		CourseContent = #{record.coursecontent,jdbcType=VARCHAR},
+		Teacher = #{record.teacher,jdbcType=VARCHAR},
+		StartDate = #{record.startdate,jdbcType=TIMESTAMP},
+		StartTime = #{record.starttime,jdbcType=INTEGER},
+		EndTime = #{record.endtime,jdbcType=INTEGER},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CrearteBy = #{record.crearteby,jdbcType=VARCHAR},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+		IsDirect = #{record.isdirect,jdbcType=VARCHAR},
+		MemoryTime = #{record.memorytime,jdbcType=INTEGER},
+		LongTime = #{record.longtime,jdbcType=INTEGER},
+		LiveVedioUrl = #{record.livevediourl,jdbcType=VARCHAR},
+		FileID = #{record.fileid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.vedio.Livevediolist">
+		update LiveVedioList
+		<set>
+			<if test="livevediostatusid != null">
+				LiveVedioStatusID = #{livevediostatusid,jdbcType=INTEGER},
+			</if>
+			<if test="livevediotitle != null">
+				LiveVedioTitle = #{livevediotitle,jdbcType=VARCHAR},
+			</if>
+			<if test="livevedioabstract != null">
+				LiveVedioAbstract = #{livevedioabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="coursetitle != null">
+				CourseTitle = #{coursetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="courseabstract != null">
+				CourseAbstract = #{courseabstract,jdbcType=VARCHAR},
+			</if>
+			<if test="coursecontent != null">
+				CourseContent = #{coursecontent,jdbcType=VARCHAR},
+			</if>
+			<if test="teacher != null">
+				Teacher = #{teacher,jdbcType=VARCHAR},
+			</if>
+			<if test="startdate != null">
+				StartDate = #{startdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="starttime != null">
+				StartTime = #{starttime,jdbcType=INTEGER},
+			</if>
+			<if test="endtime != null">
+				EndTime = #{endtime,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="crearteby != null">
+				CrearteBy = #{crearteby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+			<if test="isdirect != null">
+				IsDirect = #{isdirect,jdbcType=VARCHAR},
+			</if>
+			<if test="memorytime != null">
+				MemoryTime = #{memorytime,jdbcType=INTEGER},
+			</if>
+			<if test="longtime != null">
+				LongTime = #{longtime,jdbcType=INTEGER},
+			</if>
+			<if test="livevediourl != null">
+				LiveVedioUrl = #{livevediourl,jdbcType=VARCHAR},
+			</if>
+			<if test="fileid != null">
+				FileID = #{fileid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where LiveVedioListID = #{livevediolistid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.vedio.Livevediolist">
+		update LiveVedioList
+		set LiveVedioStatusID = #{livevediostatusid,jdbcType=INTEGER},
+		LiveVedioTitle = #{livevediotitle,jdbcType=VARCHAR},
+		LiveVedioAbstract = #{livevedioabstract,jdbcType=VARCHAR},
+		CourseTitle = #{coursetitle,jdbcType=VARCHAR},
+		CourseAbstract = #{courseabstract,jdbcType=VARCHAR},
+		CourseContent = #{coursecontent,jdbcType=VARCHAR},
+		Teacher = #{teacher,jdbcType=VARCHAR},
+		StartDate = #{startdate,jdbcType=TIMESTAMP},
+		StartTime = #{starttime,jdbcType=INTEGER},
+		EndTime = #{endtime,jdbcType=INTEGER},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CrearteBy = #{crearteby,jdbcType=VARCHAR},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+		IsDirect = #{isdirect,jdbcType=VARCHAR},
+		MemoryTime = #{memorytime,jdbcType=INTEGER},
+		LongTime = #{longtime,jdbcType=INTEGER},
+		LiveVedioUrl = #{livevediourl,jdbcType=VARCHAR},
+		FileID = #{fileid,jdbcType=BIGINT}
+		where LiveVedioListID = #{livevediolistid,jdbcType=BIGINT}
+	</update>
+</mapper>

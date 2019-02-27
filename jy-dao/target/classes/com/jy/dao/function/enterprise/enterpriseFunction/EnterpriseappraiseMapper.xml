@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.enterpriseFunction.EnterpriseappraiseMapper" >
+	<resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.enterpriseFunction.Enterpriseappraise" >
+		<id column="EnterpriseAppraiseID" property="enterpriseappraiseid" jdbcType="BIGINT" />
+		<result column="EnterpriseID" property="enterpriseid" jdbcType="INTEGER" />
+		<result column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER" />
+		<result column="AccountID" property="accountid" jdbcType="BIGINT" />
+		<result column="AppraiseDetail" property="appraisedetail" jdbcType="VARCHAR" />
+		<result column="AppraiseTime" property="appraisetime" jdbcType="TIMESTAMP" />
+		<result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+		<result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+		<result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+		<result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+		<result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause" >
+		<where >
+			<foreach collection="oredCriteria" item="criteria" separator="or" >
+				<if test="criteria.valid" >
+					<trim prefix="(" suffix=")" prefixOverrides="and" >
+						<foreach collection="criteria.criteria" item="criterion" >
+							<choose >
+								<when test="criterion.noValue" >
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue" >
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue" >
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue" >
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause" >
+		<where >
+			<foreach collection="example.oredCriteria" item="criteria" separator="or" >
+				<if test="criteria.valid" >
+					<trim prefix="(" suffix=")" prefixOverrides="and" >
+						<foreach collection="criteria.criteria" item="criterion" >
+							<choose >
+								<when test="criterion.noValue" >
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue" >
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue" >
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue" >
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List" >
+    EnterpriseAppraiseID, EnterpriseID, EJobVacancyID, AccountID, AppraiseDetail, AppraiseTime,
+    CreateTime, CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseappraiseExample" >
+		select
+		<if test="distinct" >
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from EnterpriseAppraise
+		<if test="_parameter != null" >
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null" >
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+		select
+		<include refid="Base_Column_List" />
+		from EnterpriseAppraise
+		where EnterpriseAppraiseID = #{enterpriseappraiseid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from EnterpriseAppraise
+    where EnterpriseAppraiseID = #{enterpriseappraiseid,jdbcType=BIGINT}
+  </delete>
+	<delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseappraiseExample" >
+		delete from EnterpriseAppraise
+		<if test="_parameter != null" >
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterpriseappraise" >
+    insert into EnterpriseAppraise (EnterpriseAppraiseID, EnterpriseID,
+      EJobVacancyID, AccountID, AppraiseDetail,
+      AppraiseTime, CreateTime, CreateBy,
+      CreatePersonID, UpdateTime, UpdateBy,
+      UpdatePersonID)
+    values (#{enterpriseappraiseid,jdbcType=BIGINT}, #{enterpriseid,jdbcType=INTEGER},
+      #{ejobvacancyid,jdbcType=INTEGER}, #{accountid,jdbcType=BIGINT}, #{appraisedetail,jdbcType=VARCHAR},
+      #{appraisetime,jdbcType=TIMESTAMP}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR},
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+      #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+	<insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterpriseappraise" >
+		insert into EnterpriseAppraise
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="enterpriseappraiseid != null" >
+				EnterpriseAppraiseID,
+			</if>
+			<if test="enterpriseid != null" >
+				EnterpriseID,
+			</if>
+			<if test="ejobvacancyid != null" >
+				EJobVacancyID,
+			</if>
+			<if test="accountid != null" >
+				AccountID,
+			</if>
+			<if test="appraisedetail != null" >
+				AppraiseDetail,
+			</if>
+			<if test="appraisetime != null" >
+				AppraiseTime,
+			</if>
+			<if test="createtime != null" >
+				CreateTime,
+			</if>
+			<if test="createby != null" >
+				CreateBy,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="enterpriseappraiseid != null">
+				#{enterpriseappraiseid,jdbcType=BIGINT},
+			</if>
+			<if test="enterpriseid != null" >
+				#{enterpriseid,jdbcType=INTEGER},
+			</if>
+			<if test="ejobvacancyid != null" >
+				#{ejobvacancyid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null">
+				#{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="appraisedetail != null">
+				#{appraisedetail,jdbcType=VARCHAR},
+			</if>
+			<if test="appraisetime != null" >
+				#{appraisetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseappraiseExample" resultType="java.lang.Integer" >
+		select count(*) from EnterpriseAppraise
+		<if test="_parameter != null" >
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map" >
+		update EnterpriseAppraise
+		<set >
+			<if test="record.enterpriseappraiseid != null" >
+				EnterpriseAppraiseID = #{record.enterpriseappraiseid,jdbcType=BIGINT},
+			</if>
+			<if test="record.enterpriseid != null" >
+				EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+			</if>
+			<if test="record.ejobvacancyid != null" >
+				EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+			</if>
+			<if test="record.accountid != null" >
+				AccountID = #{record.accountid,jdbcType=BIGINT},
+			</if>
+			<if test="record.appraisedetail != null" >
+				AppraiseDetail = #{record.appraisedetail,jdbcType=VARCHAR},
+			</if>
+			<if test="record.appraisetime != null" >
+				AppraiseTime = #{record.appraisetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createtime != null" >
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createpersonid != null" >
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updatetime != null" >
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null" >
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatepersonid != null" >
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null" >
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map" >
+		update EnterpriseAppraise
+		set EnterpriseAppraiseID = #{record.enterpriseappraiseid,jdbcType=BIGINT},
+		EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+		EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+		AccountID = #{record.accountid,jdbcType=BIGINT},
+		AppraiseDetail = #{record.appraisedetail,jdbcType=VARCHAR},
+		AppraiseTime = #{record.appraisetime,jdbcType=TIMESTAMP},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+		<if test="_parameter != null" >
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterpriseappraise" >
+		update EnterpriseAppraise
+		<set >
+			<if test="enterpriseid != null" >
+				EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+			</if>
+			<if test="ejobvacancyid != null" >
+				EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+			</if>
+			<if test="accountid != null" >
+				AccountID = #{accountid,jdbcType=BIGINT},
+			</if>
+			<if test="appraisedetail != null" >
+				AppraiseDetail = #{appraisedetail,jdbcType=VARCHAR},
+			</if>
+			<if test="appraisetime != null" >
+				AppraiseTime = #{appraisetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where EnterpriseAppraiseID = #{enterpriseappraiseid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.Enterpriseappraise" >
+    update EnterpriseAppraise
+    set EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+      EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER},
+      AccountID = #{accountid,jdbcType=BIGINT},
+      AppraiseDetail = #{appraisedetail,jdbcType=VARCHAR},
+      AppraiseTime = #{appraisetime,jdbcType=TIMESTAMP},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where EnterpriseAppraiseID = #{enterpriseappraiseid,jdbcType=BIGINT}
+  </update>
+
+
+	<!-- 查询企业未评价人员列表 -->
+	<select id="getHasHiredByNotAppraiseList" resultType="map">
+		SELECT
+		a.AccountID,
+		a.Name,
+		a.Phone,
+		ejv.EJobVacancyID AS JobID,
+		ejv.JobTitle,
+		"" AS AppraiseDetail
+		FROM
+		EnterpriseRecruitingProcess erp LEFT JOIN Account a ON erp.AccountID = a.AccountID
+		LEFT JOIN EnterpriseJobVacancy ejv ON erp.EJobVacancyID = ejv.EJobVacancyID
+		WHERE
+		erp.PDeliveryStatusID = 6
+		AND  erp.ApplicationStatusID = 2
+		AND erp.EnterpriseID = #{enterpriseID}
+		<if test="jobID != null">
+			AND erp.EJobVacancyID = #{jobID}
+		</if>
+		<if test="ids !=null">
+			<foreach collection="ids" open="AND erp.ID NOT IN(" separator="," close=")" item="id">
+				#{id}
+			</foreach>
+		</if>
+		<if test="search">
+			AND (
+			a.Name LIKE #{search}
+			OR
+			a.Phone LIKE #{search}
+			OR
+			ejv.JobTitle LIKE #{search}
+			)
+		</if>
+	</select>
+
+
+	<!-- 查询企业招聘人员已评价列表 -->
+	<select id="getHasHiredByAppraiseList" resultType="map">
+		SELECT
+			a.AccountID,
+			a.`Name`,
+			a.Phone,
+			ejv.EJobVacancyID AS JobID,
+			ejv.JobTitle,
+			ea.AppraiseDetail,
+			ea.AppraiseTime
+		FROM
+			EnterpriseAppraise ea LEFT JOIN Account a ON ea.AccountID = a.AccountID
+		LEFT JOIN EnterpriseJobVacancy ejv ON ea.EJobVacancyID = ejv.EJobVacancyID
+		WHERE
+			ea.EnterpriseID = #{enterpriseID}
+			<if test="jobID != null">
+				AND ea.EJobVacancyID = #{jobID}
+			</if>
+			<if test="search != null">
+				AND (
+				a.Name LIKE #{search}
+				OR
+				a.Phone LIKE #{search}
+				OR
+				ejv.JobTitle LIKE #{search}
+				)
+			</if>
+		ORDER BY AppraiseTime DESC
+	</select>
+
+	<!-- 查询未评价总数 -->
+	<select id="getHasHiredByNotAppraiseCount" resultType="int">
+		SELECT
+			count(*)
+		FROM
+		EnterpriseRecruitingProcess
+		WHERE
+			PDeliveryStatusID = 6
+			AND ApplicationStatusID = 2
+			AND EnterpriseID = #{enterpriseID}
+			<if test="ids !=null">
+				<foreach collection="ids" open="AND ID NOT IN(" separator="," close=")" item="id">
+					#{id}
+				</foreach>
+			</if>
+	</select>
+
+
+    <select id="getHasHiredByAppraiseListAll" resultType="map">
+		SELECT
+		a.`Name`,
+		ejv.JobTitle,
+		erp.ApplicationTime,
+		ejv.JobTitle
+		ea.AppraiseTime,
+		ea.AppraiseDetail,
+		FROM
+		EnterpriseAppraise ea LEFT JOIN Account a ON ea.AccountID = a.AccountID
+		LEFT JOIN EnterpriseJobVacancy ejv ON ea.EJobVacancyID = ejv.EJobVacancyID
+		LEFT JOIN EnterpriseRecruitingProcess erp ON ea.AccountID = erp.AccountID
+		WHERE
+		<if test="search != null">
+			AND a.Name LIKE #{search}
+		</if>
+		<if test="searchDate != null">
+			AND erp.ApplicationTime LIKE #{searchDate}
+		</if>
+		ORDER BY AppraiseTime DESC
+    </select>
+</mapper>

@@ -1,0 +1,75 @@
+package com.jy.service.system.email;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.system.email.Setmail;
+
+/**
+ * @ClassName:  SetingMailService
+ * @Description:邮箱设置服务接口
+ * @author: chenye
+ * @date:   2018-08-14 16:18
+ */
+public interface SetingMailService {
+
+	/**
+	 * 获取原邮箱设置信息
+	 * @return
+	 */
+	public Setmail getSetingMail();
+
+
+	/**
+	 * 新增邮箱设置信息
+	 * @param accountInfo
+	 * @param sms
+	 * @return
+	 * @throws MyException
+	 */
+	public Result insertSetingMail(AccountInfo accountInfo,String CONTROLLER_CODE,Setmail setingMail) throws MyException;
+
+
+	/**
+	 * 修改邮箱设置信息
+	 * @param accountInfo
+	 * @param sms
+	 * @return
+	 */
+	public Result updateSetingMail(AccountInfo accountInfo,String CONTROLLER_CODE,Setmail setingMail) throws MyException;
+
+
+	/**
+	 * 发送邮件
+	 * @param accountInfo 当前登陆人员
+	 * @param AUTHORITY_CODE 权限编码
+	 * @param IsCheckAuthority 是否验证权限
+	 * @param title 邮件标题
+	 * @param content 邮件内容
+	 * @param files 邮件附件
+	 * @param RmailIP 目标邮箱地址列表
+	 * @return
+	 * @throws Exception
+	 */
+	public Result sendMail(AccountInfo accountInfo,String AUTHORITY_CODE ,Boolean IsCheckAuthority, String title,String content,String[] files,String[] RmailIP) throws Exception;
+
+
+	/**
+	 * 发送验证邮箱邮件
+	 * @param accountInfo 当前的登陆人员
+	 * @param email 邮箱
+	 * @param redirectUrl 回调地址
+	 * @return
+	 * @throws Exception
+	 */
+	public Result doJSP(AccountInfo accountInfo, String email, String redirectUrl) throws Exception;
+
+	/**
+	 * 作者: Cheng Fei
+	 * 创建日期: 2018/11/4 19:01
+	 * 描述 : 发送找回密码邮件接口
+	 * @param email 邮箱
+	 * @param redirectUrl 回调地址
+	 * @return
+	 */
+	Result resetPassword(String email, String redirectUrl) throws Exception;
+}

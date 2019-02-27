@@ -1,0 +1,129 @@
+package com.jy.controller.function.enterprise.recruitment.rz;
+
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.controller.base.BaseController;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess;
+import com.jy.service.function.enterprise.recruitment.rz.PersonDeliveryApplicationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+
+/**
+ * @ClassName:  PersonDeliveryApplicationController
+ * @Description:简历投递申请接口
+ * @author: cheng fei
+ * @date:   2018-09-07 10:52
+ */
+
+@Controller
+@RequestMapping("person/delivery/application")
+@Api(tags = "function.enterprise.recruitment.rz.PersonDeliveryApplicationController", description = "功能-企业端-企业招聘-简历投递申请模块")
+public class PersonDeliveryApplicationController extends BaseController {
+
+
+	@Resource
+	private PersonDeliveryApplicationService personDeliveryApplicationService;
+
+
+	@ApiOperation(value = "投递简历接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
+	public Result insertPersonDeliveryApplication(
+			@ApiParam(value = "企业职位ID", required = true) @RequestParam(required = false) Integer jobID,
+			@ApiParam(value = "投递人账号ID", required = true) @RequestParam(required = false) Long accountID
+			) throws MyException {
+        AccountInfo accountInfo = this.getAccountInfo();
+        return personDeliveryApplicationService.insertPersonDeliveryApplication(accountInfo, jobID, accountID);
+	}
+
+	@ApiOperation(value = "判断是否投递简历接口", httpMethod = "PATCH", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.PATCH)
+	@ResponseBody
+	public Result checkPersonDeliveryApplication(
+			@ApiParam(value = "企业职位ID", required = true) @RequestParam(required = false) Integer jobID,
+			@ApiParam(value = "投递人账号ID", required = true) @RequestParam(required = false) Long accountID
+	) throws MyException {
+		return personDeliveryApplicationService.checkPersonDeliveryApplication(jobID, accountID);
+	}
+
+
+	@ApiOperation(value = "获取企业招聘职位简历列表", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getPersonDeliveryApplicationList(
+			@ApiParam(value = "企业职位ID", required = false) @RequestParam(required = false, defaultValue = "0") Integer jobID,
+			@ApiParam(value = "搜索关键词,模糊查询姓名,手机号,学校", required = false) @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam(value = "简历投递流程状态:1.主动投递-待处理,2.主动投递-不合适,3.面试-进行中,4.面试-不合适,5.录用-待入职,6.录用-已入职,7.录用-未入职", required = true) @RequestParam(required = true) Integer personDeliveryStatusID,
+			@ApiParam(value = "页码", required = false) @RequestParam(required = false, defaultValue = "1") Integer page,
+			@ApiParam(value = "每页显示条数", required = false) @RequestParam(required = false, defaultValue = "10") Integer pageSize
+			) {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return personDeliveryApplicationService.getPersonDeliveryApplicationList(accountInfo, jobID,search, personDeliveryStatusID, page, pageSize);
+	}
+
+	@ApiOperation(value = "获取企业招聘职位简历总数", httpMethod = "GET", produces = "application/json")
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	@ResponseBody
+	public Result getPersonDeliveryApplicationCount(
+			@ApiParam(value = "简历投递流程状态:1.主动投递-待处理,2.主动投递-不合适,3.面试-进行中,4.面试-不合适,5.录用-待入职,6.录用-已入职,7.录用-未入职", required = true) @RequestParam(required = true) Integer personDeliveryStatusID
+			) {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return personDeliveryApplicationService.getPersonDeliveryApplicationCount(accountInfo, personDeliveryStatusID);
+	}
+
+	@ApiOperation(value = "修改简历投递状态接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "/deliver/status", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result inappropriateByDeliver(
+			@ApiParam(value = "企业招聘职位表ID列表,用\",\"隔开", required = true) @RequestParam(required = true) String ids,
+			@ApiParam(value = "简历投递流程状态:1.主动投递-待处理,2.主动投递-不合适,3.面试-进行中,4.面试-不合适,5.录用-待入职,6.录用-已入职,7.录用-未入职", required = true) @RequestParam(required = true) Integer status
+			) throws MyException {
+		AccountInfo accountInfo = getAccountInfo();
+		return personDeliveryApplicationService.updateDeliverStatus(accountInfo, ids, status);
+	}
+
+	@ApiOperation(value = "修改确认入职时间接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "confirm/entry/time", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result updateConfirmEntryTime(
+			@ApiParam(value = "企业招聘职位表ID", required = true) @RequestParam(required = true) Long id,
+			@ApiParam(value = "确认入职时间", required = true) @RequestParam(required = true) String confirmEntryTime
+	) throws MyException {
+		AccountInfo accountInfo = getAccountInfo();
+        Enterpriserecruitingprocess enterpriserecruitingprocess = new Enterpriserecruitingprocess();
+        enterpriserecruitingprocess.setId(id);
+        try {
+
+        enterpriserecruitingprocess.setConfirmentrytime(DateUtils.dateParse(confirmEntryTime, DateUtils.DATE_PATTERN));
+        }catch (Exception e){
+            return Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+        return personDeliveryApplicationService.updateConfirmEntryTime(accountInfo, enterpriserecruitingprocess);
+	}
+
+
+	@ApiOperation(value = "修改面试时间接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "/interview/time", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result updateInterviewTime(
+			@ApiParam(value = "企业招聘职位表ID", required = true) @RequestParam(required = true) Long id,
+			@ApiParam(value = "面试时间", required = true) @RequestParam(required = true) String interviewTime
+	) throws MyException {
+        AccountInfo accountInfo = this.getAccountInfo();
+        return personDeliveryApplicationService.updateInterviewTime(accountInfo,id, interviewTime);
+	}
+
+
+}

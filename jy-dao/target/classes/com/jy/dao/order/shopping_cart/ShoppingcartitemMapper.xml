@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.jy.dao.order.shopping_cart.ShoppingcartitemMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.order.shopping_cart.Shoppingcartitem">
+		<id column="CartItemID" property="cartitemid" jdbcType="BIGINT" />
+		<result column="CartID" property="cartid" jdbcType="BIGINT" />
+		<result column="Quainty" property="quainty" jdbcType="INTEGER" />
+		<result column="UnitPrice" property="unitprice"
+			jdbcType="DECIMAL" />
+		<result column="Discount" property="discount" jdbcType="REAL" />
+		<result column="ProductID" property="productid"
+			jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		CartItemID, CartID, Quainty, UnitPrice, Discount, ProductID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.order.shopping_cart.ShoppingcartitemExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from ShoppingCartItem
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from ShoppingCartItem
+		where CartItemID = #{cartitemid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from ShoppingCartItem
+		where CartItemID = #{cartitemid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.order.shopping_cart.ShoppingcartitemExample">
+		delete from ShoppingCartItem
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.order.shopping_cart.Shoppingcartitem">
+		insert into ShoppingCartItem (CartItemID, CartID, Quainty,
+		UnitPrice, Discount, ProductID
+		)
+		values (#{cartitemid,jdbcType=BIGINT}, #{cartid,jdbcType=BIGINT},
+		#{quainty,jdbcType=INTEGER},
+		#{unitprice,jdbcType=DECIMAL}, #{discount,jdbcType=REAL}, #{productid,jdbcType=BIGINT}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.order.shopping_cart.Shoppingcartitem">
+		<selectKey keyProperty="cartitemid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+		insert into ShoppingCartItem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="cartitemid != null">
+				CartItemID,
+			</if>
+			<if test="cartid != null">
+				CartID,
+			</if>
+			<if test="quainty != null">
+				Quainty,
+			</if>
+			<if test="unitprice != null">
+				UnitPrice,
+			</if>
+			<if test="discount != null">
+				Discount,
+			</if>
+			<if test="productid != null">
+				ProductID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="cartitemid != null">
+				#{cartitemid,jdbcType=BIGINT},
+			</if>
+			<if test="cartid != null">
+				#{cartid,jdbcType=BIGINT},
+			</if>
+			<if test="quainty != null">
+				#{quainty,jdbcType=INTEGER},
+			</if>
+			<if test="unitprice != null">
+				#{unitprice,jdbcType=DECIMAL},
+			</if>
+			<if test="discount != null">
+				#{discount,jdbcType=REAL},
+			</if>
+			<if test="productid != null">
+				#{productid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.order.shopping_cart.ShoppingcartitemExample"
+		resultType="java.lang.Integer">
+		select count(*) from ShoppingCartItem
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update ShoppingCartItem
+		<set>
+			<if test="record.cartitemid != null">
+				CartItemID = #{record.cartitemid,jdbcType=BIGINT},
+			</if>
+			<if test="record.cartid != null">
+				CartID = #{record.cartid,jdbcType=BIGINT},
+			</if>
+			<if test="record.quainty != null">
+				Quainty = #{record.quainty,jdbcType=INTEGER},
+			</if>
+			<if test="record.unitprice != null">
+				UnitPrice = #{record.unitprice,jdbcType=DECIMAL},
+			</if>
+			<if test="record.discount != null">
+				Discount = #{record.discount,jdbcType=REAL},
+			</if>
+			<if test="record.productid != null">
+				ProductID = #{record.productid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update ShoppingCartItem
+		set CartItemID = #{record.cartitemid,jdbcType=BIGINT},
+		CartID = #{record.cartid,jdbcType=BIGINT},
+		Quainty = #{record.quainty,jdbcType=INTEGER},
+		UnitPrice = #{record.unitprice,jdbcType=DECIMAL},
+		Discount = #{record.discount,jdbcType=REAL},
+		ProductID = #{record.productid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.order.shopping_cart.Shoppingcartitem">
+		update ShoppingCartItem
+		<set>
+			<if test="cartid != null">
+				CartID = #{cartid,jdbcType=BIGINT},
+			</if>
+			<if test="quainty != null">
+				Quainty = #{quainty,jdbcType=INTEGER},
+			</if>
+			<if test="unitprice != null">
+				UnitPrice = #{unitprice,jdbcType=DECIMAL},
+			</if>
+			<if test="discount != null">
+				Discount = #{discount,jdbcType=REAL},
+			</if>
+			<if test="productid != null">
+				ProductID = #{productid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where CartItemID = #{cartitemid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.order.shopping_cart.Shoppingcartitem">
+		update ShoppingCartItem
+		set CartID = #{cartid,jdbcType=BIGINT},
+		Quainty = #{quainty,jdbcType=INTEGER},
+		UnitPrice = #{unitprice,jdbcType=DECIMAL},
+		Discount = #{discount,jdbcType=REAL},
+		ProductID = #{productid,jdbcType=BIGINT}
+		where CartItemID = #{cartitemid,jdbcType=BIGINT}
+	</update>
+</mapper>

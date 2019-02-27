@@ -1,0 +1,31 @@
+jdbc.driver=com.mysql.jdbc.Driver
+
+# 项目部署数据库(内网-后端01)
+# jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy.mysql.rds.aliyuncs.com/zbxc?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# jdbc.username=root
+# jdbc.password=zbxc@12345
+
+# 项目部署数据库(内网-客户环境-后端02)
+# jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy.mysql.rds.aliyuncs.com/zbxc_v1.0?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# jdbc.username=root
+# jdbc.password=zbxc@12345
+
+# 项目部署数据库(外网)
+
+jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy7o.mysql.rds.aliyuncs.com/zbxc?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+jdbc.username=root
+jdbc.password=zbxc@12345
+
+# jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy7o.mysql.rds.aliyuncs.com/zbxc?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# jdbc.username=root
+# jdbc.password=zbxc@12345
+#
+# jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy7o.mysql.rds.aliyuncs.com/zbxc?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# jdbc.username=root
+# jdbc.password=zbxc@12345
+
+# 项目部署数据库(外网-客户环境)
+# jdbc.url=jdbc:mysql://rm-wz90b6h1i51vtfzoy7o.mysql.rds.aliyuncs.com/zbxc_v1.0?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# jdbc.username=root
+# jdbc.password=zbxc@12345
+

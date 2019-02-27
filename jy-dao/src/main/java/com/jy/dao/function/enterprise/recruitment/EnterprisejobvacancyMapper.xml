@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.recruitment.EnterprisejobvacancyMapper">
+    <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy">
+        <id column="EJobVacancyID" property="ejobvacancyid" jdbcType="INTEGER"/>
+        <result column="EnterpriseID" property="enterpriseid" jdbcType="INTEGER"/>
+        <result column="SalaryTypeID" property="salarytypeid" jdbcType="INTEGER"/>
+        <result column="ProvinceCode" property="provincecode" jdbcType="VARCHAR"/>
+        <result column="CityCode" property="citycode" jdbcType="VARCHAR"/>
+        <result column="CountyCode" property="countycode" jdbcType="VARCHAR"/>
+        <result column="JobPropertyID" property="jobpropertyid" jdbcType="INTEGER"/>
+        <result column="JobTypeID" property="jobtypeid" jdbcType="INTEGER"/>
+        <result column="EducationID" property="educationid" jdbcType="INTEGER"/>
+        <result column="JobTitle" property="jobtitle" jdbcType="VARCHAR"/>
+        <result column="WorkAddress" property="workaddress" jdbcType="VARCHAR"/>
+        <result column="HirePeopleNo" property="hirepeopleno" jdbcType="INTEGER"/>
+        <result column="IsFinalHire" property="isfinalhire" jdbcType="VARCHAR"/>
+        <result column="RecruitExpireDate" property="recruitexpiredate" jdbcType="TIMESTAMP"/>
+        <result column="ExpirenceRequirement" property="expirencerequirement" jdbcType="VARCHAR"/>
+        <result column="JobChineseRequirement" property="jobchineserequirement" jdbcType="VARCHAR"/>
+        <result column="JobChineseResponsibility" property="jobchineseresponsibility" jdbcType="VARCHAR"/>
+        <result column="JobEnglishRequirement" property="jobenglishrequirement" jdbcType="VARCHAR"/>
+        <result column="JobEnglishResponsibility" property="jobenglishresponsibility" jdbcType="VARCHAR"/>
+        <result column="Salary" property="salary" jdbcType="VARCHAR"/>
+        <result column="SalaryPriceBeforeTax" property="salarypricebeforetax" jdbcType="DECIMAL"/>
+        <result column="SalaryPriceAfterTax" property="salarypriceaftertax" jdbcType="DECIMAL"/>
+        <result column="CreateBy" property="createby" jdbcType="VARCHAR"/>
+        <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP"/>
+        <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT"/>
+        <result column="UpdateBy" property="updateby" jdbcType="VARCHAR"/>
+        <result column="UpdateTmie" property="updatetmie" jdbcType="TIMESTAMP"/>
+        <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT"/>
+        <result column="Remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="IsOpen" property="isopen" jdbcType="CHAR"/>
+        <result column="LeftPeopleNo" property="leftpeopleno" jdbcType="INTEGER"/>
+        <result column="NextReruitDate" property="nextreruitdate" jdbcType="TIMESTAMP"/>
+        <result column="IsAuditPassed" property="isauditpassed" jdbcType="CHAR"/>
+        <result column="Auditor" property="auditor" jdbcType="VARCHAR"/>
+        <result column="AuditorID" property="auditorid" jdbcType="INTEGER"/>
+        <result column="AuditComment" property="auditcomment" jdbcType="VARCHAR"/>
+        <result column="IsZhongBoXingChen" property="iszhongboxingchen" jdbcType="CHAR"/>
+        <result column="IsDelete" property="isdelete" jdbcType="CHAR"/>
+        <result column="IsSalaryOnFace" property="issalaryonface" jdbcType="CHAR"/>
+        <result column="DeploymentTime" property="deploymenttime" jdbcType="TIMESTAMP"/>
+        <result column="Department" property="department" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    EJobVacancyID, EnterpriseID, SalaryTypeID, ProvinceCode, CityCode, CountyCode, JobPropertyID,
+    JobTypeID, EducationID, JobTitle, WorkAddress, HirePeopleNo, IsFinalHire, RecruitExpireDate,
+    ExpirenceRequirement, JobChineseRequirement, JobChineseResponsibility, JobEnglishRequirement,
+    JobEnglishResponsibility, Salary, SalaryPriceBeforeTax, SalaryPriceAfterTax, CreateBy,
+    CreateTime, CreatePersonID, UpdateBy, UpdateTmie, UpdatePersonID, Remark, IsOpen,
+    LeftPeopleNo, NextReruitDate, IsAuditPassed, Auditor, AuditorID, AuditComment, IsZhongBoXingChen,
+    IsDelete, IsSalaryOnFace, DeploymentTime, Department
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.jy.entiy.function.enterprise.recruitment.EnterprisejobvacancyExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from EnterpriseJobVacancy
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from EnterpriseJobVacancy
+        where EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from EnterpriseJobVacancy
+    where EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample"
+            parameterType="com.jy.entiy.function.enterprise.recruitment.EnterprisejobvacancyExample">
+        delete from EnterpriseJobVacancy
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy">
+    insert into EnterpriseJobVacancy (EJobVacancyID, EnterpriseID, SalaryTypeID,
+      ProvinceCode, CityCode, CountyCode,
+      JobPropertyID, JobTypeID, EducationID,
+      JobTitle, WorkAddress, HirePeopleNo,
+      IsFinalHire, RecruitExpireDate, ExpirenceRequirement,
+      JobChineseRequirement, JobChineseResponsibility,
+      JobEnglishRequirement, JobEnglishResponsibility,
+      Salary, SalaryPriceBeforeTax, SalaryPriceAfterTax,
+      CreateBy, CreateTime, CreatePersonID,
+      UpdateBy, UpdateTmie, UpdatePersonID,
+      Remark, IsOpen, LeftPeopleNo,
+      NextReruitDate, IsAuditPassed, Auditor,
+      AuditorID, AuditComment, IsZhongBoXingChen,
+      IsDelete, IsSalaryOnFace, DeploymentTime,
+      Department)
+    values (#{ejobvacancyid,jdbcType=INTEGER}, #{enterpriseid,jdbcType=INTEGER}, #{salarytypeid,jdbcType=INTEGER},
+      #{provincecode,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR}, #{countycode,jdbcType=VARCHAR},
+      #{jobpropertyid,jdbcType=INTEGER}, #{jobtypeid,jdbcType=INTEGER}, #{educationid,jdbcType=INTEGER},
+      #{jobtitle,jdbcType=VARCHAR}, #{workaddress,jdbcType=VARCHAR}, #{hirepeopleno,jdbcType=INTEGER},
+      #{isfinalhire,jdbcType=VARCHAR}, #{recruitexpiredate,jdbcType=TIMESTAMP}, #{expirencerequirement,jdbcType=VARCHAR},
+      #{jobchineserequirement,jdbcType=VARCHAR}, #{jobchineseresponsibility,jdbcType=VARCHAR},
+      #{jobenglishrequirement,jdbcType=VARCHAR}, #{jobenglishresponsibility,jdbcType=VARCHAR},
+      #{salary,jdbcType=VARCHAR}, #{salarypricebeforetax,jdbcType=DECIMAL}, #{salarypriceaftertax,jdbcType=DECIMAL},
+      #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT},
+      #{updateby,jdbcType=VARCHAR}, #{updatetmie,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT},
+      #{remark,jdbcType=VARCHAR}, #{isopen,jdbcType=CHAR}, #{leftpeopleno,jdbcType=INTEGER},
+      #{nextreruitdate,jdbcType=TIMESTAMP}, #{isauditpassed,jdbcType=CHAR}, #{auditor,jdbcType=VARCHAR},
+      #{auditorid,jdbcType=INTEGER}, #{auditcomment,jdbcType=VARCHAR}, #{iszhongboxingchen,jdbcType=CHAR},
+      #{isdelete,jdbcType=CHAR}, #{issalaryonface,jdbcType=CHAR}, #{deploymenttime,jdbcType=TIMESTAMP},
+      #{department,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy"
+            useGeneratedKeys="true" keyColumn="EJobVacancyID" keyProperty="ejobvacancyid">
+        insert into EnterpriseJobVacancy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ejobvacancyid != null">
+                EJobVacancyID,
+            </if>
+            <if test="enterpriseid != null">
+                EnterpriseID,
+            </if>
+            <if test="salarytypeid != null">
+                SalaryTypeID,
+            </if>
+            <if test="provincecode != null">
+                ProvinceCode,
+            </if>
+            <if test="citycode != null">
+                CityCode,
+            </if>
+            <if test="countycode != null">
+                CountyCode,
+            </if>
+            <if test="jobpropertyid != null">
+                JobPropertyID,
+            </if>
+            <if test="jobtypeid != null">
+                JobTypeID,
+            </if>
+            <if test="educationid != null">
+                EducationID,
+            </if>
+            <if test="jobtitle != null">
+                JobTitle,
+            </if>
+            <if test="workaddress != null">
+                WorkAddress,
+            </if>
+            <if test="hirepeopleno != null">
+                HirePeopleNo,
+            </if>
+            <if test="isfinalhire != null">
+                IsFinalHire,
+            </if>
+            <if test="recruitexpiredate != null">
+                RecruitExpireDate,
+            </if>
+            <if test="expirencerequirement != null">
+                ExpirenceRequirement,
+            </if>
+            <if test="jobchineserequirement != null">
+                JobChineseRequirement,
+            </if>
+            <if test="jobchineseresponsibility != null">
+                JobChineseResponsibility,
+            </if>
+            <if test="jobenglishrequirement != null">
+                JobEnglishRequirement,
+            </if>
+            <if test="jobenglishresponsibility != null">
+                JobEnglishResponsibility,
+            </if>
+            <if test="salary != null">
+                Salary,
+            </if>
+            <if test="salarypricebeforetax != null">
+                SalaryPriceBeforeTax,
+            </if>
+            <if test="salarypriceaftertax != null">
+                SalaryPriceAfterTax,
+            </if>
+            <if test="createby != null">
+                CreateBy,
+            </if>
+            <if test="createtime != null">
+                CreateTime,
+            </if>
+            <if test="createpersonid != null">
+                CreatePersonID,
+            </if>
+            <if test="updateby != null">
+                UpdateBy,
+            </if>
+            <if test="updatetmie != null">
+                UpdateTmie,
+            </if>
+            <if test="updatepersonid != null">
+                UpdatePersonID,
+            </if>
+            <if test="remark != null">
+                Remark,
+            </if>
+            <if test="isopen != null">
+                IsOpen,
+            </if>
+            <if test="leftpeopleno != null">
+                LeftPeopleNo,
+            </if>
+            <if test="nextreruitdate != null">
+                NextReruitDate,
+            </if>
+            <if test="isauditpassed != null">
+                IsAuditPassed,
+            </if>
+            <if test="auditor != null">
+                Auditor,
+            </if>
+            <if test="auditorid != null">
+                AuditorID,
+            </if>
+            <if test="auditcomment != null">
+                AuditComment,
+            </if>
+            <if test="iszhongboxingchen != null">
+                IsZhongBoXingChen,
+            </if>
+            <if test="isdelete != null">
+                IsDelete,
+            </if>
+            <if test="issalaryonface != null">
+                IsSalaryOnFace,
+            </if>
+            <if test="deploymenttime != null">
+                DeploymentTime,
+            </if>
+            <if test="department != null">
+                Department,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ejobvacancyid != null">
+                #{ejobvacancyid,jdbcType=INTEGER},
+            </if>
+            <if test="enterpriseid != null">
+                #{enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="salarytypeid != null">
+                #{salarytypeid,jdbcType=INTEGER},
+            </if>
+            <if test="provincecode != null">
+                #{provincecode,jdbcType=VARCHAR},
+            </if>
+            <if test="citycode != null">
+                #{citycode,jdbcType=VARCHAR},
+            </if>
+            <if test="countycode != null">
+                #{countycode,jdbcType=VARCHAR},
+            </if>
+            <if test="jobpropertyid != null">
+                #{jobpropertyid,jdbcType=INTEGER},
+            </if>
+            <if test="jobtypeid != null">
+                #{jobtypeid,jdbcType=INTEGER},
+            </if>
+            <if test="educationid != null">
+                #{educationid,jdbcType=INTEGER},
+            </if>
+            <if test="jobtitle != null">
+                #{jobtitle,jdbcType=VARCHAR},
+            </if>
+            <if test="workaddress != null">
+                #{workaddress,jdbcType=VARCHAR},
+            </if>
+            <if test="hirepeopleno != null">
+                #{hirepeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="isfinalhire != null">
+                #{isfinalhire,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitexpiredate != null">
+                #{recruitexpiredate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="expirencerequirement != null">
+                #{expirencerequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobchineserequirement != null">
+                #{jobchineserequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobchineseresponsibility != null">
+                #{jobchineseresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="jobenglishrequirement != null">
+                #{jobenglishrequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobenglishresponsibility != null">
+                #{jobenglishresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="salary != null">
+                #{salary,jdbcType=VARCHAR},
+            </if>
+            <if test="salarypricebeforetax != null">
+                #{salarypricebeforetax,jdbcType=DECIMAL},
+            </if>
+            <if test="salarypriceaftertax != null">
+                #{salarypriceaftertax,jdbcType=DECIMAL},
+            </if>
+            <if test="createby != null">
+                #{createby,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createpersonid != null">
+                #{createpersonid,jdbcType=BIGINT},
+            </if>
+            <if test="updateby != null">
+                #{updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="updatetmie != null">
+                #{updatetmie,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatepersonid != null">
+                #{updatepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isopen != null">
+                #{isopen,jdbcType=CHAR},
+            </if>
+            <if test="leftpeopleno != null">
+                #{leftpeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="nextreruitdate != null">
+                #{nextreruitdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isauditpassed != null">
+                #{isauditpassed,jdbcType=CHAR},
+            </if>
+            <if test="auditor != null">
+                #{auditor,jdbcType=VARCHAR},
+            </if>
+            <if test="auditorid != null">
+                #{auditorid,jdbcType=INTEGER},
+            </if>
+            <if test="auditcomment != null">
+                #{auditcomment,jdbcType=VARCHAR},
+            </if>
+            <if test="iszhongboxingchen != null">
+                #{iszhongboxingchen,jdbcType=CHAR},
+            </if>
+            <if test="isdelete != null">
+                #{isdelete,jdbcType=CHAR},
+            </if>
+            <if test="issalaryonface != null">
+                #{issalaryonface,jdbcType=CHAR},
+            </if>
+            <if test="deploymenttime != null">
+                #{deploymenttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="department != null">
+                #{department,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.recruitment.EnterprisejobvacancyExample"
+            resultType="java.lang.Integer">
+        select count(*) from EnterpriseJobVacancy
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update EnterpriseJobVacancy
+        <set>
+            <if test="record.ejobvacancyid != null">
+                EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+            </if>
+            <if test="record.enterpriseid != null">
+                EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="record.salarytypeid != null">
+                SalaryTypeID = #{record.salarytypeid,jdbcType=INTEGER},
+            </if>
+            <if test="record.provincecode != null">
+                ProvinceCode = #{record.provincecode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.citycode != null">
+                CityCode = #{record.citycode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.countycode != null">
+                CountyCode = #{record.countycode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobpropertyid != null">
+                JobPropertyID = #{record.jobpropertyid,jdbcType=INTEGER},
+            </if>
+            <if test="record.jobtypeid != null">
+                JobTypeID = #{record.jobtypeid,jdbcType=INTEGER},
+            </if>
+            <if test="record.educationid != null">
+                EducationID = #{record.educationid,jdbcType=INTEGER},
+            </if>
+            <if test="record.jobtitle != null">
+                JobTitle = #{record.jobtitle,jdbcType=VARCHAR},
+            </if>
+            <if test="record.workaddress != null">
+                WorkAddress = #{record.workaddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.hirepeopleno != null">
+                HirePeopleNo = #{record.hirepeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="record.isfinalhire != null">
+                IsFinalHire = #{record.isfinalhire,jdbcType=VARCHAR},
+            </if>
+            <if test="record.recruitexpiredate != null">
+                RecruitExpireDate = #{record.recruitexpiredate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.expirencerequirement != null">
+                ExpirenceRequirement = #{record.expirencerequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobchineserequirement != null">
+                JobChineseRequirement = #{record.jobchineserequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobchineseresponsibility != null">
+                JobChineseResponsibility = #{record.jobchineseresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobenglishrequirement != null">
+                JobEnglishRequirement = #{record.jobenglishrequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobenglishresponsibility != null">
+                JobEnglishResponsibility = #{record.jobenglishresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="record.salary != null">
+                Salary = #{record.salary,jdbcType=VARCHAR},
+            </if>
+            <if test="record.salarypricebeforetax != null">
+                SalaryPriceBeforeTax = #{record.salarypricebeforetax,jdbcType=DECIMAL},
+            </if>
+            <if test="record.salarypriceaftertax != null">
+                SalaryPriceAfterTax = #{record.salarypriceaftertax,jdbcType=DECIMAL},
+            </if>
+            <if test="record.createby != null">
+                CreateBy = #{record.createby,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createtime != null">
+                CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createpersonid != null">
+                CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+            </if>
+            <if test="record.updateby != null">
+                UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="record.updatetmie != null">
+                UpdateTmie = #{record.updatetmie,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updatepersonid != null">
+                UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="record.remark != null">
+                Remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.isopen != null">
+                IsOpen = #{record.isopen,jdbcType=CHAR},
+            </if>
+            <if test="record.leftpeopleno != null">
+                LeftPeopleNo = #{record.leftpeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="record.nextreruitdate != null">
+                NextReruitDate = #{record.nextreruitdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.isauditpassed != null">
+                IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+            </if>
+            <if test="record.auditor != null">
+                Auditor = #{record.auditor,jdbcType=VARCHAR},
+            </if>
+            <if test="record.auditorid != null">
+                AuditorID = #{record.auditorid,jdbcType=INTEGER},
+            </if>
+            <if test="record.auditcomment != null">
+                AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+            </if>
+            <if test="record.iszhongboxingchen != null">
+                IsZhongBoXingChen = #{record.iszhongboxingchen,jdbcType=CHAR},
+            </if>
+            <if test="record.isdelete != null">
+                IsDelete = #{record.isdelete,jdbcType=CHAR},
+            </if>
+            <if test="record.issalaryonface != null">
+                IsSalaryOnFace = #{record.issalaryonface,jdbcType=CHAR},
+            </if>
+            <if test="record.deploymenttime != null">
+                DeploymentTime = #{record.deploymenttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.department != null">
+                Department = #{record.department,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update EnterpriseJobVacancy
+        set EJobVacancyID = #{record.ejobvacancyid,jdbcType=INTEGER},
+        EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+        SalaryTypeID = #{record.salarytypeid,jdbcType=INTEGER},
+        ProvinceCode = #{record.provincecode,jdbcType=VARCHAR},
+        CityCode = #{record.citycode,jdbcType=VARCHAR},
+        CountyCode = #{record.countycode,jdbcType=VARCHAR},
+        JobPropertyID = #{record.jobpropertyid,jdbcType=INTEGER},
+        JobTypeID = #{record.jobtypeid,jdbcType=INTEGER},
+        EducationID = #{record.educationid,jdbcType=INTEGER},
+        JobTitle = #{record.jobtitle,jdbcType=VARCHAR},
+        WorkAddress = #{record.workaddress,jdbcType=VARCHAR},
+        HirePeopleNo = #{record.hirepeopleno,jdbcType=INTEGER},
+        IsFinalHire = #{record.isfinalhire,jdbcType=VARCHAR},
+        RecruitExpireDate = #{record.recruitexpiredate,jdbcType=TIMESTAMP},
+        ExpirenceRequirement = #{record.expirencerequirement,jdbcType=VARCHAR},
+        JobChineseRequirement = #{record.jobchineserequirement,jdbcType=VARCHAR},
+        JobChineseResponsibility = #{record.jobchineseresponsibility,jdbcType=VARCHAR},
+        JobEnglishRequirement = #{record.jobenglishrequirement,jdbcType=VARCHAR},
+        JobEnglishResponsibility = #{record.jobenglishresponsibility,jdbcType=VARCHAR},
+        Salary = #{record.salary,jdbcType=VARCHAR},
+        SalaryPriceBeforeTax = #{record.salarypricebeforetax,jdbcType=DECIMAL},
+        SalaryPriceAfterTax = #{record.salarypriceaftertax,jdbcType=DECIMAL},
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+        UpdateTmie = #{record.updatetmie,jdbcType=TIMESTAMP},
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+        Remark = #{record.remark,jdbcType=VARCHAR},
+        IsOpen = #{record.isopen,jdbcType=CHAR},
+        LeftPeopleNo = #{record.leftpeopleno,jdbcType=INTEGER},
+        NextReruitDate = #{record.nextreruitdate,jdbcType=TIMESTAMP},
+        IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+        Auditor = #{record.auditor,jdbcType=VARCHAR},
+        AuditorID = #{record.auditorid,jdbcType=INTEGER},
+        AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+        IsZhongBoXingChen = #{record.iszhongboxingchen,jdbcType=CHAR},
+        IsDelete = #{record.isdelete,jdbcType=CHAR},
+        IsSalaryOnFace = #{record.issalaryonface,jdbcType=CHAR},
+        DeploymentTime = #{record.deploymenttime,jdbcType=TIMESTAMP},
+        Department = #{record.department,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy">
+        update EnterpriseJobVacancy
+        <set>
+            <if test="enterpriseid != null">
+                EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="salarytypeid != null">
+                SalaryTypeID = #{salarytypeid,jdbcType=INTEGER},
+            </if>
+            <if test="provincecode != null">
+                ProvinceCode = #{provincecode,jdbcType=VARCHAR},
+            </if>
+            <if test="citycode != null">
+                CityCode = #{citycode,jdbcType=VARCHAR},
+            </if>
+            <if test="countycode != null">
+                CountyCode = #{countycode,jdbcType=VARCHAR},
+            </if>
+            <if test="jobpropertyid != null">
+                JobPropertyID = #{jobpropertyid,jdbcType=INTEGER},
+            </if>
+            <if test="jobtypeid != null">
+                JobTypeID = #{jobtypeid,jdbcType=INTEGER},
+            </if>
+            <if test="educationid != null">
+                EducationID = #{educationid,jdbcType=INTEGER},
+            </if>
+            <if test="jobtitle != null">
+                JobTitle = #{jobtitle,jdbcType=VARCHAR},
+            </if>
+            <if test="workaddress != null">
+                WorkAddress = #{workaddress,jdbcType=VARCHAR},
+            </if>
+            <if test="hirepeopleno != null">
+                HirePeopleNo = #{hirepeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="isfinalhire != null">
+                IsFinalHire = #{isfinalhire,jdbcType=VARCHAR},
+            </if>
+            <if test="recruitexpiredate != null">
+                RecruitExpireDate = #{recruitexpiredate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="expirencerequirement != null">
+                ExpirenceRequirement = #{expirencerequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobchineserequirement != null">
+                JobChineseRequirement = #{jobchineserequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobchineseresponsibility != null">
+                JobChineseResponsibility = #{jobchineseresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="jobenglishrequirement != null">
+                JobEnglishRequirement = #{jobenglishrequirement,jdbcType=VARCHAR},
+            </if>
+            <if test="jobenglishresponsibility != null">
+                JobEnglishResponsibility = #{jobenglishresponsibility,jdbcType=VARCHAR},
+            </if>
+            <if test="salary != null">
+                Salary = #{salary,jdbcType=VARCHAR},
+            </if>
+            <if test="salarypricebeforetax != null">
+                SalaryPriceBeforeTax = #{salarypricebeforetax,jdbcType=DECIMAL},
+            </if>
+            <if test="salarypriceaftertax != null">
+                SalaryPriceAfterTax = #{salarypriceaftertax,jdbcType=DECIMAL},
+            </if>
+            <if test="createby != null">
+                CreateBy = #{createby,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                CreateTime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createpersonid != null">
+                CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+            </if>
+            <if test="updateby != null">
+                UpdateBy = #{updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="updatetmie != null">
+                UpdateTmie = #{updatetmie,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatepersonid != null">
+                UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="remark != null">
+                Remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isopen != null">
+                IsOpen = #{isopen,jdbcType=CHAR},
+            </if>
+            <if test="leftpeopleno != null">
+                LeftPeopleNo = #{leftpeopleno,jdbcType=INTEGER},
+            </if>
+            <if test="nextreruitdate != null">
+                NextReruitDate = #{nextreruitdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isauditpassed != null">
+                IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+            </if>
+            <if test="auditor != null">
+                Auditor = #{auditor,jdbcType=VARCHAR},
+            </if>
+            <if test="auditorid != null">
+                AuditorID = #{auditorid,jdbcType=INTEGER},
+            </if>
+            <if test="auditcomment != null">
+                AuditComment = #{auditcomment,jdbcType=VARCHAR},
+            </if>
+            <if test="iszhongboxingchen != null">
+                IsZhongBoXingChen = #{iszhongboxingchen,jdbcType=CHAR},
+            </if>
+            <if test="isdelete != null">
+                IsDelete = #{isdelete,jdbcType=CHAR},
+            </if>
+            <if test="issalaryonface != null">
+                IsSalaryOnFace = #{issalaryonface,jdbcType=CHAR},
+            </if>
+            <if test="deploymenttime != null">
+                DeploymentTime = #{deploymenttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="department != null">
+                Department = #{department,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy">
+    update EnterpriseJobVacancy
+    set EnterpriseID = #{enterpriseid,jdbcType=INTEGER},
+      SalaryTypeID = #{salarytypeid,jdbcType=INTEGER},
+      ProvinceCode = #{provincecode,jdbcType=VARCHAR},
+      CityCode = #{citycode,jdbcType=VARCHAR},
+      CountyCode = #{countycode,jdbcType=VARCHAR},
+      JobPropertyID = #{jobpropertyid,jdbcType=INTEGER},
+      JobTypeID = #{jobtypeid,jdbcType=INTEGER},
+      EducationID = #{educationid,jdbcType=INTEGER},
+      JobTitle = #{jobtitle,jdbcType=VARCHAR},
+      WorkAddress = #{workaddress,jdbcType=VARCHAR},
+      HirePeopleNo = #{hirepeopleno,jdbcType=INTEGER},
+      IsFinalHire = #{isfinalhire,jdbcType=VARCHAR},
+      RecruitExpireDate = #{recruitexpiredate,jdbcType=TIMESTAMP},
+      ExpirenceRequirement = #{expirencerequirement,jdbcType=VARCHAR},
+      JobChineseRequirement = #{jobchineserequirement,jdbcType=VARCHAR},
+      JobChineseResponsibility = #{jobchineseresponsibility,jdbcType=VARCHAR},
+      JobEnglishRequirement = #{jobenglishrequirement,jdbcType=VARCHAR},
+      JobEnglishResponsibility = #{jobenglishresponsibility,jdbcType=VARCHAR},
+      Salary = #{salary,jdbcType=VARCHAR},
+      SalaryPriceBeforeTax = #{salarypricebeforetax,jdbcType=DECIMAL},
+      SalaryPriceAfterTax = #{salarypriceaftertax,jdbcType=DECIMAL},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdateTmie = #{updatetmie,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      Remark = #{remark,jdbcType=VARCHAR},
+      IsOpen = #{isopen,jdbcType=CHAR},
+      LeftPeopleNo = #{leftpeopleno,jdbcType=INTEGER},
+      NextReruitDate = #{nextreruitdate,jdbcType=TIMESTAMP},
+      IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      Auditor = #{auditor,jdbcType=VARCHAR},
+      AuditorID = #{auditorid,jdbcType=INTEGER},
+      AuditComment = #{auditcomment,jdbcType=VARCHAR},
+      IsZhongBoXingChen = #{iszhongboxingchen,jdbcType=CHAR},
+      IsDelete = #{isdelete,jdbcType=CHAR},
+      IsSalaryOnFace = #{issalaryonface,jdbcType=CHAR},
+      DeploymentTime = #{deploymenttime,jdbcType=TIMESTAMP},
+      Department = #{department,jdbcType=VARCHAR}
+    where EJobVacancyID = #{ejobvacancyid,jdbcType=INTEGER}
+  </update>
+    <!-- 通过栏目 和模糊标题查询职位表获得职位列表-->
+    <select id="getPositionInfoByJobTypeID" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        EnterpriseJobVacancy
+        <where>
+            IsDelete='N'
+            AND IsZhongBoXingChen = 'Y'
+            <if test="IsOpen != null">
+                AND (IsOpen=#{IsOpen})
+            </if>
+            <if test="IsAuditPassed != null">
+                AND (IsAuditPassed=#{IsAuditPassed})
+            </if>
+            <if test="jobtypeid != null">
+                AND (JobTypeID=#{jobtypeid})
+            </if>
+            <if test="jobtitle != null">
+                AND (JobTitle like #{jobtitle})
+            </if>
+
+        </where>
+        ORDER BY
+        EJobVacancyID DESC
+        LIMIT
+        #{startSize},#{pageSize}
+
+    </select>
+
+    <!-- 通过栏目 和模糊标题查询职位表获得职位数量 -->
+    <select id="getPositionInfoCountByJobTypeID" resultType="int">
+        SELECT
+        count(EJobVacancyID)
+        FROM
+        EnterpriseJobVacancy
+        <where>
+            IsDelete='N'
+            AND IsZhongBoXingChen = 'Y'
+            <if test="IsOpen != null">
+                AND (IsOpen=#{IsOpen})
+            </if>
+            <if test="IsAuditPassed != null">
+                AND (IsAuditPassed=#{IsAuditPassed})
+            </if>
+            <if test="jobtypeid != null">
+                AND (JobTypeID=#{jobtypeid})
+            </if>
+            <if test="jobtitle != null">
+                AND (JobTitle like #{jobtitle})
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 条件分页回收站 -->
+    <select id="getRecycleInfoByJobTypeID" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        EnterpriseJobVacancy
+        <where>
+            IsDelete='Y'
+            AND IsZhongBoXingChen = 'Y'
+            <if test="jobtypeid != null">
+                AND (JobTypeID=#{jobtypeid})
+            </if>
+            <if test="jobtitle != null">
+                AND (JobTitle like #{jobtitle})
+            </if>
+
+        </where>
+        ORDER BY
+        EJobVacancyID DESC
+        LIMIT
+        #{startSize},#{pageSize}
+
+    </select>
+
+    <select id="getRecycleInfoCountByJobTypeID" resultType="int">
+        SELECT
+        count(EJobVacancyID)
+        FROM
+        EnterpriseJobVacancy
+        <where>
+            IsDelete='Y'
+            AND IsZhongBoXingChen = 'Y'
+            <if test="jobtypeid != null">
+                AND (JobTypeID=#{jobtypeid})
+            </if>
+            <if test="jobtitle != null">
+                AND (JobTitle like #{jobtitle})
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 获取企业招聘职位下拉列表 -->
+    <select id="getEnterpriseJobVacancySelect" resultType="com.jy.dao.system.select.SelectResult">
+        SELECT
+         EJobVacancyID as id,
+         JobTitle as name
+        FROM
+        EnterpriseJobVacancy
+        WHERE
+        EnterpriseID = #{enterpriseID}
+        AND IsDelete = "N"
+        AND IsZhongBoXingChen = "N"
+        <if test="isOpen != null">
+            AND IsOpen = #{isOpen}
+        </if>
+        <if test="isAuditPassed != null">
+            AND IsAuditPassed = #{isAuditPassed}
+        </if>
+        <if test="search != null">
+            AND JobTitle LIKE #{search}
+        </if>
+        ORDER BY UpdateTmie DESC
+    </select>
+
+    <select id="getEnterpriseJobVacancyListAll" resultMap="BaseResultMap">
+        SELECT
+        a.*
+        FROM
+        EnterpriseJobVacancy a,
+        EnterpriseInfo b
+        WHERE
+        a.EnterpriseID = b.EnterpriseID
+        AND IsZhongBoXingChen = "N"
+        AND a.IsDelete = 'N'
+        AND a.IsOpen = "Y"
+        AND a.IsAuditPassed = 'Y'
+        <if test="search != null">
+            AND (a.JobTitle LIKE #{search} OR b.EnterpriseName LIKE #{search})
+        </if>
+        ORDER BY a.UpdateTmie DESC
+    </select>
+
+    <!-- 查询职位名称 -->
+    <select id="getJobNameByJObID" resultType="java.lang.String">
+        SELECT JobTitle FROM EnterpriseJobVacancy WHERE EJobVacancyID = #{jobID}
+    </select>
+
+    <select id="getOverdueJobList" resultMap="BaseResultMap">
+        <![CDATA[
+         SELECT * FROM EnterpriseJobVacancy WHERE IsOpen = "Y" AND RecruitExpireDate < #{nowDate}
+        ]]>
+    </select>
+</mapper>

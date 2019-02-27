@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.file.file.FileinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.file.file.Fileinfo" >
+    <id column="FileID" property="fileid" jdbcType="BIGINT" />
+    <result column="FileName" property="filename" jdbcType="VARCHAR" />
+    <result column="FileType" property="filetype" jdbcType="VARCHAR" />
+    <result column="FileFullPath" property="filefullpath" jdbcType="VARCHAR" />
+    <result column="FilePath" property="filepath" jdbcType="VARCHAR" />
+    <result column="FileSize" property="filesize" jdbcType="VARCHAR" />
+    <result column="VideoTime" property="videotime" jdbcType="BIGINT" />
+    <result column="Type" property="type" jdbcType="INTEGER" />
+    <result column="DocumentDirectoryID" property="documentdirectoryid" jdbcType="BIGINT" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    FileID, FileName, FileType, FileFullPath, FilePath, FileSize, VideoTime, Type, DocumentDirectoryID,
+    CreateTime, CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.file.file.FileinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from FileInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from FileInfo
+    where FileID = #{fileid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from FileInfo
+    where FileID = #{fileid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.file.file.FileinfoExample" >
+    delete from FileInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.file.file.Fileinfo" >
+    insert into FileInfo (FileID, FileName, FileType,
+      FileFullPath, FilePath, FileSize,
+      VideoTime, Type, DocumentDirectoryID,
+      CreateTime, CreateBy, CreatePersonID,
+      UpdateTime, UpdateBy, UpdatePersonID
+      )
+    values (#{fileid,jdbcType=BIGINT}, #{filename,jdbcType=VARCHAR}, #{filetype,jdbcType=VARCHAR},
+      #{filefullpath,jdbcType=VARCHAR}, #{filepath,jdbcType=VARCHAR}, #{filesize,jdbcType=VARCHAR},
+      #{videotime,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{documentdirectoryid,jdbcType=BIGINT},
+      #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT},
+      #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.file.file.Fileinfo" useGeneratedKeys="true" keyColumn="FileID" keyProperty="fileid">
+    insert into FileInfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileid != null" >
+        FileID,
+      </if>
+      <if test="filename != null" >
+        FileName,
+      </if>
+      <if test="filetype != null" >
+        FileType,
+      </if>
+      <if test="filefullpath != null" >
+        FileFullPath,
+      </if>
+      <if test="filepath != null" >
+        FilePath,
+      </if>
+      <if test="filesize != null" >
+        FileSize,
+      </if>
+      <if test="videotime != null" >
+        VideoTime,
+      </if>
+      <if test="type != null" >
+        Type,
+      </if>
+      <if test="documentdirectoryid != null" >
+        DocumentDirectoryID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileid != null" >
+        #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="filename != null" >
+        #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="filetype != null" >
+        #{filetype,jdbcType=VARCHAR},
+      </if>
+      <if test="filefullpath != null" >
+        #{filefullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filepath != null" >
+        #{filepath,jdbcType=VARCHAR},
+      </if>
+      <if test="filesize != null" >
+        #{filesize,jdbcType=VARCHAR},
+      </if>
+      <if test="videotime != null" >
+        #{videotime,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="documentdirectoryid != null" >
+        #{documentdirectoryid,jdbcType=BIGINT},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.file.file.FileinfoExample" resultType="java.lang.Integer" >
+    select count(*) from FileInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update FileInfo
+    <set >
+      <if test="record.fileid != null" >
+        FileID = #{record.fileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.filename != null" >
+        FileName = #{record.filename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filetype != null" >
+        FileType = #{record.filetype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filefullpath != null" >
+        FileFullPath = #{record.filefullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filepath != null" >
+        FilePath = #{record.filepath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filesize != null" >
+        FileSize = #{record.filesize,jdbcType=VARCHAR},
+      </if>
+      <if test="record.videotime != null" >
+        VideoTime = #{record.videotime,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null" >
+        Type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.documentdirectoryid != null" >
+        DocumentDirectoryID = #{record.documentdirectoryid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update FileInfo
+    set FileID = #{record.fileid,jdbcType=BIGINT},
+      FileName = #{record.filename,jdbcType=VARCHAR},
+      FileType = #{record.filetype,jdbcType=VARCHAR},
+      FileFullPath = #{record.filefullpath,jdbcType=VARCHAR},
+      FilePath = #{record.filepath,jdbcType=VARCHAR},
+      FileSize = #{record.filesize,jdbcType=VARCHAR},
+      VideoTime = #{record.videotime,jdbcType=BIGINT},
+      Type = #{record.type,jdbcType=INTEGER},
+      DocumentDirectoryID = #{record.documentdirectoryid,jdbcType=BIGINT},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.file.file.Fileinfo" >
+    update FileInfo
+    <set >
+      <if test="filename != null" >
+        FileName = #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="filetype != null" >
+        FileType = #{filetype,jdbcType=VARCHAR},
+      </if>
+      <if test="filefullpath != null" >
+        FileFullPath = #{filefullpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filepath != null" >
+        FilePath = #{filepath,jdbcType=VARCHAR},
+      </if>
+      <if test="filesize != null" >
+        FileSize = #{filesize,jdbcType=VARCHAR},
+      </if>
+      <if test="videotime != null" >
+        VideoTime = #{videotime,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        Type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="documentdirectoryid != null" >
+        DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where FileID = #{fileid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.file.file.Fileinfo" >
+    update FileInfo
+    set FileName = #{filename,jdbcType=VARCHAR},
+      FileType = #{filetype,jdbcType=VARCHAR},
+      FileFullPath = #{filefullpath,jdbcType=VARCHAR},
+      FilePath = #{filepath,jdbcType=VARCHAR},
+      FileSize = #{filesize,jdbcType=VARCHAR},
+      VideoTime = #{videotime,jdbcType=BIGINT},
+      Type = #{type,jdbcType=INTEGER},
+      DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where FileID = #{fileid,jdbcType=BIGINT}
+  </update>
+
+      <select id="getMonthList" resultType="string">
+          SELECT
+              distinct DATE_FORMAT(CreateTime,'%Y-%m')
+          FROM
+              FileInfo
+          <where>
+              Type = #{type}
+              <if test="directory_ids != null">
+                  <foreach collection="directory_ids" item="id" open="AND DocumentDirectoryID in (" close=")" separator=",">
+                      #{id}
+                  </foreach>
+              </if>
+              <if test="search != null">
+                  AND DATE_FORMAT(CreateTime,'%Y-%m') like  #{search}
+              </if>
+          </where>
+
+          ORDER BY
+              CreateTime DESC
+		<!-- LIMIT #{startSize},#{pageSize} -->
+  </select>
+
+  <select id="getFileListByMonth" resultMap="BaseResultMap" >
+  	SELECT
+  		<include refid="Base_Column_List" />
+  	FROM
+  		FileInfo
+  	WHERE
+  		Type = #{type}
+
+  		AND	DATE_FORMAT(CreateTime,'%Y-%m') = #{month}
+  		<if test="directory_ids != null">
+  			<foreach collection="directory_ids" item="id" open="AND DocumentDirectoryID in (" close=")" separator=",">
+            	#{id}
+        	</foreach>
+  		</if>
+  		<if test="search != null">
+			AND	FileName like  #{search}
+		</if>
+  </select>
+
+  <select id="getFileListByParam" resultMap="BaseResultMap">
+  	SELECT
+  		<include refid="Base_Column_List" />
+  	FROM
+  		FileInfo
+  	WHERE
+  		Type = #{type}
+
+  		<if test="directory_ids != null">
+ 			<foreach collection="directory_ids" item="id" open="AND DocumentDirectoryID in (" close=")" separator=",">
+            	#{id}
+        	</foreach>
+  		</if>
+  		<if test="search != null">
+			AND	FileName like  #{search}
+		</if>
+  </select>
+
+  <select id="getFileFullPathByFileID" resultType="string">
+  	SELECT FileFullPath FROM FileInfo where FileID = #{file_id}
+  </select>
+
+  <select id="getFileNameByFileID" resultType="string">
+  	SELECT FileName FROM FileInfo where FileID = #{file_id}
+  </select>
+</mapper>

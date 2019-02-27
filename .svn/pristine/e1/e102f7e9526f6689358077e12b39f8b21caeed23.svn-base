@@ -1,0 +1,107 @@
+package com.jy.controller.content.file.image;
+
+import com.jy.common.result.Result;
+import com.jy.controller.base.BaseController;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.AuthorityCode;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.service.content.file.file.FileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+
+/**
+ * @ClassName:  ImageController
+ * @Description:图片库
+ * @author: cheng fei
+ * @date:   2018-08-24 15:26
+ */
+
+@Controller
+@RequestMapping("/content/file/image")
+@Api(tags = "content.file.image.ImageController", description = "内容-文件-图片-图片库模块")
+public class ImageController extends BaseController{
+
+	@Resource
+	private FileService fileService;
+
+
+	@ApiOperation(value ="上传图片接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	@ResponseBody
+	public Result uploadImage(
+			@ApiParam(value = "要上传的文件", required = true) @RequestParam MultipartFile uploadFile,
+			@ApiParam(value = "上传目录ID", required = true) @RequestParam(required = true) Long directory_id
+			) throws Exception {
+		AccountInfo accountInfo = this.getAccountInfo();
+		//type 0是图片,1是文件,2是视频,3是面经题库
+		return fileService.insertFile(accountInfo, 0, uploadFile, directory_id, null);
+
+	}
+
+	@ApiOperation(value = "加载图片按月分类月份列表接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/month/list", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getMonthList(
+			@ApiParam(value = "文件夹ID", required = false, defaultValue = "1") @RequestParam(required = false,defaultValue = "1") Long directory_id,
+			@ApiParam("关键词:模糊查询月份") @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam("页码") @RequestParam(required = false, defaultValue = "1") Integer page,
+			@ApiParam("每页条数") @RequestParam(required = false, defaultValue = "9") Integer pageSize
+			) {
+		AccountInfo accountInfo = this.getAccountInfo();
+		//type 0是图片,1是文件,2是视频,3是面经题库
+		return fileService.getMonthList(accountInfo, 0, directory_id,search, page, pageSize);
+	}
+
+
+	@ApiOperation(value = "加载图片列表接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getImageList(
+			@ApiParam("月份") @RequestParam(required = true) String month,
+			@ApiParam(value = "文件夹ID", required = false) @RequestParam(required = false,defaultValue = "0") Long directory_id,
+			@ApiParam("关键词") @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam("页码") @RequestParam(required = false, defaultValue = "1") Integer page,
+			@ApiParam("每页条数") @RequestParam(required = false, defaultValue = "10") Integer pageSize
+			) throws Exception {
+		AccountInfo accountInfo = this.getAccountInfo();
+		//type 0是图片,1是文件,2是视频,3是面经题库
+		return fileService.getFileList(accountInfo, 0, month,directory_id,search, page, pageSize);
+	}
+
+	@ApiOperation(value = "修改图片名称接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "",method = RequestMethod.PUT)
+	@ResponseBody
+	public Result updateImage(
+			@ApiParam(value = "图片ID", required = true) @RequestParam(required = true) Long image_id,
+			@ApiParam(value = "图片名", required = true) @RequestParam(required = true) String image_name
+			) throws Exception {
+		AccountInfo accountInfo = this.getAccountInfo();
+		Fileinfo fileinfo = new Fileinfo();
+		fileinfo.setFileid(image_id);
+		fileinfo.setFilename(image_name);
+		return fileService.updateFiles(accountInfo, AuthorityCode.CONTENT_IMAGE_UPDATE_AUTHORITY, fileinfo);
+	}
+
+	@ApiOperation(value = "批量删除图片接口", httpMethod = "DELETE", produces = "application/json")
+	@RequestMapping(value = "",method = RequestMethod.DELETE)
+	@ResponseBody
+	public Result deleteImages(
+			@ApiParam(value = "要删除的图片id列表,用\",\"隔开", required = true) @RequestParam(required = true) String ids
+			) throws Exception {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return fileService.deleteFiles(accountInfo,AuthorityCode.CONTENT_IMAGE_DELETE_AUTHORITY,ids);
+	}
+
+
+
+
+}

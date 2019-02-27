@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.marketingFunction.registrationManagement.SignincheckMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck" >
+    <id column="SigninCheckID" property="signincheckid" jdbcType="INTEGER" />
+    <result column="ActivityLocation" property="activitylocation" jdbcType="VARCHAR" />
+    <result column="ActiveName" property="activename" jdbcType="VARCHAR" />
+    <result column="ActiveTime" property="activetime" jdbcType="TIMESTAMP" />
+    <result column="TwoDimensionPath" property="twodimensionpath" jdbcType="VARCHAR" />
+    <result column="SigninCheckPageUrl" property="signincheckpageurl" jdbcType="VARCHAR" />
+    <result column="TwoDimensionName" property="twodimensionname" jdbcType="VARCHAR" />
+    <result column="VoteStatusID" property="votestatusid" jdbcType="INTEGER" />
+    <result column="VoteParticipantTypeID" property="voteparticipanttypeid" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SigninCheckID, ActivityLocation, ActiveName, ActiveTime, TwoDimensionPath, SigninCheckPageUrl, 
+    TwoDimensionName, VoteStatusID, VoteParticipantTypeID, CreateTime, CreateBy, CreatePersonID, 
+    UpdateBy, UpdatePersonID, UpdateTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.SignincheckExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SigninCheck
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from SigninCheck
+    where SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from SigninCheck
+    where SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.SignincheckExample" >
+    delete from SigninCheck
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck" >
+    insert into SigninCheck (SigninCheckID, ActivityLocation, 
+      ActiveName, ActiveTime, TwoDimensionPath, 
+      SigninCheckPageUrl, TwoDimensionName, VoteStatusID, 
+      VoteParticipantTypeID, CreateTime, CreateBy, 
+      CreatePersonID, UpdateBy, UpdatePersonID, 
+      UpdateTime)
+    values (#{signincheckid,jdbcType=INTEGER}, #{activitylocation,jdbcType=VARCHAR}, 
+      #{activename,jdbcType=VARCHAR}, #{activetime,jdbcType=TIMESTAMP}, #{twodimensionpath,jdbcType=VARCHAR}, 
+      #{signincheckpageurl,jdbcType=VARCHAR}, #{twodimensionname,jdbcType=VARCHAR}, #{votestatusid,jdbcType=INTEGER}, 
+      #{voteparticipanttypeid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT}, 
+      #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck" useGeneratedKeys="true" keyColumn="SigninCheckID" keyProperty="signincheckid">
+    insert into SigninCheck
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="signincheckid != null" >
+        SigninCheckID,
+      </if>
+      <if test="activitylocation != null" >
+        ActivityLocation,
+      </if>
+      <if test="activename != null" >
+        ActiveName,
+      </if>
+      <if test="activetime != null" >
+        ActiveTime,
+      </if>
+      <if test="twodimensionpath != null" >
+        TwoDimensionPath,
+      </if>
+      <if test="signincheckpageurl != null" >
+        SigninCheckPageUrl,
+      </if>
+      <if test="twodimensionname != null" >
+        TwoDimensionName,
+      </if>
+      <if test="votestatusid != null" >
+        VoteStatusID,
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        VoteParticipantTypeID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="signincheckid != null" >
+        #{signincheckid,jdbcType=INTEGER},
+      </if>
+      <if test="activitylocation != null" >
+        #{activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="activename != null" >
+        #{activename,jdbcType=VARCHAR},
+      </if>
+      <if test="activetime != null" >
+        #{activetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="twodimensionpath != null" >
+        #{twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="signincheckpageurl != null" >
+        #{signincheckpageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionname != null" >
+        #{twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="votestatusid != null" >
+        #{votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        #{voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.SignincheckExample" resultType="java.lang.Integer" >
+    select count(*) from SigninCheck
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SigninCheck
+    <set >
+      <if test="record.signincheckid != null" >
+        SigninCheckID = #{record.signincheckid,jdbcType=INTEGER},
+      </if>
+      <if test="record.activitylocation != null" >
+        ActivityLocation = #{record.activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activename != null" >
+        ActiveName = #{record.activename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.activetime != null" >
+        ActiveTime = #{record.activetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.twodimensionpath != null" >
+        TwoDimensionPath = #{record.twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.signincheckpageurl != null" >
+        SigninCheckPageUrl = #{record.signincheckpageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.twodimensionname != null" >
+        TwoDimensionName = #{record.twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.votestatusid != null" >
+        VoteStatusID = #{record.votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.voteparticipanttypeid != null" >
+        VoteParticipantTypeID = #{record.voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SigninCheck
+    set SigninCheckID = #{record.signincheckid,jdbcType=INTEGER},
+      ActivityLocation = #{record.activitylocation,jdbcType=VARCHAR},
+      ActiveName = #{record.activename,jdbcType=VARCHAR},
+      ActiveTime = #{record.activetime,jdbcType=TIMESTAMP},
+      TwoDimensionPath = #{record.twodimensionpath,jdbcType=VARCHAR},
+      SigninCheckPageUrl = #{record.signincheckpageurl,jdbcType=VARCHAR},
+      TwoDimensionName = #{record.twodimensionname,jdbcType=VARCHAR},
+      VoteStatusID = #{record.votestatusid,jdbcType=INTEGER},
+      VoteParticipantTypeID = #{record.voteparticipanttypeid,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck" >
+    update SigninCheck
+    <set >
+      <if test="activitylocation != null" >
+        ActivityLocation = #{activitylocation,jdbcType=VARCHAR},
+      </if>
+      <if test="activename != null" >
+        ActiveName = #{activename,jdbcType=VARCHAR},
+      </if>
+      <if test="activetime != null" >
+        ActiveTime = #{activetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="twodimensionpath != null" >
+        TwoDimensionPath = #{twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="signincheckpageurl != null" >
+        SigninCheckPageUrl = #{signincheckpageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionname != null" >
+        TwoDimensionName = #{twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="votestatusid != null" >
+        VoteStatusID = #{votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        VoteParticipantTypeID = #{voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Signincheck" >
+    update SigninCheck
+    set ActivityLocation = #{activitylocation,jdbcType=VARCHAR},
+      ActiveName = #{activename,jdbcType=VARCHAR},
+      ActiveTime = #{activetime,jdbcType=TIMESTAMP},
+      TwoDimensionPath = #{twodimensionpath,jdbcType=VARCHAR},
+      SigninCheckPageUrl = #{signincheckpageurl,jdbcType=VARCHAR},
+      TwoDimensionName = #{twodimensionname,jdbcType=VARCHAR},
+      VoteStatusID = #{votestatusid,jdbcType=INTEGER},
+      VoteParticipantTypeID = #{voteparticipanttypeid,jdbcType=INTEGER},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP}
+    where SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </update>
+  <select id="selectSignincheckList" resultMap="BaseResultMap">
+		SELECT
+		  <include refid="Base_Column_List" />
+    	from SigninCheck
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="votestatusid != null">
+					AND (VoteStatusID = #{votestatusid})
+				</if>
+				<if test="search != null">
+					AND (ActiveName like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		SigninCheckID DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountSignincheckList" resultType="int">
+		SELECT
+			count(SigninCheckID)
+		FROM
+			SigninCheck
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="votestatusid != null">
+					AND (VoteStatusID = #{votestatusid})
+				</if>
+				<if test="search != null">
+					AND (ActiveName like #{search})
+				</if>
+			</trim>
+		</where>
+  	</select>
+</mapper>

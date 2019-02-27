@@ -1,0 +1,240 @@
+package com.jy.service.content.file.question_bank;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.file.question_bank.BusinessMapper;
+import com.jy.dao.content.file.question_bank.CompanyinfoMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.directory.VueTreeNode;
+import com.jy.entiy.content.file.question_bank.Business;
+import com.jy.entiy.content.file.question_bank.BusinessExample;
+import com.jy.entiy.content.file.question_bank.BusinessExample.Criteria;
+import com.jy.entiy.content.file.question_bank.Companyinfo;
+import com.jy.entiy.content.file.question_bank.CompanyinfoExample;
+import com.jy.service.base.BaseService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+
+/**
+ * @ClassName: BusinessServiceImpl
+ * @Description:面经题库行业模块接口实现类
+ * @author: cheng fei
+ * @date: 2018-09-19 17:00
+ */
+
+@Service
+public class BusinessServiceImpl extends BaseService implements BusinessService {
+
+    //数据库操作日志类型
+    private static final String DB_LOG_TYPE = "DB_LOG_BUSINESS";
+
+    @Resource
+    private BusinessMapper businessMapper;
+
+    @Resource
+    private CompanyinfoMapper companyinfoMapper;
+
+    @Resource
+    private FileinfoMapper fileinfoMapper;
+
+    @Override
+    public Result insertBusiness(AccountInfo accountInfo, String AUTHORITY_CODE, Business business) throws MyException {
+
+        //检测参数
+        if (StringUtils.isBlank(business.getBusinessname())){
+            return Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        //检测权限
+        Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+        if (checkAuthority.getStatus() != 200) {
+            return checkAuthority;
+        }
+
+        //补全参数
+        business.setCreatepersonid(accountInfo.getAccount().getAccountid());
+        business.setCreateby(accountInfo.getAccount().getName());
+        business.setCreatetime(new Date());
+        business.setStatus(1);
+        business.setIsparent(false);
+
+        int i = businessMapper.insertSelective(business);
+        if (i < 1) {
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+
+        //查询父节点
+        Business parent_business = businessMapper.selectByPrimaryKey(business.getParentid());
+
+        //判断添加前父节点是否是父节点,不是父节点修改为父节点
+        if (!parent_business.getIsparent()) {
+            Business business2 = new Business();
+            business2.setBusinessid(parent_business.getBusinessid());
+            business2.setIsparent(true);
+            i = businessMapper.updateByPrimaryKeySelective(business2);
+            if (i < 1) {
+                throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+            }
+        }
+
+        //数据库操作日志
+        String log = "在面经题库行业[ " + parent_business.getBusinessname() + " ]添加了子行业 [ " + business.getBusinessname() + " ]";
+
+        this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+        return Result.succee(business.getBusinessid());
+    }
+
+    @Override
+    public Result updateBusiness(AccountInfo accountInfo, String AUTHORITY_CODE, Business business) throws MyException {
+
+        //检测权限
+        Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+        if (checkAuthority.getStatus() != 200) {
+            return checkAuthority;
+        }
+
+        business.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+        business.setUpdateby(accountInfo.getAccount().getName());
+        business.setUpdatetime(new Date());
+
+        Business old_business = businessMapper.selectByPrimaryKey(business.getBusinessid());
+
+        int i = businessMapper.updateByPrimaryKeySelective(business);
+        if (i < 1) {
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        String log = "面经题库行业[ " + old_business.getBusinessname() + " ]修改为[ " + business.getBusinessname() + " ]";
+
+        this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result deleteBusiness(AccountInfo accountInfo, String AUTHORITY_CODE, Integer business_id) throws MyException {
+
+        //检测权限
+        Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+        if (checkAuthority.getStatus() != 200) {
+            return checkAuthority;
+        }
+
+        //判断删除节点是否为父节点,父节点不允许删除
+        Business business = businessMapper.selectByPrimaryKey(business_id);
+        /*if (business.getIsparent()) {
+            return Result.build(ResultEnum.BUSINESS_IS_PARENT);
+        }*/
+
+        //判断当前节点是否为最顶级节点,最顶级节点不允许删除
+        if (business.getParentid() == 0) {
+            return Result.build(ResultEnum.BUSINESS_IS_TOP_PARENT);
+        }
+
+        //判断当前行业下是否存在公司,存在公司时,不能删除
+        CompanyinfoExample companyinfoExample = new CompanyinfoExample();
+        CompanyinfoExample.Criteria companyInfoExampleCriteria = companyinfoExample.createCriteria();
+        companyInfoExampleCriteria.andBusinessidEqualTo(business_id);
+        int count = companyinfoMapper.countByExample(companyinfoExample);
+
+        if (count > 0){
+            return Result.build(ResultEnum.BUSINESS_EXIST_COMPANY);
+        }
+
+
+        int i = businessMapper.deleteByPrimaryKey(business_id);
+        if (i < 1) {
+            throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+        }
+
+        //判断当前节点的父节点下是否还有子节点,没有子节点修改当前节点父节点为子节点
+        /*BusinessExample example = new BusinessExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andParentidEqualTo(business.getParentid());
+        criteria.andStatusEqualTo(1);
+        count = businessMapper.countByExample(example);
+
+        if (count == 0) {
+            Business business2 = new Business();
+            business2.setBusinessid(business.getParentid());
+            business2.setIsparent(false);
+            i = businessMapper.updateByPrimaryKeySelective(business2);
+            if (i < 1) {
+                throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+            }
+        }*/
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result getBusinessList(Integer business_parent_id, String search, Integer page, Integer pageSize) throws MyException {
+
+        //检测参数
+        search = this.checkSearch(search);
+
+        BusinessExample example = new BusinessExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andParentidEqualTo(business_parent_id);
+        criteria.andStatusEqualTo(1);
+        if (search != null) {
+            criteria.andBusinessnameLike(search);
+        }
+
+        PageHelper.startPage(page, pageSize);
+        List<Business> list = businessMapper.selectByExample(example);
+        PageInfo<Business> info = new PageInfo<>(list);
+        List<Business> data = info.getList();
+        //查询行业下公司列表
+        for (Business business : data) {
+            CompanyinfoExample example2 = new CompanyinfoExample();
+            com.jy.entiy.content.file.question_bank.CompanyinfoExample.Criteria criteria2 = example2.createCriteria();
+            criteria2.andBusinessidEqualTo(business.getBusinessid());
+            List<Companyinfo> list2 = companyinfoMapper.selectByExample(example2);
+
+            //查询公司logo地址
+            for (Companyinfo companyinfo : list2) {
+                String filePath = companyinfo.getCompanylogo() == null ? null : fileinfoMapper.getFileFullPathByFileID(companyinfo.getCompanylogo());
+                if (StringUtils.isNotBlank(filePath)){
+                    filePath = aliyunOSSClientUtil.getUrl(filePath);
+                }
+                companyinfo.setLogoPath(filePath);
+            }
+            business.setCompanyList(list2);
+        }
+        Map<Object, Object> map = new HashMap<>(2);
+        map.put("rows", data);
+        map.put("count", info.getTotal());
+
+        aliyunOSSClientUtil.closeOSSClient();
+        return Result.succee(map);
+
+    }
+
+    @Override
+    public Result getBusinessList(Integer business_parent_id) {
+        BusinessExample example = new BusinessExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andParentidEqualTo(business_parent_id);
+        criteria.andStatusEqualTo(1);
+        List<Business> list = businessMapper.selectByExample(example);
+        List<VueTreeNode> data = new ArrayList<>();
+        for (Business business : list) {
+            VueTreeNode node = new VueTreeNode();
+            node.setCode(business.getBusinessid());
+            node.setName(business.getBusinessname());
+            node.setExpand(business.getIsparent());
+            data.add(node);
+        }
+        return Result.succee(data);
+    }
+}

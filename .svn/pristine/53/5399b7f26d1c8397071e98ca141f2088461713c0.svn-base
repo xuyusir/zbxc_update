@@ -1,0 +1,135 @@
+package com.jy.entiy.content.product.course;
+
+import java.util.Date;
+
+public class Coursechapter {
+    private Long charpterid;
+
+    private Long courseid;
+
+    private String charptertitle;
+
+    private String charptercode;
+
+    private String charpterabstract;
+
+    private String remark;
+
+    private Date createtime;
+
+    private String createby;
+
+    private Long createpersonid;
+
+    private Date updatetime;
+
+    private String updateby;
+
+    private Long updatepersonid;
+
+    private Integer displayorder;
+
+    public Long getCharpterid() {
+        return charpterid;
+    }
+
+    public void setCharpterid(Long charpterid) {
+        this.charpterid = charpterid;
+    }
+
+    public Long getCourseid() {
+        return courseid;
+    }
+
+    public void setCourseid(Long courseid) {
+        this.courseid = courseid;
+    }
+
+    public String getCharptertitle() {
+        return charptertitle;
+    }
+
+    public void setCharptertitle(String charptertitle) {
+        this.charptertitle = charptertitle == null ? null : charptertitle.trim();
+    }
+
+    public String getCharptercode() {
+        return charptercode;
+    }
+
+    public void setCharptercode(String charptercode) {
+        this.charptercode = charptercode == null ? null : charptercode.trim();
+    }
+
+    public String getCharpterabstract() {
+        return charpterabstract;
+    }
+
+    public void setCharpterabstract(String charpterabstract) {
+        this.charpterabstract = charpterabstract == null ? null : charpterabstract.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
+    }
+
+    public Date getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
+
+    public String getCreateby() {
+        return createby;
+    }
+
+    public void setCreateby(String createby) {
+        this.createby = createby == null ? null : createby.trim();
+    }
+
+    public Long getCreatepersonid() {
+        return createpersonid;
+    }
+
+    public void setCreatepersonid(Long createpersonid) {
+        this.createpersonid = createpersonid;
+    }
+
+    public Date getUpdatetime() {
+        return updatetime;
+    }
+
+    public void setUpdatetime(Date updatetime) {
+        this.updatetime = updatetime;
+    }
+
+    public String getUpdateby() {
+        return updateby;
+    }
+
+    public void setUpdateby(String updateby) {
+        this.updateby = updateby == null ? null : updateby.trim();
+    }
+
+    public Long getUpdatepersonid() {
+        return updatepersonid;
+    }
+
+    public void setUpdatepersonid(Long updatepersonid) {
+        this.updatepersonid = updatepersonid;
+    }
+
+    public Integer getDisplayorder() {
+        return displayorder;
+    }
+
+    public void setDisplayorder(Integer displayorder) {
+        this.displayorder = displayorder;
+    }
+}

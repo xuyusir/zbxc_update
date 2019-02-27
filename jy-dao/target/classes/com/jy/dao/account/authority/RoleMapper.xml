@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.account.authority.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.account.authority.Role" >
+    <id column="RoleID" property="roleid" jdbcType="INTEGER" />
+    <result column="Name" property="name" jdbcType="VARCHAR" />
+    <result column="MenuRights" property="menurights" jdbcType="VARCHAR" />
+    <result column="Authority" property="authority" jdbcType="VARCHAR" />
+    <result column="ParentID" property="parentid" jdbcType="INTEGER" />
+    <result column="InsertRights" property="insertrights" jdbcType="VARCHAR" />
+    <result column="DeleteRights" property="deleterights" jdbcType="VARCHAR" />
+    <result column="SelectRights" property="selectrights" jdbcType="VARCHAR" />
+    <result column="UpdateRights" property="updaterights" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="Status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    RoleID, Name, MenuRights, Authority, ParentID, InsertRights, DeleteRights, SelectRights, 
+    UpdateRights, CreatePersonID, CreateTime, CreateBy, UpdatePersonID, UpdateTime, UpdateBy, 
+    Status
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.account.authority.RoleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Role
+    where RoleID = #{roleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Role
+    where RoleID = #{roleid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.account.authority.RoleExample" >
+    delete from Role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.account.authority.Role" >
+    insert into Role (RoleID, Name, MenuRights, 
+      Authority, ParentID, InsertRights, 
+      DeleteRights, SelectRights, UpdateRights, 
+      CreatePersonID, CreateTime, CreateBy, 
+      UpdatePersonID, UpdateTime, UpdateBy, 
+      Status)
+    values (#{roleid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{menurights,jdbcType=VARCHAR}, 
+      #{authority,jdbcType=VARCHAR}, #{parentid,jdbcType=INTEGER}, #{insertrights,jdbcType=VARCHAR}, 
+      #{deleterights,jdbcType=VARCHAR}, #{selectrights,jdbcType=VARCHAR}, #{updaterights,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.account.authority.Role" >
+    insert into Role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleid != null" >
+        RoleID,
+      </if>
+      <if test="name != null" >
+        Name,
+      </if>
+      <if test="menurights != null" >
+        MenuRights,
+      </if>
+      <if test="authority != null" >
+        Authority,
+      </if>
+      <if test="parentid != null" >
+        ParentID,
+      </if>
+      <if test="insertrights != null" >
+        InsertRights,
+      </if>
+      <if test="deleterights != null" >
+        DeleteRights,
+      </if>
+      <if test="selectrights != null" >
+        SelectRights,
+      </if>
+      <if test="updaterights != null" >
+        UpdateRights,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleid != null" >
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="menurights != null" >
+        #{menurights,jdbcType=VARCHAR},
+      </if>
+      <if test="authority != null" >
+        #{authority,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="insertrights != null" >
+        #{insertrights,jdbcType=VARCHAR},
+      </if>
+      <if test="deleterights != null" >
+        #{deleterights,jdbcType=VARCHAR},
+      </if>
+      <if test="selectrights != null" >
+        #{selectrights,jdbcType=VARCHAR},
+      </if>
+      <if test="updaterights != null" >
+        #{updaterights,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.account.authority.RoleExample" resultType="java.lang.Integer" >
+    select count(*) from Role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Role
+    <set >
+      <if test="record.roleid != null" >
+        RoleID = #{record.roleid,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null" >
+        Name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.menurights != null" >
+        MenuRights = #{record.menurights,jdbcType=VARCHAR},
+      </if>
+      <if test="record.authority != null" >
+        Authority = #{record.authority,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentid != null" >
+        ParentID = #{record.parentid,jdbcType=INTEGER},
+      </if>
+      <if test="record.insertrights != null" >
+        InsertRights = #{record.insertrights,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deleterights != null" >
+        DeleteRights = #{record.deleterights,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selectrights != null" >
+        SelectRights = #{record.selectrights,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updaterights != null" >
+        UpdateRights = #{record.updaterights,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        Status = #{record.status,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Role
+    set RoleID = #{record.roleid,jdbcType=INTEGER},
+      Name = #{record.name,jdbcType=VARCHAR},
+      MenuRights = #{record.menurights,jdbcType=VARCHAR},
+      Authority = #{record.authority,jdbcType=VARCHAR},
+      ParentID = #{record.parentid,jdbcType=INTEGER},
+      InsertRights = #{record.insertrights,jdbcType=VARCHAR},
+      DeleteRights = #{record.deleterights,jdbcType=VARCHAR},
+      SelectRights = #{record.selectrights,jdbcType=VARCHAR},
+      UpdateRights = #{record.updaterights,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      Status = #{record.status,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.account.authority.Role" >
+    update Role
+    <set >
+      <if test="name != null" >
+        Name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="menurights != null" >
+        MenuRights = #{menurights,jdbcType=VARCHAR},
+      </if>
+      <if test="authority != null" >
+        Authority = #{authority,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        ParentID = #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="insertrights != null" >
+        InsertRights = #{insertrights,jdbcType=VARCHAR},
+      </if>
+      <if test="deleterights != null" >
+        DeleteRights = #{deleterights,jdbcType=VARCHAR},
+      </if>
+      <if test="selectrights != null" >
+        SelectRights = #{selectrights,jdbcType=VARCHAR},
+      </if>
+      <if test="updaterights != null" >
+        UpdateRights = #{updaterights,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where RoleID = #{roleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.account.authority.Role" >
+    update Role
+    set Name = #{name,jdbcType=VARCHAR},
+      MenuRights = #{menurights,jdbcType=VARCHAR},
+      Authority = #{authority,jdbcType=VARCHAR},
+      ParentID = #{parentid,jdbcType=INTEGER},
+      InsertRights = #{insertrights,jdbcType=VARCHAR},
+      DeleteRights = #{deleterights,jdbcType=VARCHAR},
+      SelectRights = #{selectrights,jdbcType=VARCHAR},
+      UpdateRights = #{updaterights,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=INTEGER}
+    where RoleID = #{roleid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getRoleCountByParentID" resultType="int">
+  		SELECT count(RoleID) FROM Role WHERE ParentID = #{ParentID} AND status = 1
+  </select>
+  
+  <!-- 根据id查询名字 -->
+  <select id="getNameByRoleID" resultType="string">
+  		SELECT Name FROM Role WHERE RoleID = #{RoleID} AND status = 1
+  </select>
+  
+  <select id="getRoleSelect" resultType="com.jy.dao.system.select.SelectResult">
+  		SELECT RoleID as id,Name as name FROM Role WHERE status = 1 
+  </select>
+  
+  
+</mapper>

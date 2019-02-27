@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.ExpectjoblocationMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.Expectjoblocation" >
+    <id column="ExpectJobLocationID" property="expectjoblocationid" jdbcType="BIGINT" />
+    <result column="ResumeID" property="resumeid" jdbcType="BIGINT" />
+    <result column="Province" property="province" jdbcType="VARCHAR" />
+    <result column="City" property="city" jdbcType="VARCHAR" />
+    <result column="County" property="county" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ExpectJobLocationID, ResumeID, Province, City, County
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.ExpectjoblocationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ExpectJobLocation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ExpectJobLocation
+    where ExpectJobLocationID = #{expectjoblocationid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ExpectJobLocation
+    where ExpectJobLocationID = #{expectjoblocationid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.ExpectjoblocationExample" >
+    delete from ExpectJobLocation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.Expectjoblocation" >
+    insert into ExpectJobLocation (ExpectJobLocationID, ResumeID, Province, 
+      City, County)
+    values (#{expectjoblocationid,jdbcType=BIGINT}, #{resumeid,jdbcType=BIGINT}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.Expectjoblocation" >
+    <selectKey keyProperty="expectjoblocationid" order="AFTER" resultType="Long">
+    SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ExpectJobLocation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="expectjoblocationid != null" >
+        ExpectJobLocationID,
+      </if>
+      <if test="resumeid != null" >
+        ResumeID,
+      </if>
+      <if test="province != null" >
+        Province,
+      </if>
+      <if test="city != null" >
+        City,
+      </if>
+      <if test="county != null" >
+        County,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="expectjoblocationid != null" >
+        #{expectjoblocationid,jdbcType=BIGINT},
+      </if>
+      <if test="resumeid != null" >
+        #{resumeid,jdbcType=BIGINT},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null" >
+        #{county,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.ExpectjoblocationExample" resultType="java.lang.Integer" >
+    select count(*) from ExpectJobLocation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ExpectJobLocation
+    <set >
+      <if test="record.expectjoblocationid != null" >
+        ExpectJobLocationID = #{record.expectjoblocationid,jdbcType=BIGINT},
+      </if>
+      <if test="record.resumeid != null" >
+        ResumeID = #{record.resumeid,jdbcType=BIGINT},
+      </if>
+      <if test="record.province != null" >
+        Province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null" >
+        City = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.county != null" >
+        County = #{record.county,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ExpectJobLocation
+    set ExpectJobLocationID = #{record.expectjoblocationid,jdbcType=BIGINT},
+      ResumeID = #{record.resumeid,jdbcType=BIGINT},
+      Province = #{record.province,jdbcType=VARCHAR},
+      City = #{record.city,jdbcType=VARCHAR},
+      County = #{record.county,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.person.Expectjoblocation" >
+    update ExpectJobLocation
+    <set >
+      <if test="resumeid != null" >
+        ResumeID = #{resumeid,jdbcType=BIGINT},
+      </if>
+      <if test="province != null" >
+        Province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        City = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null" >
+        County = #{county,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ExpectJobLocationID = #{expectjoblocationid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.person.Expectjoblocation" >
+    update ExpectJobLocation
+    set ResumeID = #{resumeid,jdbcType=BIGINT},
+      Province = #{province,jdbcType=VARCHAR},
+      City = #{city,jdbcType=VARCHAR},
+      County = #{county,jdbcType=VARCHAR}
+    where ExpectJobLocationID = #{expectjoblocationid,jdbcType=BIGINT}
+  </update>
+</mapper>

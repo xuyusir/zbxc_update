@@ -1,0 +1,112 @@
+package com.jy.dao.function.enterprise.recruitment;
+
+import com.jy.dao.system.select.SelectResult;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+import com.jy.entiy.function.enterprise.recruitment.EnterprisejobvacancyExample;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface EnterprisejobvacancyMapper {
+    int countByExample(EnterprisejobvacancyExample example);
+
+    int deleteByExample(EnterprisejobvacancyExample example);
+
+    int deleteByPrimaryKey(Integer ejobvacancyid);
+
+    int insert(Enterprisejobvacancy record);
+
+    int insertSelective(Enterprisejobvacancy record);
+
+    List<Enterprisejobvacancy> selectByExample(EnterprisejobvacancyExample example);
+
+    Enterprisejobvacancy selectByPrimaryKey(Integer ejobvacancyid);
+
+    int updateByExampleSelective(@Param("record") Enterprisejobvacancy record, @Param("example") EnterprisejobvacancyExample example);
+
+    int updateByExample(@Param("record") Enterprisejobvacancy record, @Param("example") EnterprisejobvacancyExample example);
+
+    int updateByPrimaryKeySelective(Enterprisejobvacancy record);
+
+    int updateByPrimaryKey(Enterprisejobvacancy record);
+
+    /**
+   	 * 通过栏目 和模糊标题查询职位表获得职位列表
+   	 *
+   	 * @return
+   	 */
+   	List<Enterprisejobvacancy> getPositionInfoByJobTypeID(
+   			@Param("IsOpen") String IsOpen,//职位是否关闭Y/N
+   			@Param("jobtypeid") Integer jobtypeid,
+   			@Param("jobtitle") String jobtitle,
+   			@Param("startSize") Integer startSize,
+   			@Param("pageSize") Integer pageSize);
+
+   	/**
+   	 * 通过栏目 和模糊标题查询职位表获得职位数量
+   	 *
+   	 * @return
+   	 */
+   	Integer getPositionInfoCountByJobTypeID(
+   			@Param("IsOpen") String IsOpen,
+   			@Param("jobtypeid") Integer jobtypeid,
+   			@Param("jobtitle") String jobtitle);
+
+   	/**
+   	 * 通过栏目 和模糊标题查询职位表获得职位列表(回收站)
+   	 *
+   	 * @return
+   	 */
+   	List<Enterprisejobvacancy> getRecycleInfoByJobTypeID(
+   			@Param("jobtypeid") Integer jobtypeid,
+   			@Param("jobtitle") String jobtitle,
+   			@Param("startSize") Integer startSize,
+   			@Param("pageSize") Integer pageSize);
+
+   	/**
+   	 * 通过栏目 和模糊标题查询职位表获得职位数量(回收站)
+   	 *
+   	 * @return
+   	 */
+   	Integer getRecycleInfoCountByJobTypeID(
+   			@Param("jobtypeid") Integer jobtypeid,
+   			@Param("jobtitle") String jobtitle);
+
+	/**
+	 * 获取企业招聘职位下拉列表
+	 *
+	 * @param enterpriseID
+	 * @param search
+	 * @param isOpen
+	 * @param isAuditPassed
+	 * @return
+	 */
+	List<SelectResult> getEnterpriseJobVacancySelect(@Param("enterpriseID") Integer enterpriseID, @Param("search") String search, @Param("isOpen")String isOpen, @Param("isAuditPassed")String isAuditPassed);
+
+   	/**
+   	 * 查询所有企业职位列表
+   	 * @param search 模糊查询
+   	 * @return
+   	 */
+   	List<Enterprisejobvacancy> getEnterpriseJobVacancyListAll(@Param("search") String search);
+
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/11/6 14:12
+     * 描述 : 查询职位名称
+     * @param jobID 职位ID
+     * @return
+     */
+   	String getJobNameByJObID(@Param("jobID") Integer jobID);
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/11/28 12:45
+     * 描述 : 获取已超过有效期的职位列表
+     *
+     * @param nowDate
+     * @return
+     */
+    List<Enterprisejobvacancy> getOverdueJobList(@Param("nowDate")String nowDate);
+}

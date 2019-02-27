@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.sms.SetsmsMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.sms.Setsms" >
+    <id column="SetInfoID" property="setinfoid" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="State" property="state" jdbcType="VARCHAR" />
+    <result column="UserName" property="username" jdbcType="VARCHAR" />
+    <result column="PassWord" property="password" jdbcType="VARCHAR" />
+    <result column="RegistedSend" property="registedsend" jdbcType="VARCHAR" />
+    <result column="LoginSend" property="loginsend" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SetInfoID, CreateTime, CreatePersonID, CreateBy, UpdateTime, UpdatePersonID, UpdateBy, 
+    State, UserName, PassWord, RegistedSend, LoginSend
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.sms.SetsmsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SetSMS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from SetSMS
+    where SetInfoID = #{setinfoid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from SetSMS
+    where SetInfoID = #{setinfoid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.sms.SetsmsExample" >
+    delete from SetSMS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.sms.Setsms" >
+    insert into SetSMS (SetInfoID, CreateTime, CreatePersonID, 
+      CreateBy, UpdateTime, UpdatePersonID, 
+      UpdateBy, State, UserName, 
+      PassWord, RegistedSend, LoginSend
+      )
+    values (#{setinfoid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, 
+      #{createby,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT}, 
+      #{updateby,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{registedsend,jdbcType=VARCHAR}, #{loginsend,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.sms.Setsms" >
+    insert into SetSMS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="setinfoid != null" >
+        SetInfoID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="state != null" >
+        State,
+      </if>
+      <if test="username != null" >
+        UserName,
+      </if>
+      <if test="password != null" >
+        PassWord,
+      </if>
+      <if test="registedsend != null" >
+        RegistedSend,
+      </if>
+      <if test="loginsend != null" >
+        LoginSend,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="setinfoid != null" >
+        #{setinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="registedsend != null" >
+        #{registedsend,jdbcType=VARCHAR},
+      </if>
+      <if test="loginsend != null" >
+        #{loginsend,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.sms.SetsmsExample" resultType="java.lang.Integer" >
+    select count(*) from SetSMS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SetSMS
+    <set >
+      <if test="record.setinfoid != null" >
+        SetInfoID = #{record.setinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        State = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.username != null" >
+        UserName = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        PassWord = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.registedsend != null" >
+        RegistedSend = #{record.registedsend,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginsend != null" >
+        LoginSend = #{record.loginsend,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SetSMS
+    set SetInfoID = #{record.setinfoid,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      State = #{record.state,jdbcType=VARCHAR},
+      UserName = #{record.username,jdbcType=VARCHAR},
+      PassWord = #{record.password,jdbcType=VARCHAR},
+      RegistedSend = #{record.registedsend,jdbcType=VARCHAR},
+      LoginSend = #{record.loginsend,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.sms.Setsms" >
+    update SetSMS
+    <set >
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        State = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        UserName = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        PassWord = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="registedsend != null" >
+        RegistedSend = #{registedsend,jdbcType=VARCHAR},
+      </if>
+      <if test="loginsend != null" >
+        LoginSend = #{loginsend,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SetInfoID = #{setinfoid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.sms.Setsms" >
+    update SetSMS
+    set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      State = #{state,jdbcType=VARCHAR},
+      UserName = #{username,jdbcType=VARCHAR},
+      PassWord = #{password,jdbcType=VARCHAR},
+      RegistedSend = #{registedsend,jdbcType=VARCHAR},
+      LoginSend = #{loginsend,jdbcType=VARCHAR}
+    where SetInfoID = #{setinfoid,jdbcType=INTEGER}
+  </update>
+</mapper>

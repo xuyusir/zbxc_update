@@ -1,0 +1,151 @@
+package com.jy.service.content.articleManage;
+
+import java.io.IOException;
+import java.text.ParseException;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.articleManage.Articleinfo;
+import com.jy.entiy.content.columnManage.Pagecolumn;
+
+
+/**
+ * 文章管理接口
+ * @author chenye
+ * @date 2018-8-24
+ */
+public interface ArticleInfoService {
+	
+	/**
+	 * 通过栏目 和模糊标题查询获得文章列表(正在发布的文章)
+	 * @return
+	 */
+//	public Result getArticleList(Integer pagecolumnid,  String articletitle,Integer page, Integer pageSize);
+
+	/**
+	 * 通过栏目 和模糊标题查询获得文章列表
+	 * @return
+	 */
+	public Result getArticleinfoByPageColumnID(Integer pagecolumnid,  String articletitle,String search,Integer page, Integer pageSize);
+	
+	/**
+	 * 通过栏目 和模糊标题查询获得文章列表(回收站)
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result getRecycleInfoByPageColumnID(AccountInfo accountInfo,String CONTROLLER_CODE,Integer pagecolumnid,  String articletitle,Integer page, Integer pageSize) throws MyException;
+	
+	/**
+	 * 通过栏目 和模糊标题查询获得文章列表(未审核的)
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result getNotAudit(AccountInfo accountInfo,String CONTROLLER_CODE,Integer pagecolumnid,  String articletitle,Integer page, Integer pageSize) throws MyException;
+
+	/**
+	 * 在新增或者编辑操作前加载banner图片(通过栏目id查询栏目表获得bannar相关信息)
+	 * @param pagecolumnid
+	 * @return
+	 */
+	public Pagecolumn getBannerByPageColumnID(Integer pagecolumnid);
+	
+	
+	/**
+	 * 星辰福利直播课程页面接口
+	 * @param pagecolumnid
+	 * 
+	 * @return
+	 */
+	public Result getArticleLiveByTime(Integer pagecolumnid);
+	
+	
+	/**
+	 * 新增栏目banner
+	 * @param pagecolumnid
+	 * @return
+	 */
+	public Pagecolumn insertBannerByPageColumnID(Pagecolumn pagecolumn);
+	
+	
+	/**
+	 * 替换banner图片(修改栏目表,删除banner时设置banner图片地址为空)
+	 * @param pagecolumnid
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result updateBanner(AccountInfo accountInfo,String CONTROLLER_CODE,Pagecolumn pagecolumn) throws MyException;
+	
+	
+	
+	/**新增文章信息
+	 * @param accountInfo
+	 * @param articleinfo
+	 * @return
+	 * @throws MyException 
+	 * @throws IOException 
+	 */
+	public Result insertArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Articleinfo articleinfo) throws MyException, IOException;
+	
+	
+	/**
+	 * 修改文章
+	 * @param accountInfo
+	 * @param articleinfo
+	 * @return
+	 * @throws MyException 
+	 * @throws IOException 
+	 */
+	public Result updateArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Articleinfo articleinfo) throws MyException, IOException;
+	
+	/**
+	 * 删除文章(放到回收站)
+	 * @param articleinfo
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result recycleArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Articleinfo articleinfo) throws MyException;
+	
+	/**
+	 * 还原
+	 * @param accountInfo
+	 * @param CONTROLLER_CODE
+	 * @param articleinfo
+	 * @return
+	 * @throws MyException
+	 */
+	public Result restoreArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Articleinfo articleinfo) throws MyException;
+	
+	/**
+	 * 彻底删除
+	 * @param accountInfo
+	 * @param articleid
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result deleteArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Integer articleid) throws MyException;
+	
+	/**
+	 * 审核文章
+	 * @param accountInfo
+	 * @param articleinfo
+	 * @return
+	 * @throws MyException 
+	 */
+	public Result auditArticle(AccountInfo accountInfo,String CONTROLLER_CODE,Articleinfo articleinfo) throws MyException;
+	
+	
+	/**
+	 * 表格加载(查询表格下拉框等信息)
+	 * @return
+	 */
+	public Result getFormLoad(AccountInfo accountInfo,String CONTROLLER_CODE)throws MyException;
+	
+	/**
+	 * 修改前方法(查询原信息)
+	 * @return
+	 * @throws ParseException 
+	 */
+	public Result getUpdateSelect(AccountInfo accountInfo,String CONTROLLER_CODE,Integer articleid,Integer reqSource)throws MyException, ParseException;
+	
+}

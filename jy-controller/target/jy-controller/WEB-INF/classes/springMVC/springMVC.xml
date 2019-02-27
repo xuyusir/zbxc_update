@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   					   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       					   http://www.springframework.org/schema/mvc
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        				   http://www.springframework.org/schema/context
+        				   http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+    <!-- 扫描参数配置文件 -->
+    <context:property-placeholder
+            location="classpath:conf/*.properties"/>
+
+    <!-- 加载注解驱动 -->
+    <mvc:annotation-driven/>
+
+    <!-- 扫描Controller包 -->
+    <context:component-scan
+            base-package="com.jy.controller"/>
+
+    <!-- 自定义的全局异常处理器,只要实现HandlerExceptionResolver接口就是全局异常处理器 -->
+    <bean id="globalExceptionHandler" class="com.jy.exception.GlobalExceptionHandler"></bean>
+
+    <!-- 请求头拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.jy.interceptor.HeaderInterceptor">
+                <property name="encode" value="UTF-8"></property>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+    <mvc:resources location="/WEB-INF/crossdomain.xml" mapping="/crossdomain.xml"/>
+
+
+    <!-- 定义文件上传解析器 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设定默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"></property>
+
+        <!-- 设定文件上传的最大值2GB，2*1024*1024*1024 -->
+
+        <property name="maxUploadSize" value="2147483648"></property>
+
+    </bean>
+
+    <!--登录拦截和请求是否合法拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.jy.interceptor.LoginInterceptor">
+
+                <!-- 公共地址,不需要任何鉴权可访问的地址 -->
+                <property name="publicUrl">
+                    <list>
+                        <value>/content/file/file/download</value>
+
+                        <!-- 心跳检测-->
+                        <value>/</value>
+                        <!-- 发送短信验证码 -->
+                        <value>/system/sms/send</value>
+
+                        <!-- liu 支付宝二次验签接口 -->
+                        <value>/order/signPays</value>
+
+                        <!-- liu 支付宝二次验签接口 -->
+                        <value>/order/signPay</value>
+
+
+                        <!-- JS跨域 -->
+                        <value>/crossdomain.xml</value>
+
+                        <!-- 接口文档框架开始  -->
+                        <value>/swagger-ui.html</value>
+                        <value>/swagger-resources/**</value>
+                        <value>/v2/api-docs</value>
+                        <value>/webjars/**</value>
+                        <!-- 接口文档框架结束  -->
+
+                        <!-- 图形验证码 -->
+                        <value>/system/code</value>
+
+                        <!-- 菜单树 -->
+                        <value>/system/menu/easyui/tree</value>
+
+                    </list>
+                </property>
+
+                <!-- 需要验证appkey,但不需要验证登录的地址 -->
+                <property name="excludedUrls">
+                    <list>
+
+
+                        <value>/vedio/getPublicityVedio</value><!-- liu 前台业务不拦截接口 获取宣传视频信息 -->
+                        <value>/vedio/getLiveVedioList</value><!-- liu 前台业务不拦截接口 获取直播信息 -->
+                        <value>/course/getCourse</value><!-- liu 前台业务不拦截接口 获取所有课程信息 -->
+                        <value>/course/getCourseCharpter</value><!-- liu 前台业务不拦截接口 获取所有课程信息 -->
+                        <value>/course/freeCourse</value><!-- liu 前台业务不拦截接口 获取所有课程信息 -->
+                        <value>/product/getProduct</value><!-- liu 前台业务不拦截接口 获取所有产品信息 -->
+                        <value>/product/getProductBindCousre</value><!-- liu 前台业务不拦截接口 获取产品课程绑定信息 -->
+                        <value>/product/getProductdiscount</value><!-- liu 前台业务不拦截接口 获取产品折扣信息 -->
+
+                        <!-- 公共不需要登录可访问接口 -->
+                        <!-- 抽奖管理加载奖项 -->
+                        <value>/function/lottery/load</value>
+                        <!--  面经题库行业列表 -->
+                        <value>/content/file/question/bank/business/list</value>
+                        <!--  面经题库列表 -->
+                        <value>/content/file/question/bank/file/list</value>
+                        <!-- 面经题库下载 -->
+                        <value>/content/file/question/bank/file/download</value>
+
+                        <!-- 地区下拉列表 -->
+                        <value>/system/area/select</value>
+
+                        <!-- 配置表下拉列表  -->
+                        <value>/system/select/select/id</value>
+                        <value>/system/select/select/name/**</value>
+
+                        <!--注册验证手机号码是否可用 -->
+                        <value>/account/public/check/phone</value>
+
+                        <!-- 验证邮箱是否可用  -->
+                        <value>/account/public/check/email</value>
+
+                        <!-- 找回密码 -->
+                        <value>/account/public/reset/password</value>
+
+                        <!-- 发送找回密码接口 -->
+                        <value>/system/email/reset/password</value>
+
+                        <!-- 获取视频播放地址 -->
+                        <value>/content/file/video/path</value>
+
+                        <!-- 公共不需要登录可访问接口 -->
+
+                        <!-- 后台管理系统不需要登录可访问接口开始 -->
+
+                        <!-- 后台管理登录 -->
+                        <value>/system/manage/login</value>
+
+                        <!-- 后台管理系统不需要登录可访问接口结束 -->
+
+                        <!-- 官网不需要登录,可访问的接口开始 -->
+
+                        <!-- 官网账号登录 -->
+                        <value>/system/uccn/login</value>
+
+                        <!-- 官网手机验证码登录 -->
+                        <value>/system/uccn/phone/login/**</value>
+
+                        <!-- 通过token获取用户信息 -->
+                        <value>/system/login/account/info</value>
+
+                        <!-- 个人账号注册 -->
+                        <value>/account/person/register</value>
+
+                        <!-- 企业注册 -->
+                        <value>/account/enterprise/register</value>
+
+                        <!-- 企业信息 -->
+                        <value>/account/enterprise/enterprise/data</value>
+
+                        <!-- 获取所有企业招聘职位列表 -->
+                        <value>/enterprise/job/vacancy/list/all</value>
+
+                        <!-- 获取所有企业招聘职位列表总数 -->
+                        <value>/enterprise/job/vacancy/job/count</value>
+
+                        <!-- 获取指定企业的职位列表 -->
+                        <value>/enterprise/job/vacancy/list</value>
+
+                        <!-- 获取职位详情 -->
+                        <value>/enterprise/job/vacancy/one</value>
+
+                        <!-- 导航页 -->
+                        <value>/content/navbar/all/list</value>
+                        <value>/content/navbar/load</value>
+                        <value>/content/navbar/info</value>
+                        <value>/content/navbar/loadc</value>
+
+                        <!-- 底部链接 -->
+                        <value>/system/web/bottomLink/list</value>
+
+                        <!-- 栏目 -->
+                        <value>/content/column/all/list</value>
+                        <value>/content/column/{pageid}</value>
+
+                        <!-- 推荐位 -->
+                        <value>/content/position/all/list</value>
+                        <value>/content/position/{pagecolumnid}</value>
+
+                        <!-- 文章信息 -->
+                        <value>/content/article/list</value>
+                        <value>/content/article/live</value>
+                        <value>/content/article/info</value>
+
+                        <!-- 官网招聘 -->
+                        <value>/joinUs/list</value>
+
+                        <!-- 网站设置-->
+                        <value>/system/web/seting/all</value>
+                        <value>/system/web/seting/qr</value>
+                        <value>/system/web/seting/logo</value>
+
+                        <!-- 加入我们 -->
+                        <value>/joinUs/list/gw</value>
+
+                        <!-- 官网不需要登录,可访问的结束 -->
+
+                        <!-- 以下为测试接口,测试完后需要删除  -->
+
+
+
+
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 引入swagger相关 -->
+    <!-- Enables swgger ui -->
+    <mvc:resources mapping="/swagger-ui.html"
+                   location="classpath:/META-INF/resources/"/>
+    <mvc:resources mapping="/webjars/**"
+                   location="classpath:/META-INF/resources/webjars/"/>
+
+    <!-- Include a swagger configuration -->
+    <bean name="/applicationSwaggerConfig"
+          class="com.jy.swagger.SwaggerConfiguration"/>
+
+</beans>

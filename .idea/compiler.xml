@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="jy-common" />
+        <module name="jy-controller" />
+        <module name="jy-dao" />
+        <module name="jy-entity" />
+        <module name="jy-interface" />
+        <module name="jy-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="jy-common" target="1.8" />
+      <module name="jy-controller" target="1.8" />
+      <module name="jy-dao" target="1.8" />
+      <module name="jy-entity" target="1.8" />
+      <module name="jy-interface" target="1.8" />
+      <module name="jy-parent" target="1.8" />
+      <module name="jy-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/jy-common/jy-common.iml" filepath="$PROJECT_DIR$/jy-common/jy-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-common/jy-common.iml" filepath="$PROJECT_DIR$/jy-common/jy-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-controller/jy-controller.iml" filepath="$PROJECT_DIR$/jy-controller/jy-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-controller/jy-controller.iml" filepath="$PROJECT_DIR$/jy-controller/jy-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-dao/jy-dao.iml" filepath="$PROJECT_DIR$/jy-dao/jy-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-entity/jy-entity.iml" filepath="$PROJECT_DIR$/jy-entity/jy-entity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-interface/jy-interface.iml" filepath="$PROJECT_DIR$/jy-interface/jy-interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-parent/jy-parent.iml" filepath="$PROJECT_DIR$/jy-parent/jy-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jy-service/jy-service.iml" filepath="$PROJECT_DIR$/jy-service/jy-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/zbxc_update.iml" filepath="$PROJECT_DIR$/.idea/zbxc_update.iml" />
+    </modules>
+  </component>
+</project>

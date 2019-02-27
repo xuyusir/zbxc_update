@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/jy-controller" />
+  </component>
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/jy-common/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-controller/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-dao/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-entity/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-interface/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-parent/pom.xml" />
+        <option value="$PROJECT_DIR$/jy-service/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://10.0.104.54/zbxc/branches" />
+                  <option value="svn://10.0.104.54/zbxc/tags" />
+                  <option value="svn://10.0.104.54/zbxc/uccn" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://10.0.104.54/zbxc/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

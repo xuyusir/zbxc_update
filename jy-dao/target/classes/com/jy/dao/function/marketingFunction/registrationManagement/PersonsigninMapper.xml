@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.marketingFunction.registrationManagement.PersonsigninMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin" >
+    <id column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <id column="SigninCheckID" property="signincheckid" jdbcType="INTEGER" />
+    <result column="SiginTime" property="sigintime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    AccountID, SigninCheckID, SiginTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from PersonSignin
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from PersonSignin
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninKey" >
+    delete from PersonSignin
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample" >
+    delete from PersonSignin
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin" >
+    insert into PersonSignin (AccountID, SigninCheckID, SiginTime
+      )
+    values (#{accountid,jdbcType=BIGINT}, #{signincheckid,jdbcType=INTEGER}, #{sigintime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin" >
+    insert into PersonSignin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+      <if test="signincheckid != null" >
+        SigninCheckID,
+      </if>
+      <if test="sigintime != null" >
+        SiginTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="signincheckid != null" >
+        #{signincheckid,jdbcType=INTEGER},
+      </if>
+      <if test="sigintime != null" >
+        #{sigintime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.PersonsigninExample" resultType="java.lang.Integer" >
+    select count(*) from PersonSignin
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update PersonSignin
+    <set >
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+      <if test="record.signincheckid != null" >
+        SigninCheckID = #{record.signincheckid,jdbcType=INTEGER},
+      </if>
+      <if test="record.sigintime != null" >
+        SiginTime = #{record.sigintime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update PersonSignin
+    set AccountID = #{record.accountid,jdbcType=BIGINT},
+      SigninCheckID = #{record.signincheckid,jdbcType=INTEGER},
+      SiginTime = #{record.sigintime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin" >
+    update PersonSignin
+    <set >
+      <if test="sigintime != null" >
+        SiginTime = #{sigintime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.registrationManagement.Personsignin" >
+    update PersonSignin
+    set SiginTime = #{sigintime,jdbcType=TIMESTAMP}
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and SigninCheckID = #{signincheckid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,357 @@
+ package com.jy.controller.base;
+
+ import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
+import com.jy.common.utils.AliyunOSSClientUtil;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.account.authority.RoleMapper;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.Constant;
+import com.jy.entiy.content.file.file.Fileinfo;
+
+/**
+ * @ClassName: BaseController
+ * @Description:基础Controller
+ * @author: cheng fei
+ * @date: 2018-07-31 09:42
+ */
+public class BaseController {
+	// 日志
+	protected Logger logger = Logger.getLogger(this.getClass());
+
+	@Value("${DEBUG}")
+	private boolean DEBUG;
+
+	@Resource
+	private AccountMapper accountMapper;
+
+	@Resource
+	private FileinfoMapper fileinfoMapper;
+
+	@Resource
+	private RoleMapper roleMapper;
+
+	@Resource
+	protected AliyunOSSClientUtil aliyunOSSClientUtil;
+
+	// 获取配置文件
+	@Value("${Alipay_GATEWAY}")
+	private String Alipay_GATEWAY;
+
+	@Value("${Alipay_APP_ID}")
+	private String Alipay_APP_ID;
+
+	@Value("${merchant_PRIVATE_KEY}")
+	private String merchant_PRIVATE_KEY;
+
+	@Value("${Alipay_CHARSET}")
+	private String Alipay_CHARSET;
+
+	@Value("${merchant_PUBLIC_KEY}")
+	private String merchant_PUBLIC_KEY;
+
+	@Value("${Alipay_PUBLIC_KEY}")
+	private String Alipay_PUBLIC_KEY;
+
+	@Value("${SIGN_URL}")
+	private String sign_url;
+
+
+
+	/**
+	 * 支付宝支付接口
+	 *
+	 * @param httpResponse
+	 * @param out_trade_no
+	 *            订单号
+	 * @param subject
+	 *            订单标题
+	 * @param total_amount
+	 *            总价格
+	 * @param body
+	 *            订单详情
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void doPost(HttpServletResponse httpResponse,Map<String, String> param,String url1,String ip) throws ServletException, IOException {
+		AlipayClient alipayClient = new DefaultAlipayClient(Alipay_GATEWAY, Alipay_APP_ID, merchant_PRIVATE_KEY, "json",
+				Alipay_CHARSET, Alipay_PUBLIC_KEY, "RSA2"); // 获得初始化的AlipayClient
+		AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();// 创建API对应的request
+		alipayRequest.setReturnUrl(ip + url1);// 在公共参数中设置回跳地址
+
+		alipayRequest.setNotifyUrl(sign_url+"/order/signPays");// 在公共参数中设置通知地址
+
+		String s = "{"
+				+ "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"," //固定值
+				+ "\"out_trade_no\":\""+ param.get("out_trade_no") + "\","//订单号
+				+ "\"total_amount\":"+ param.get("total_amount") + "," //总价
+				+ "\"subject\":\"" + param.get("subject") + "\"," //订单标题
+				+ "\"body\":\"" + param.get("body") + "\""//订单详情
+				+ "}";
+		alipayRequest.setBizContent(s);// 填充业务参数
+		String form = "";
+		try {
+			form = alipayClient.pageExecute(alipayRequest).getBody(); // 调用SDK生成表单
+		} catch (AlipayApiException e) {
+			logger.error("支付宝支付错误,订单号："+param.get("out_trade_no"));
+			e.printStackTrace();
+		}
+		httpResponse.setContentType("text/html;charset=UTF-8");
+		httpResponse.getWriter().write(form);// 直接将完整的表单html输出到页面
+		httpResponse.getWriter().flush();
+		httpResponse.getWriter().close();
+	}
+
+	/**
+	 * 支付宝验签接口
+	 *
+	 * @param httpRequest
+	 * @param httpResponse
+	 * @param charset
+	 * @param out_trade_no
+	 * @param method
+	 * @param total_amount
+	 * @param sign
+	 * @param trade_no支付宝交易号
+	 * @param auth_app_id
+	 * @param app_id
+	 * @param sign_type
+	 * @param seller_id
+	 * @param timestamp
+	 * @return
+	 */
+	public boolean payResult(Map<String, String> param) {
+		boolean signVerified = false;
+		try {
+			signVerified = AlipaySignature.rsaCheckV1(param, Alipay_PUBLIC_KEY, Alipay_CHARSET, "RSA2");
+		} catch (AlipayApiException e) {
+			logger.error("支付宝验签错误,订单号："+param.get("out_trade_no")+"支付宝系统中的交易流水号："
+					+param.get("trade_no"));
+			e.printStackTrace();
+		} // 调用SDK验证签名
+		System.out.println("result:"+signVerified);
+		if (signVerified) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * 支付宝退款接口
+	 */
+	/*
+	public void returnMoney(Map<String, String> param) {
+		AlipayClient alipayClient = new DefaultAlipayClient(Alipay_GATEWAY, Alipay_APP_ID, merchant_PRIVATE_KEY, "json",
+				Alipay_CHARSET, Alipay_PUBLIC_KEY);
+		AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+		request.setBizContent("{"
+				+ "\"out_trade_no\":\""+param.get("out_trade_no")+"\","   //订单号
+				+ "\"trade_no\":\""+param.get("trade_no")+"\"," //支付宝交易号
+				+ "\"refund_amount\":"+param.get("refund_amount")+"\"," //需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+				+ "\"refund_reason\":\""+param.get("refund_reason")+"\"," //退款的原因说明
+				+ "\"out_request_no\":\""+param.get("out_request_no")+"\"," //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+				+ "}");
+ 		AlipayTradeRefundResponse response = null;
+		try {
+			response = alipayClient.execute(request);
+		} catch (AlipayApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (response.isSuccess()) {
+			System.out.println("调用成功");
+		} else {
+			System.out.println("调用失败");
+		}
+	}*/
+
+	/**
+	 * 退款查询接口
+	 * @param param
+	 * @return
+	 * @throws AlipayApiException
+	 */
+	public AlipayTradeFastpayRefundQueryResponse refundQuery(Map<String, String> param) throws AlipayApiException {
+		AlipayClient alipayClient = new DefaultAlipayClient(Alipay_GATEWAY, Alipay_APP_ID, merchant_PRIVATE_KEY, "json",
+				Alipay_CHARSET, Alipay_PUBLIC_KEY);
+		AlipayTradeFastpayRefundQueryRequest request = new AlipayTradeFastpayRefundQueryRequest();
+		request.setBizContent("{"
+		+"\"trade_no\":\""+param.get("trade_no")+"\","
+		+"\"out_trade_no\":\""+param.get("out_trade_no")+"\","
+		+"\"out_request_no\":\""+param.get("out_request_no")+"\"" //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+		+
+		"}");
+		AlipayTradeFastpayRefundQueryResponse response = alipayClient.execute(request);
+		return response;
+	}
+
+	/**
+	 * 得到request对象
+	 */
+	protected HttpServletRequest getRequest() {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		return request;
+	}
+
+	/**
+	 * 下载
+	 *
+	 * @throws IOException
+	 */
+	protected String baseDownloadFile(HttpServletResponse response, Long file_id) throws IOException {
+		Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(file_id);
+		if (fileinfo == null) {
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write("文件不存在!");// 直接将完整的表单html输出到页面
+            response.getWriter().flush();
+            response.getWriter().close();
+            return "";
+        }
+
+		// 设置请求头
+		response.setContentType("application/x-msdownload;");
+		response.setHeader("Content-disposition", "attachment; filename=" + new String(fileinfo.getFilename().getBytes("utf-8"), "ISO8859-1"));
+		response.setHeader("Content-Length", fileinfo.getFilesize());
+
+		InputStream inputStream = aliyunOSSClientUtil.downLoadFile(fileinfo.getFilefullpath());
+
+		ServletOutputStream outputStream = response.getOutputStream();
+		byte [] data = new byte[1024 * 1024];
+		int len = -1;
+		while ((len = inputStream.read(data)) > -1) {
+			outputStream.write(data, 0, len);
+		}
+		inputStream.close();
+		outputStream.close();
+		aliyunOSSClientUtil.closeOSSClient();
+
+		return null;
+	}
+
+	/**
+	 * 导出excel
+	 *
+	 * @param response
+	 * @param fileName
+	 *
+	 * @param name
+	 * @throws IOException
+	 */
+	protected void exportExcel(HttpServletResponse response, String fileName, String name) throws IOException {
+		// 下载PDF
+		// 获取输入流
+		InputStream bis = new BufferedInputStream(new FileInputStream(new File(fileName)));
+		// 假如以中文名下载的话
+		String filename = name;
+		// 转码，免得文件名中文乱码
+		filename = URLEncoder.encode(filename, "UTF-8");
+		// 设置文件下载头
+		response.addHeader("Content-Disposition", "attachment;filename=" + filename);
+		// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+		response.setContentType("multipart/form-data");
+		BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+		int len = 0;
+		while ((len = bis.read()) != -1) {
+			out.write(len);
+			out.flush();
+		}
+		out.close();
+		bis.close();
+
+		// 下载完成，删除文件
+		File file1 = new File(fileName);
+		if (file1.isFile() && file1.exists()) {
+			file1.delete();
+		}
+	}
+
+	/**
+	 * 参数字符串转时间日期
+	 */
+	protected Date getDate(String time) {
+		time = time.trim();
+		if (time.indexOf(":") > 0) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				return format.parse(time);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				return format.parse(time);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取登录用户的IP
+	 *
+	 * @throws Exception
+	 */
+	protected String getIP() {
+		HttpServletRequest request = this.getRequest();
+		String ip = "";
+		if (request.getHeader("x-forwarded-for") == null) {
+			ip = request.getRemoteAddr();
+		} else {
+			ip = request.getHeader("x-forwarded-for");
+		}
+		return ip;
+	}
+
+	/**
+	 * 获取当前已登录用户
+	 * @return
+	 */
+	protected AccountInfo getAccountInfo() {
+		Object object = getRequest().getAttribute(Constant.ACCOUNTINFO);
+		return (AccountInfo) object;
+	}
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/7 20:00
+	 * 描述 : 获取请求来源
+	 * @return
+	 */
+	protected String getRequestHome(){
+		return getRequest().getAttribute(Constant.REQUEST_HOME).toString();
+	}
+
+}

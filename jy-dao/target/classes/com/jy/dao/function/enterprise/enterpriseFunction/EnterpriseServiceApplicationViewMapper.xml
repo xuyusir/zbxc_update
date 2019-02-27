@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationViewMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationView" >
+    <result column="TalentPoolApplicationID" property="talentpoolapplicationid" jdbcType="INTEGER" />
+    <result column="ServiceNo" property="serviceno" jdbcType="VARCHAR" />
+    <result column="ApplcationDate" property="applcationdate" jdbcType="TIMESTAMP" />
+    <result column="EnterpriseName" property="enterprisename" jdbcType="VARCHAR" />
+    <result column="Name" property="name" jdbcType="VARCHAR" />
+    <result column="Phone" property="phone" jdbcType="VARCHAR" />
+    <result column="ApplicationServiceType" property="applicationservicetype" jdbcType="INTEGER" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ApplicationStatusName" property="applicationstatusname" jdbcType="VARCHAR" />
+    <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ServiceNo, ApplcationDate, EnterpriseName, Name, Phone, ApplicationServiceType, ApplicationStatusID, 
+    ApplicationStatusName, HandleTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationViewExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from enterprise_service_application_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationViewExample" >
+    delete from enterprise_service_application_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationView" >
+    insert into enterprise_service_application_view (ServiceNo, ApplcationDate, EnterpriseName, 
+      Name, Phone, ApplicationServiceType, 
+      ApplicationStatusID, ApplicationStatusName, 
+      HandleTime)
+    values (#{serviceno,jdbcType=VARCHAR}, #{applcationdate,jdbcType=TIMESTAMP}, #{enterprisename,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{applicationservicetype,jdbcType=INTEGER}, 
+      #{applicationstatusid,jdbcType=INTEGER}, #{applicationstatusname,jdbcType=VARCHAR}, 
+      #{handletime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationView" >
+    insert into enterprise_service_application_view
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="serviceno != null" >
+        ServiceNo,
+      </if>
+      <if test="applcationdate != null" >
+        ApplcationDate,
+      </if>
+      <if test="enterprisename != null" >
+        EnterpriseName,
+      </if>
+      <if test="name != null" >
+        Name,
+      </if>
+      <if test="phone != null" >
+        Phone,
+      </if>
+      <if test="applicationservicetype != null" >
+        ApplicationServiceType,
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID,
+      </if>
+      <if test="applicationstatusname != null" >
+        ApplicationStatusName,
+      </if>
+      <if test="handletime != null" >
+        HandleTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="serviceno != null" >
+        #{serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="applcationdate != null" >
+        #{applcationdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enterprisename != null" >
+        #{enterprisename,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationservicetype != null" >
+        #{applicationservicetype,jdbcType=INTEGER},
+      </if>
+      <if test="applicationstatusid != null" >
+        #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="applicationstatusname != null" >
+        #{applicationstatusname,jdbcType=VARCHAR},
+      </if>
+      <if test="handletime != null" >
+        #{handletime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.enterpriseFunction.EnterpriseServiceApplicationViewExample" resultType="java.lang.Integer" >
+    select count(*) from enterprise_service_application_view
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update enterprise_service_application_view
+    <set >
+      <if test="record.serviceno != null" >
+        ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applcationdate != null" >
+        ApplcationDate = #{record.applcationdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.enterprisename != null" >
+        EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        Name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        Phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicationservicetype != null" >
+        ApplicationServiceType = #{record.applicationservicetype,jdbcType=INTEGER},
+      </if>
+      <if test="record.applicationstatusid != null" >
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.applicationstatusname != null" >
+        ApplicationStatusName = #{record.applicationstatusname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.handletime != null" >
+        HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update enterprise_service_application_view
+    set ServiceNo = #{record.serviceno,jdbcType=VARCHAR},
+      ApplcationDate = #{record.applcationdate,jdbcType=TIMESTAMP},
+      EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+      Name = #{record.name,jdbcType=VARCHAR},
+      Phone = #{record.phone,jdbcType=VARCHAR},
+      ApplicationServiceType = #{record.applicationservicetype,jdbcType=INTEGER},
+      ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      ApplicationStatusName = #{record.applicationstatusname,jdbcType=VARCHAR},
+      HandleTime = #{record.handletime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <select id="selectEnterpriseApplicationList" resultMap="BaseResultMap">
+		SELECT
+		  TalentPoolApplicationID,
+		  ServiceNo, ApplcationDate, EnterpriseName, 
+	      Name, Phone, ApplicationServiceType, 
+	      ApplicationStatusID, ApplicationStatusName, 
+	      HandleTime
+		FROM
+			enterprise_service_application_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="applicationstatusname != null">
+					AND (ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="applcationdate != null">
+					AND (ApplcationDate like '%${applcationdate}%')
+				</if>
+				<if test="search != null">
+					AND (ServiceNo like #{search} OR Name like #{search} OR EnterpriseName like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		ApplcationDate DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountEnterpriseApplicationList" resultType="int">
+		SELECT
+			count(TalentPoolApplicationID)
+		FROM
+			enterprise_service_application_view
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="applicationstatusname != null">
+					AND (ApplicationStatusName = #{applicationstatusname})
+				</if>
+				<if test="applcationdate != null">
+					AND (ApplcationDate like '%${applcationdate}%')
+				</if>
+				<if test="search != null">
+					AND (ServiceNo like #{search} OR Name like #{search} OR EnterpriseName like #{search})
+				</if>
+			</trim>
+		</where>
+  
+  </select>
+  
+</mapper>

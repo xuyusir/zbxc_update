@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.PracticalexpirenceMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.function.person.Practicalexpirence">
+		<id column="PracticeID" property="practiceid" jdbcType="BIGINT" />
+		<result column="ResumeID" property="resumeid" jdbcType="BIGINT" />
+		<result column="PracticeTitle" property="practicetitle"
+			jdbcType="VARCHAR" />
+		<result column="PracticeStartDate" property="practicestartdate"
+			jdbcType="TIMESTAMP" />
+		<result column="PracticeEndDate" property="practiceenddate"
+			jdbcType="TIMESTAMP" />
+		<result column="PracticeRole" property="practicerole"
+			jdbcType="VARCHAR" />
+		<result column="PracticeDescription"
+			property="practicedescription" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		PracticeID, ResumeID, PracticeTitle, PracticeStartDate, PracticeEndDate,
+		PracticeRole,
+		PracticeDescription
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.function.person.PracticalexpirenceExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from PracticalExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from PracticalExpirence
+		where PracticeID = #{practiceid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from PracticalExpirence
+		where PracticeID = #{practiceid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.function.person.PracticalexpirenceExample">
+		delete from PracticalExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.function.person.Practicalexpirence">
+		insert into PracticalExpirence (PracticeID, ResumeID, PracticeTitle,
+		PracticeStartDate, PracticeEndDate,
+		PracticeRole, PracticeDescription)
+		values (#{practiceid,jdbcType=BIGINT}, #{resumeid,jdbcType=BIGINT},
+		#{practicetitle,jdbcType=VARCHAR},
+		#{practicestartdate,jdbcType=TIMESTAMP},
+		#{practiceenddate,jdbcType=TIMESTAMP},
+		#{practicerole,jdbcType=VARCHAR},
+		#{practicedescription,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.function.person.Practicalexpirence">
+		<selectKey keyProperty="practiceid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into PracticalExpirence
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="practiceid != null">
+				PracticeID,
+			</if>
+			<if test="resumeid != null">
+				ResumeID,
+			</if>
+			<if test="practicetitle != null">
+				PracticeTitle,
+			</if>
+			<if test="practicestartdate != null">
+				PracticeStartDate,
+			</if>
+			<if test="practiceenddate != null">
+				PracticeEndDate,
+			</if>
+			<if test="practicerole != null">
+				PracticeRole,
+			</if>
+			<if test="practicedescription != null">
+				PracticeDescription,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="practiceid != null">
+				#{practiceid,jdbcType=BIGINT},
+			</if>
+			<if test="resumeid != null">
+				#{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="practicetitle != null">
+				#{practicetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="practicestartdate != null">
+				#{practicestartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="practiceenddate != null">
+				#{practiceenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="practicerole != null">
+				#{practicerole,jdbcType=VARCHAR},
+			</if>
+			<if test="practicedescription != null">
+				#{practicedescription,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.function.person.PracticalexpirenceExample"
+		resultType="java.lang.Integer">
+		select count(*) from PracticalExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update PracticalExpirence
+		<set>
+			<if test="record.practiceid != null">
+				PracticeID = #{record.practiceid,jdbcType=BIGINT},
+			</if>
+			<if test="record.resumeid != null">
+				ResumeID = #{record.resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="record.practicetitle != null">
+				PracticeTitle = #{record.practicetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.practicestartdate != null">
+				PracticeStartDate = #{record.practicestartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.practiceenddate != null">
+				PracticeEndDate = #{record.practiceenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.practicerole != null">
+				PracticeRole = #{record.practicerole,jdbcType=VARCHAR},
+			</if>
+			<if test="record.practicedescription != null">
+				PracticeDescription = #{record.practicedescription,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update PracticalExpirence
+		set PracticeID = #{record.practiceid,jdbcType=BIGINT},
+		ResumeID = #{record.resumeid,jdbcType=BIGINT},
+		PracticeTitle = #{record.practicetitle,jdbcType=VARCHAR},
+		PracticeStartDate = #{record.practicestartdate,jdbcType=TIMESTAMP},
+		PracticeEndDate = #{record.practiceenddate,jdbcType=TIMESTAMP},
+		PracticeRole = #{record.practicerole,jdbcType=VARCHAR},
+		PracticeDescription = #{record.practicedescription,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.function.person.Practicalexpirence">
+		update PracticalExpirence
+		<set>
+			<if test="resumeid != null">
+				ResumeID = #{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="practicetitle != null">
+				PracticeTitle = #{practicetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="practicestartdate != null">
+				PracticeStartDate = #{practicestartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="practiceenddate != null">
+				PracticeEndDate = #{practiceenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="practicerole != null">
+				PracticeRole = #{practicerole,jdbcType=VARCHAR},
+			</if>
+			<if test="practicedescription != null">
+				PracticeDescription = #{practicedescription,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where PracticeID = #{practiceid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.function.person.Practicalexpirence">
+		update PracticalExpirence
+		set ResumeID = #{resumeid,jdbcType=BIGINT},
+		PracticeTitle = #{practicetitle,jdbcType=VARCHAR},
+		PracticeStartDate = #{practicestartdate,jdbcType=TIMESTAMP},
+		PracticeEndDate = #{practiceenddate,jdbcType=TIMESTAMP},
+		PracticeRole = #{practicerole,jdbcType=VARCHAR},
+		PracticeDescription = #{practicedescription,jdbcType=VARCHAR}
+		where PracticeID = #{practiceid,jdbcType=BIGINT}
+	</update>
+</mapper>

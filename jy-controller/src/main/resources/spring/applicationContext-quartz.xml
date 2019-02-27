@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 自动关闭过期职位Job类 -->
+    <bean id="jobQuartz" class="com.jy.quartz.JobQuartz"/>
+
+    <!-- 配置自动关闭职位JobDetail  使用MethodInvokingJobDetailFactoryBean这种方式job类不需要实现Job接口-->
+    <bean id="jobQuartzDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="jobQuartz" />
+        </property>
+        <!-- 要执行的方法名称 -->
+        <property name="targetMethod">
+            <value>execute</value>
+        </property>
+    </bean>
+
+    <!-- 配置自动关闭职位简单触发器trigger，启动项目立即执行 -->
+    <bean id="jobSimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="jobQuartzDetail"></property>
+        <property name="startDelay" value="500" />
+        <property name="repeatInterval" value="0" />
+        <property name="repeatCount" value="0" />
+    </bean>
+    <!-- 配置关闭过期职位触发器trigger -->
+    <bean id="jobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean ">
+        <property name="jobDetail" ref="jobQuartzDetail"></property>
+        <!-- 每天凌晨0点1点整点执行 -->
+        <property name="cronExpression" value="0 0 0-1 * * ?"></property>
+    </bean>
+    
+    
+    
+        <!-- 自动回收文章 -->
+    <bean id="articleQuartz" class="com.jy.quartz.ArticleQuartz"/>
+
+    <!-- 配置自动回收文章JobDetail  使用MethodInvokingJobDetailFactoryBean这种方式job类不需要实现Job接口-->
+    <bean id="articleQuartzID" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="articleQuartz" />
+        </property>
+        <!-- 要执行的方法名称 -->
+        <property name="targetMethod">
+            <value>execute</value>
+        </property>
+    </bean>
+
+    <!-- 配置自动关闭职位简单触发器trigger，启动项目立即执行 -->
+    <bean id="articleSimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="articleQuartzID"></property>
+        <property name="startDelay" value="500" />
+        <property name="repeatInterval" value="0" />
+        <property name="repeatCount" value="0" />
+    </bean>
+    <!-- 配置关闭过期职位触发器trigger -->
+    <bean id="articleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean ">
+        <property name="jobDetail" ref="articleQuartzID"></property>
+        <!-- 每天凌晨0点1点整点执行 -->
+        <property name="cronExpression" value="0 0 0-1 * * ?"></property>
+    </bean>
+    
+    
+
+    <!-- 配置调度工厂 -->
+    <bean id="SpringJobSchedulerFactoryBean"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <!-- 关闭过期职位的两个触发器 -->
+                <ref bean="jobSimpleTrigger" />
+                <ref bean="jobTrigger" />
+                <!-- 回收文章两个触发器 -->
+                <ref bean="articleSimpleTrigger" />
+                <ref bean="articleTrigger" />
+            </list>
+        </property>
+    </bean>
+
+
+</beans>

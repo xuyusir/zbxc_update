@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.course.CourseMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.product.course.Course" >
+    <id column="CourseID" property="courseid" jdbcType="BIGINT" />
+    <result column="CourseTitle" property="coursetitle" jdbcType="VARCHAR" />
+    <result column="CourseAbstract" property="courseabstract" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="FileID" property="fileid" jdbcType="BIGINT" />
+    <result column="ValidDays" property="validdays" jdbcType="INTEGER" />
+    <result column="Image" property="image" jdbcType="BIGINT" />
+    <result column="Teacher" property="teacher" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    CourseID, CourseTitle, CourseAbstract, CreateTime, CreatePersonID, UpdateTime, UpdatePersonID, 
+    FileID, ValidDays, Image, Teacher
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.product.course.CourseExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from Course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from Course
+    where CourseID = #{courseid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Course
+    where CourseID = #{courseid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.product.course.CourseExample" >
+    delete from Course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.product.course.Course" >
+    insert into Course (CourseID, CourseTitle, CourseAbstract, 
+      CreateTime, CreatePersonID, UpdateTime, 
+      UpdatePersonID, FileID, ValidDays, 
+      Image, Teacher)
+    values (#{courseid,jdbcType=BIGINT}, #{coursetitle,jdbcType=VARCHAR}, #{courseabstract,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{fileid,jdbcType=BIGINT}, #{validdays,jdbcType=INTEGER}, 
+      #{image,jdbcType=BIGINT}, #{teacher,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.product.course.Course" >
+    <selectKey keyProperty="courseid" order="AFTER" resultType="Long">
+    SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into Course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="courseid != null" >
+        CourseID,
+      </if>
+      <if test="coursetitle != null" >
+        CourseTitle,
+      </if>
+      <if test="courseabstract != null" >
+        CourseAbstract,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="fileid != null" >
+        FileID,
+      </if>
+      <if test="validdays != null" >
+        ValidDays,
+      </if>
+      <if test="image != null" >
+        Image,
+      </if>
+      <if test="teacher != null" >
+        Teacher,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="courseid != null" >
+        #{courseid,jdbcType=BIGINT},
+      </if>
+      <if test="coursetitle != null" >
+        #{coursetitle,jdbcType=VARCHAR},
+      </if>
+      <if test="courseabstract != null" >
+        #{courseabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="fileid != null" >
+        #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="validdays != null" >
+        #{validdays,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=BIGINT},
+      </if>
+      <if test="teacher != null" >
+        #{teacher,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.product.course.CourseExample" resultType="java.lang.Integer" >
+    select count(*) from Course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update Course
+    <set >
+      <if test="record.courseid != null" >
+        CourseID = #{record.courseid,jdbcType=BIGINT},
+      </if>
+      <if test="record.coursetitle != null" >
+        CourseTitle = #{record.coursetitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.courseabstract != null" >
+        CourseAbstract = #{record.courseabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.fileid != null" >
+        FileID = #{record.fileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.validdays != null" >
+        ValidDays = #{record.validdays,jdbcType=INTEGER},
+      </if>
+      <if test="record.image != null" >
+        Image = #{record.image,jdbcType=BIGINT},
+      </if>
+      <if test="record.teacher != null" >
+        Teacher = #{record.teacher,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update Course
+    set CourseID = #{record.courseid,jdbcType=BIGINT},
+      CourseTitle = #{record.coursetitle,jdbcType=VARCHAR},
+      CourseAbstract = #{record.courseabstract,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      FileID = #{record.fileid,jdbcType=BIGINT},
+      ValidDays = #{record.validdays,jdbcType=INTEGER},
+      Image = #{record.image,jdbcType=BIGINT},
+      Teacher = #{record.teacher,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.product.course.Course" >
+    update Course
+    <set >
+      <if test="coursetitle != null" >
+        CourseTitle = #{coursetitle,jdbcType=VARCHAR},
+      </if>
+      <if test="courseabstract != null" >
+        CourseAbstract = #{courseabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="fileid != null" >
+        FileID = #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="validdays != null" >
+        ValidDays = #{validdays,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        Image = #{image,jdbcType=BIGINT},
+      </if>
+      <if test="teacher != null" >
+        Teacher = #{teacher,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where CourseID = #{courseid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.product.course.Course" >
+    update Course
+    set CourseTitle = #{coursetitle,jdbcType=VARCHAR},
+      CourseAbstract = #{courseabstract,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      FileID = #{fileid,jdbcType=BIGINT},
+      ValidDays = #{validdays,jdbcType=INTEGER},
+      Image = #{image,jdbcType=BIGINT},
+      Teacher = #{teacher,jdbcType=VARCHAR}
+    where CourseID = #{courseid,jdbcType=BIGINT}
+  </update>
+</mapper>

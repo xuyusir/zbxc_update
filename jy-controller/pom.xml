@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>jy</groupId>
+		<artifactId>jy-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>jy-controller</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>jy</groupId>
+			<artifactId>jy-service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-petstore</artifactId>
+		</dependency>
+
+		<!-- Jackson Json处理工具包 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- 短信 https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-core</artifactId>
+		</dependency>
+
+		<!-- 短信 https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-dysmsapi -->
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+		</dependency>
+
+		<!-- jstl -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<!-- servlet-api -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- 支付宝 -->
+		<dependency>
+			<groupId>com.alipay</groupId> <!--自定义 -->
+			<artifactId>alipay-sdk-sources</artifactId> <!--自定义 -->
+			<version>3.3.4.ALL</version> <!--自定义 -->
+			<scope>system</scope> <!--system，类似provided，需要显式提供依赖的jar以后，Maven就不会在Repository中查找它 -->
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java-3.3.4.ALL-sources.jar</systemPath> <!--项目根目录下的lib文件夹下 -->
+		</dependency>
+		<dependency>
+			<groupId>com.alipay</groupId> <!--自定义 -->
+			<artifactId>alipay-sdk</artifactId> <!--自定义 -->
+			<version>3.3.4.ALL</version> <!--自定义 -->
+			<scope>system</scope> <!--system，类似provided，需要显式提供依赖的jar以后，Maven就不会在Repository中查找它 -->
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/alipay-sdk-java-3.3.4.ALL.jar</systemPath> <!--项目根目录下的lib文件夹下 -->
+		</dependency>
+
+		<dependency>
+			<groupId>jack.jave</groupId>
+			<artifactId>jave</artifactId>
+			<version>1.0.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/jave-1.0.2.jar</systemPath>
+		</dependency>
+		<!-- 文件上传组件 -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+
+		<!-- quartz任务调度框架 -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<!-- <update>true</update> -->
+					<path>/</path>
+					<port>8080</port>
+					<!-- 云凯服务器tomcat热部署 -->
+					<!--<url>http://10.0.104.54:8080/manager/text</url>-->
+					<!-- 阿里云后端01tomcat热部署 -->
+					<!--<url>http://119.23.95.61:10005/manager/text</url>-->
+					<!-- 阿里云后端02tomcat热部署 -->
+					<url>http://119.23.95.61:10006/manager/text</url>
+					<username>tomcat</username>
+					<password>tomcat</password>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

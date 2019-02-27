@@ -1,0 +1,83 @@
+package com.jy.dao.function.person.resume;
+
+import com.jy.entiy.function.person.resume.Resumeinfo;
+import com.jy.entiy.function.person.resume.ResumeinfoExample;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ResumeinfoMapper {
+	int countByExample(ResumeinfoExample example);
+
+	int deleteByExample(ResumeinfoExample example);
+
+	int deleteByPrimaryKey(Long resumeid);
+
+	int insert(Resumeinfo record);
+
+	int insertSelective(Resumeinfo record);
+
+	List<Resumeinfo> selectByExample(ResumeinfoExample example);
+
+	Resumeinfo selectByPrimaryKey(Long resumeid);
+
+	int updateByExampleSelective(@Param("record") Resumeinfo record, @Param("example") ResumeinfoExample example);
+
+	int updateByExample(@Param("record") Resumeinfo record, @Param("example") ResumeinfoExample example);
+
+	int updateByPrimaryKeySelective(Resumeinfo record);
+
+	int updateByPrimaryKey(Resumeinfo record);
+
+	// 查询已投递登陆者企业的所有简历
+	List<Resumeinfo> getSendAccounts(Map<String, Object> param);
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/15 0:51
+	 * 描述 : 查询简历列表
+	 *
+	 * @param cityCode      期望工作城市编码
+	 * @param search        关键词:模糊查询姓名/手机号/学校
+	 * @param order         排序方式:1.绩点排序,2.更新时间排序
+	 * @param accountIDList 要排除简历的账号列表
+	 * @return
+	 */
+//	List<Map<String,Object>> getResume(@Param("cityCode")String cityCode, @Param("search")String search, @Param("order")Integer order, @Param("accountIDList")List<Long> accountIDList);
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/15 0:51
+	 * 描述 : 查询简历列表
+	 *
+	 * @param cityCode      期望工作城市编码
+	 * @param search        关键词:模糊查询姓名/手机号/学校
+	 * @param order         排序方式:1.绩点排序,2.更新时间排序
+	 * @return
+	 */
+	List<Map<String,Object>> getResume(@Param("cityCode")String cityCode, @Param("search")String search, @Param("order")Integer order);
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2018/11/15 0:55
+	 * 描述 : 查询简历总数
+	 * @param accountIDList 要排除简历的账号列表
+	 * @return
+	 */
+//	Integer getResumeCountByAll(@Param("accountIDList")List<Long> accountIDList);
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2019/1/7 15:59
+	 * 描述 : 查询简历总数
+	 * @return
+	 */
+	Integer getResumeCountByAll();
+
+	List<Resumeinfo> selectDown(Map<String, Object> param);
+
+	Integer selectDownCount(Map<String, Object> param);
+
+    String getSexByAccountID(@Param("accountID") Long accountID);
+
+}

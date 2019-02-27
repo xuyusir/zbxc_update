@@ -1,0 +1,246 @@
+package com.jy.controller.function.enterprise.recruitment.rz;
+
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.controller.base.BaseController;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+import com.jy.service.function.enterprise.recruitment.rz.EnterpriseJobVacancyService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+
+/**
+ * @ClassName:  EnterpriseJobVacancyController
+ * @Description:企业招聘职位接口
+ * @author: cheng fei
+ * @date:   2018-09-05 10:32
+ */
+@Controller
+@RequestMapping("enterprise/job/vacancy")
+@Api(tags = "function.enterprise.recruitment.rz.EnterpriseJobVacancyController", description = "功能-企业端-招聘-企业招聘职位模块")
+public class EnterpriseJobVacancyController extends BaseController{
+
+	@Resource
+	private EnterpriseJobVacancyService enterpriseJobVacancyService;
+
+	@ApiOperation(value = "添加企业招聘职位接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
+	public Result insertEnterpriseJobVacancy(
+			@ApiParam(value = "职位名称", required = true) @RequestParam(required = true) String job_title,
+			@ApiParam(value = "招聘类型ID", required = true) @RequestParam(required = true) Integer job_property_id,
+			@ApiParam(value = "工作类型ID", required = false) @RequestParam(required = false) Integer job_type_id,
+			@ApiParam(value = "工作省ID", required = true) @RequestParam(required = true) String province_code,
+			@ApiParam(value = "工作市ID", required = true) @RequestParam(required = true) String city_code,
+			@ApiParam(value = "工作县ID", required = false) @RequestParam(required = false) String county_code,
+			@ApiParam(value = "招聘人数", required = true) @RequestParam(required = true) Integer hire_people_no,
+			@ApiParam(value = "是否留用,Y:是,N:否", required = true) @RequestParam(required = true) String is_final_hire,
+			@ApiParam(value = "薪资类型ID", required = true) @RequestParam(required = true) Integer salary_type_id,
+			@ApiParam(value = "薪资", required = true) @RequestParam(required = true) String salary,
+			@ApiParam(value = "工作年限要求", required = true) @RequestParam(required = true) String expirence_requirement,
+			@ApiParam(value = "工作内容", required = true) @RequestParam(required = true) String job_chinese_reponsibility,
+			@ApiParam(value = "职位要求", required = true) @RequestParam(required = true) String job_chinesere_quirement,
+			@ApiParam(value = "学历要求", required = true) @RequestParam(required = true) Integer education_id,
+			@ApiParam(value = "工作地址", required = true) @RequestParam(required = true) String work_address,
+			@ApiParam(value = "招聘有效期", required = true) @RequestParam(required = true) String recruit_expire_date,
+			@ApiParam(value = "下期开始日期", required = false) @RequestParam(required = false) String next_reruit_date
+			) throws MyException {
+		AccountInfo accountInfo = this.getAccountInfo();
+		Enterprisejobvacancy ejv = new Enterprisejobvacancy();
+		ejv.setJobtitle(job_title);
+		ejv.setJobpropertyid(job_property_id);
+		ejv.setJobtypeid(job_type_id);
+		ejv.setProvincecode(province_code);
+		ejv.setCitycode(city_code);
+		ejv.setCountycode(county_code);
+		ejv.setHirepeopleno(hire_people_no);
+		ejv.setSalarytypeid(salary_type_id);
+		ejv.setIsfinalhire(is_final_hire);
+		ejv.setSalary(salary);
+		ejv.setExpirencerequirement(expirence_requirement);
+		ejv.setJobchineseresponsibility(job_chinese_reponsibility);
+		ejv.setJobchineserequirement(job_chinesere_quirement);
+		ejv.setEducationid(education_id);
+		ejv.setWorkaddress(work_address);
+
+        Result result = setDate(ejv, recruit_expire_date, next_reruit_date);
+        if (result.getStatus().intValue() != ResultEnum.SUCCESS.getStatus()){
+            return result;
+        }
+
+		return enterpriseJobVacancyService.insertEnterpriseJobVacancy(accountInfo, ejv);
+	}
+
+	@ApiOperation(value = "修改企业招聘职位接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result updateEnterpriseJobVacancy(
+			@ApiParam(value = "职位ID", required = true) @RequestParam(required = true) Integer enterprise_job_vacancy_id,
+			@ApiParam(value = "职位名称", required = false) @RequestParam(required = false) String job_title,
+			@ApiParam(value = "招聘类型ID", required = false) @RequestParam(required = false) Integer job_property_id,
+			@ApiParam(value = "工作类型ID", required = false) @RequestParam(required = false) Integer job_type_id,
+			@ApiParam(value = "工作省ID", required = false) @RequestParam(required = false) String province_code,
+			@ApiParam(value = "工作市ID", required = false) @RequestParam(required = false) String city_code,
+			@ApiParam(value = "工作县ID", required = false) @RequestParam(required = false) String county_code,
+			@ApiParam(value = "招聘人数", required = false) @RequestParam(required = false) Integer hire_people_no,
+			@ApiParam(value = "是否留用,Y:是,N:否", required = false) @RequestParam(required = false) String is_final_hire,
+			@ApiParam(value = "薪资类型ID", required = false) @RequestParam(required = false) Integer salary_type_id,
+			@ApiParam(value = "薪资", required = false) @RequestParam(required = false) String salary,
+			@ApiParam(value = "工作年限要求", required = false) @RequestParam(required = false) String expirence_requirement,
+			@ApiParam(value = "工作内容", required = false) @RequestParam(required = false) String job_chinese_reponsibility,
+			@ApiParam(value = "职位要求", required = false) @RequestParam(required = false) String job_chinesere_quirement,
+			@ApiParam(value = "学历要求", required = false) @RequestParam(required = false) Integer education_id,
+			@ApiParam(value = "工作地址", required = false) @RequestParam(required = false) String work_address,
+			@ApiParam(value = "招聘有效期", required = false) @RequestParam(required = false) String recruit_expire_date,
+			@ApiParam(value = "下期开始日期", required = false) @RequestParam(required = false) String next_reruit_date
+			) throws MyException {
+		AccountInfo accountInfo = this.getAccountInfo();
+		Enterprisejobvacancy ejv = new Enterprisejobvacancy();
+		ejv.setEjobvacancyid(enterprise_job_vacancy_id);
+		ejv.setJobtitle(job_title);
+		ejv.setJobpropertyid(job_property_id);
+		ejv.setJobtypeid(job_type_id);
+		ejv.setProvincecode(province_code);
+		ejv.setCitycode(city_code);
+		ejv.setCountycode(county_code);
+		ejv.setHirepeopleno(hire_people_no);
+		ejv.setSalarytypeid(salary_type_id);
+		ejv.setIsfinalhire(is_final_hire);
+		ejv.setSalary(salary);
+		ejv.setExpirencerequirement(expirence_requirement);
+		ejv.setJobchineseresponsibility(job_chinese_reponsibility);
+		ejv.setJobchineserequirement(job_chinesere_quirement);
+		ejv.setEducationid(education_id);
+		ejv.setWorkaddress(work_address);
+
+        Result result = setDate(ejv, recruit_expire_date, next_reruit_date);
+        if (result.getStatus().intValue() != ResultEnum.SUCCESS.getStatus()){
+            return result;
+        }
+
+		return enterpriseJobVacancyService.updateEnterpriseJobVacancy(accountInfo, ejv);
+	}
+
+	@ApiOperation(value = "查询企业招聘职位接口", httpMethod = "GET", produces = "application/json")
+	@RequestMapping(value = "/one", method = RequestMethod.GET)
+	@ResponseBody
+	public Result getEnterpriseJobVacancy(
+			@ApiParam(value = "职位ID", required = true) @RequestParam(required = true) Integer enterprise_job_vacancy_id
+			) {
+		return enterpriseJobVacancyService.getEnterpriseJobVacancy(enterprise_job_vacancy_id);
+	}
+
+
+	@ApiOperation(value = "查询企业招聘职位列表", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getEnterpriseJobVacancyList(
+			@ApiParam(value = "账号ID,和企业ID二选一(用于企业)", required = false) @RequestParam(required = false) Long account_id,
+			@ApiParam(value = "企业ID,和账号ID二选一(用于官网展示)", required = false) @RequestParam(required = false) Integer enterprise_id,
+			@ApiParam(value = "职位是否开启,Y 表示职位是打开的,N表示职位关闭,不传为查询所有", required = false) @RequestParam(required = false, defaultValue = "") String is_open,
+			@ApiParam(value = "职位是否已审核,Y 已审核,N未审核,不传为查询所有", required = false) @RequestParam(required = false, defaultValue = "") String isAuditPassed,
+			@ApiParam(value = "搜索职位", required = false) @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam(value = "页码", required = false) @RequestParam(required = false, defaultValue = "1") Integer page,
+			@ApiParam(value = "每页显示条数", required = false) @RequestParam(required = false, defaultValue = "10") Integer page_size
+			) {
+		return enterpriseJobVacancyService.getEnterpriseJobVacancyList(account_id,enterprise_id, is_open,isAuditPassed, search, page, page_size);
+	}
+
+	@ApiOperation(value = "查询企业招聘职位总数", httpMethod = "GET", produces = "application/json")
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	@ResponseBody
+	public Result getCount(){
+        AccountInfo accountInfo = this.getAccountInfo();
+        return enterpriseJobVacancyService.getCount(accountInfo);
+	}
+
+	@ApiOperation(value = "关闭企业招聘职位接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "/close", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result closeEnterpriseJobVacancy(
+			@ApiParam(value = "职位ID", required = true) @RequestParam(required = true) String jobIDS
+			) throws MyException {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return enterpriseJobVacancyService.updateEnterpriseJobVacancyOpenOrClose(accountInfo, jobIDS, "N");
+	}
+
+	@ApiOperation(value = "开启企业招聘职位接口", httpMethod = "PUT", produces = "application/json")
+	@RequestMapping(value = "/open", method = RequestMethod.PUT)
+	@ResponseBody
+	public Result openEnterpriseJobVacancy(
+			@ApiParam(value = "职位ID", required = true) @RequestParam(required = true) String  jobIDS
+			) throws MyException {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return enterpriseJobVacancyService.updateEnterpriseJobVacancyOpenOrClose(accountInfo, jobIDS, "Y");
+	}
+
+	@ApiOperation(value = "删除企业招聘职位接口", httpMethod = "DELETE", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Result deleteEnterpriseJobVacancy(
+			@ApiParam(value = "职位ID", required = true) @RequestParam(required = true) String  jobIDS
+			) throws MyException {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return enterpriseJobVacancyService.updateEnterpriseJobVacancyDelete(accountInfo, jobIDS);
+	}
+
+	@ApiOperation(value = "获取企业招聘职位下拉列表接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/select", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getEnterpriseJobVacancySelect(
+			@ApiParam(value = "关键词:模糊查询企业职位下拉列表", required = false) @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam(value = "职位开启状态:Y/N", required = false) @RequestParam(required = false, defaultValue = "") String isOpen,
+			@ApiParam(value = "职位审核状态:Y/N", required = false) @RequestParam(required = false, defaultValue = "") String isAuditPassed
+	) {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return enterpriseJobVacancyService.getEnterpriseJobVacancySelect(accountInfo, search, isOpen, isAuditPassed);
+	}
+
+	@ApiOperation(value = "获取所有企业招聘职位列表接口", httpMethod = "POST", produces = "application/json")
+	@RequestMapping(value = "/list/all", method = RequestMethod.POST)
+	@ResponseBody
+	public Result getEnterpriseJobVacancyListAll(
+			@ApiParam(value = "搜索职位", required = false) @RequestParam(required = false, defaultValue = "") String search,
+			@ApiParam(value = "页码", required = false) @RequestParam(required = false, defaultValue = "1") Integer page,
+			@ApiParam(value = "每页显示条数", required = false) @RequestParam(required = false, defaultValue = "9") Integer page_size
+			) {
+		AccountInfo accountInfo = this.getAccountInfo();
+		return enterpriseJobVacancyService.getEnterpriseJobVacancyListAll(accountInfo, search, page, page_size);
+	}
+
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2019/1/2 20:23
+	 * 描述 : 设置时间
+	 * @param ejv
+	 * @param recruit_expire_date
+	 * @param next_reruit_date
+	 * @return
+	 */
+	private Result setDate(Enterprisejobvacancy ejv, String recruit_expire_date ,String next_reruit_date){
+
+		try {
+			ejv.setRecruitexpiredate(DateUtils.dateParse(recruit_expire_date, DateUtils.DATE_PATTERN));
+			if (StringUtils.isNotBlank(next_reruit_date)){
+				ejv.setNextreruitdate(DateUtils.dateParse(next_reruit_date, DateUtils.DATE_PATTERN));
+			}
+			return Result.succee();
+		}catch (Exception e){
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+	}
+
+}

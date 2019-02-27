@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.WorkexpirenceMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.function.person.Workexpirence">
+		<id column="WorkExpirenceID" property="workexpirenceid"
+			jdbcType="BIGINT" />
+		<result column="ResumeID" property="resumeid" jdbcType="BIGINT" />
+		<result column="CompanyScaleID" property="companyscaleid"
+			jdbcType="INTEGER" />
+		<result column="WorkExpirenceTitle"
+			property="workexpirencetitle" jdbcType="VARCHAR" />
+		<result column="Company" property="company" jdbcType="VARCHAR" />
+		<result column="WorkStartDate" property="workstartdate"
+			jdbcType="TIMESTAMP" />
+		<result column="WorkEndDate" property="workenddate"
+			jdbcType="TIMESTAMP" />
+		<result column="WorkRole" property="workrole"
+			jdbcType="VARCHAR" />
+		<result column="WorkResponsiblility"
+			property="workresponsiblility" jdbcType="VARCHAR" />
+		<result column="WorkAchievement" property="workachievement"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		WorkExpirenceID, ResumeID, CompanyScaleID, WorkExpirenceTitle, Company, WorkStartDate,
+		WorkEndDate, WorkRole, WorkResponsiblility, WorkAchievement
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.function.person.WorkexpirenceExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from WorkExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from WorkExpirence
+		where WorkExpirenceID = #{workexpirenceid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from WorkExpirence
+		where WorkExpirenceID = #{workexpirenceid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.function.person.WorkexpirenceExample">
+		delete from WorkExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.function.person.Workexpirence">
+		insert into WorkExpirence (WorkExpirenceID, ResumeID, CompanyScaleID,
+		WorkExpirenceTitle, Company, WorkStartDate,
+		WorkEndDate, WorkRole, WorkResponsiblility,
+		WorkAchievement)
+		values (#{workexpirenceid,jdbcType=BIGINT}, #{resumeid,jdbcType=BIGINT},
+		#{companyscaleid,jdbcType=INTEGER},
+		#{workexpirencetitle,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR},
+		#{workstartdate,jdbcType=TIMESTAMP},
+		#{workenddate,jdbcType=TIMESTAMP}, #{workrole,jdbcType=VARCHAR},
+		#{workresponsiblility,jdbcType=VARCHAR},
+		#{workachievement,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.function.person.Workexpirence">
+		<selectKey keyProperty="workexpirenceid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into WorkExpirence
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="workexpirenceid != null">
+				WorkExpirenceID,
+			</if>
+			<if test="resumeid != null">
+				ResumeID,
+			</if>
+			<if test="companyscaleid != null">
+				CompanyScaleID,
+			</if>
+			<if test="workexpirencetitle != null">
+				WorkExpirenceTitle,
+			</if>
+			<if test="company != null">
+				Company,
+			</if>
+			<if test="workstartdate != null">
+				WorkStartDate,
+			</if>
+			<if test="workenddate != null">
+				WorkEndDate,
+			</if>
+			<if test="workrole != null">
+				WorkRole,
+			</if>
+			<if test="workresponsiblility != null">
+				WorkResponsiblility,
+			</if>
+			<if test="workachievement != null">
+				WorkAchievement,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="workexpirenceid != null">
+				#{workexpirenceid,jdbcType=BIGINT},
+			</if>
+			<if test="resumeid != null">
+				#{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="companyscaleid != null">
+				#{companyscaleid,jdbcType=INTEGER},
+			</if>
+			<if test="workexpirencetitle != null">
+				#{workexpirencetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				#{company,jdbcType=VARCHAR},
+			</if>
+			<if test="workstartdate != null">
+				#{workstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workenddate != null">
+				#{workenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workrole != null">
+				#{workrole,jdbcType=VARCHAR},
+			</if>
+			<if test="workresponsiblility != null">
+				#{workresponsiblility,jdbcType=VARCHAR},
+			</if>
+			<if test="workachievement != null">
+				#{workachievement,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.function.person.WorkexpirenceExample"
+		resultType="java.lang.Integer">
+		select count(*) from WorkExpirence
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update WorkExpirence
+		<set>
+			<if test="record.workexpirenceid != null">
+				WorkExpirenceID = #{record.workexpirenceid,jdbcType=BIGINT},
+			</if>
+			<if test="record.resumeid != null">
+				ResumeID = #{record.resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="record.companyscaleid != null">
+				CompanyScaleID = #{record.companyscaleid,jdbcType=INTEGER},
+			</if>
+			<if test="record.workexpirencetitle != null">
+				WorkExpirenceTitle = #{record.workexpirencetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.company != null">
+				Company = #{record.company,jdbcType=VARCHAR},
+			</if>
+			<if test="record.workstartdate != null">
+				WorkStartDate = #{record.workstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.workenddate != null">
+				WorkEndDate = #{record.workenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.workrole != null">
+				WorkRole = #{record.workrole,jdbcType=VARCHAR},
+			</if>
+			<if test="record.workresponsiblility != null">
+				WorkResponsiblility = #{record.workresponsiblility,jdbcType=VARCHAR},
+			</if>
+			<if test="record.workachievement != null">
+				WorkAchievement = #{record.workachievement,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update WorkExpirence
+		set WorkExpirenceID = #{record.workexpirenceid,jdbcType=BIGINT},
+		ResumeID = #{record.resumeid,jdbcType=BIGINT},
+		CompanyScaleID = #{record.companyscaleid,jdbcType=INTEGER},
+		WorkExpirenceTitle = #{record.workexpirencetitle,jdbcType=VARCHAR},
+		Company = #{record.company,jdbcType=VARCHAR},
+		WorkStartDate = #{record.workstartdate,jdbcType=TIMESTAMP},
+		WorkEndDate = #{record.workenddate,jdbcType=TIMESTAMP},
+		WorkRole = #{record.workrole,jdbcType=VARCHAR},
+		WorkResponsiblility = #{record.workresponsiblility,jdbcType=VARCHAR},
+		WorkAchievement = #{record.workachievement,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.function.person.Workexpirence">
+		update WorkExpirence
+		<set>
+			<if test="resumeid != null">
+				ResumeID = #{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="companyscaleid != null">
+				CompanyScaleID = #{companyscaleid,jdbcType=INTEGER},
+			</if>
+			<if test="workexpirencetitle != null">
+				WorkExpirenceTitle = #{workexpirencetitle,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				Company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="workstartdate != null">
+				WorkStartDate = #{workstartdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workenddate != null">
+				WorkEndDate = #{workenddate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workrole != null">
+				WorkRole = #{workrole,jdbcType=VARCHAR},
+			</if>
+			<if test="workresponsiblility != null">
+				WorkResponsiblility = #{workresponsiblility,jdbcType=VARCHAR},
+			</if>
+			<if test="workachievement != null">
+				WorkAchievement = #{workachievement,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where WorkExpirenceID = #{workexpirenceid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.function.person.Workexpirence">
+		update WorkExpirence
+		set ResumeID = #{resumeid,jdbcType=BIGINT},
+		CompanyScaleID = #{companyscaleid,jdbcType=INTEGER},
+		WorkExpirenceTitle = #{workexpirencetitle,jdbcType=VARCHAR},
+		Company = #{company,jdbcType=VARCHAR},
+		WorkStartDate = #{workstartdate,jdbcType=TIMESTAMP},
+		WorkEndDate = #{workenddate,jdbcType=TIMESTAMP},
+		WorkRole = #{workrole,jdbcType=VARCHAR},
+		WorkResponsiblility = #{workresponsiblility,jdbcType=VARCHAR},
+		WorkAchievement = #{workachievement,jdbcType=VARCHAR}
+		where WorkExpirenceID = #{workexpirenceid,jdbcType=BIGINT}
+	</update>
+</mapper>

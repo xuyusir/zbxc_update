@@ -1,0 +1,172 @@
+package com.jy.service.order;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.product.product.ProductinfoMapper;
+import com.jy.dao.order.shopping_cart.ShoppingcartMapper;
+import com.jy.dao.order.shopping_cart.ShoppingcartitemMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.product.product.Productinfo;
+import com.jy.entiy.order.shopping_cart.Shoppingcart;
+import com.jy.entiy.order.shopping_cart.ShoppingcartExample;
+import com.jy.entiy.order.shopping_cart.Shoppingcartitem;
+import com.jy.entiy.order.shopping_cart.ShoppingcartitemExample;
+import com.jy.service.base.BaseService;
+
+/**
+ * 产品详情页面接口Dao层实现类
+ * 
+ * @ClassName:ProductDetailsServiceImpl
+ * @Description:
+ * @author:liuhong
+ * @date:2018年8月10日
+ */
+@Service
+public class ShoppingCartServiceImpl extends BaseService implements ShoppingCartService {
+	
+	@Resource
+	ProductinfoMapper productinfoMapper;
+	
+	@Resource
+	ShoppingcartitemMapper shoppingcartitemMapper;
+	
+	@Resource
+	ShoppingcartMapper shoppingcartMapper;
+	
+	@Resource
+	FileinfoMapper fileinfoMapper;
+	
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_SHOPPING_CART";
+	
+
+	/**
+	 * 将产品加入购物车
+	 * 
+	 * @param productId
+	 * @param account
+	 * @return
+	 * @throws MyException 
+	 */
+	@Override
+	public Result addToShoppingCart(Long productId,
+			AccountInfo accountInfo) throws MyException {
+		ShoppingcartExample example = new ShoppingcartExample();
+		com.jy.entiy.order.shopping_cart.ShoppingcartExample.Criteria criteria = example.createCriteria();
+		criteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+		List<Shoppingcart> shoppingcarts = shoppingcartMapper.selectByExample(example);
+		Shoppingcart cart = new Shoppingcart();
+		if (shoppingcarts.size()<1) {// 该用户不存在购物车，则创建
+			cart.setCartstatus("启用");
+			cart.setCreateby(accountInfo.getAccount().getName());
+			cart.setCreatepersonid(accountInfo.getAccount().getAccountid());
+			cart.setCreatetime(new Date());
+			cart.setAccountid(accountInfo.getAccount().getAccountid());
+			int i = shoppingcartMapper.insertSelective(cart);
+			if (i<1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			log(DB_LOG_TYPE, cart, accountInfo, 1, "ShoppingCart", null);
+		}else {
+			cart = shoppingcarts.get(0);
+		}
+		
+		// 将产品信息加入Shoppingcartitem
+		Shoppingcartitem cartitem = new Shoppingcartitem();
+		
+		//查询产品信息
+		Productinfo productinfo = productinfoMapper.selectByPrimaryKey(productId);
+		
+		cartitem.setCartid(cart.getCartid());
+		
+		cartitem.setProductid(productId);
+		cartitem.setQuainty(1);
+		cartitem.setUnitprice(productinfo.getProductprice());
+
+		int i  = shoppingcartitemMapper.insertSelective(cartitem);
+		if (i<1) {
+			return Result.build(ResultEnum.INSERT_SQL_ERROR);
+		}
+		log(DB_LOG_TYPE, cartitem, accountInfo, 1, "ShoppingCartItem", null);
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 删除购物车列表中物品详情
+	 * @throws MyException 
+	 */
+	@Override
+	public Result deleteShopping(Long cartitemid, AccountInfo accountInfo) throws MyException {
+		// 查询数据库，判断要删除的数据是否为当前用户的数据
+		Shoppingcartitem shoppingcartitem = shoppingcartitemMapper.selectByPrimaryKey(cartitemid);
+		Shoppingcart shoppingcart = shoppingcartMapper.selectByPrimaryKey(shoppingcartitem.getCartid());
+		if (!shoppingcart.getAccountid().equals(accountInfo.getAccount().getAccountid())) {
+			return Result.build(ResultEnum.NOT_DELETE_RIGHTS);
+		}
+		
+		int i = shoppingcartitemMapper.deleteByPrimaryKey(cartitemid);
+		if (i<1) {
+			return Result.build(ResultEnum.DELETE_SQL_ERROR);
+		}
+		log(DB_LOG_TYPE, shoppingcartitem, accountInfo, 3, "ShoppingCartItem", null);
+		
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 查询购物车信息
+	 */
+	@Override
+	public Result getShoppingCart(AccountInfo accountInfo) {
+		ShoppingcartExample example = new ShoppingcartExample();
+		com.jy.entiy.order.shopping_cart.ShoppingcartExample.Criteria criteria = example.createCriteria();
+		criteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+		List<Shoppingcart> shoppingcarts = shoppingcartMapper.selectByExample(example);
+		if (shoppingcarts.size() != 1) {
+			return Result.build(ResultEnum.SELECT_SQL_ERROR);
+		}
+		ShoppingcartitemExample example2 = new ShoppingcartitemExample();
+		com.jy.entiy.order.shopping_cart.ShoppingcartitemExample.Criteria criteria2 = example2.createCriteria();
+		criteria2.andCartidEqualTo(shoppingcarts.get(0).getCartid());
+		List<Shoppingcartitem> shoppingcartitems = shoppingcartitemMapper.selectByExample(example2);
+		List<Map<String, Object>> list = new ArrayList<>();
+		BigDecimal amountPrice = new BigDecimal(0);
+		for (Shoppingcartitem shoppingcartitem : shoppingcartitems) {
+			Map<String, Object> map = new HashMap<>();
+			
+			Productinfo productinfo = productinfoMapper.selectByPrimaryKey(shoppingcartitem.getProductid());
+			if(productinfo.getIsauditpassed().equals("N") || productinfo.getIsdelete().equals("Y") ||
+					productinfo.getRemove().equals("Y")) {
+				continue;
+			}
+			map.put("shoppingcartitem", shoppingcartitem);
+			map.put("productinfo", productinfo);
+			if(productinfo != null) {
+				map.put("fileinfo", fileinfoMapper.selectByPrimaryKey(productinfo.getFileid()));
+				amountPrice = amountPrice.add(productinfo.getProductprice());
+			}
+			
+			list.add(map);
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("shoppingcart", shoppingcarts.get(0));
+		map.put("shoppingcartitems", list);
+		map.put("amountPrice", amountPrice);
+		return Result.succee(map);
+	}
+
+
+}

@@ -1,0 +1,74 @@
+package com.jy.service.system.login;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.Account;
+import com.jy.entiy.account.account.AccountInfo;
+
+/**
+ * @ClassName:  LoginService   
+ * @Description:登录服务接口 
+ * @author: cheng fei
+ * @date:   2018-07-30 22:58
+ */
+public interface LoginService {
+
+	/**
+	 * 官网后台管理系统登录
+	 * @param login_data
+	 * @param code 
+	 * @return
+	 * @throws MyException 
+	 */
+	Result doManageLogin(String login_data, String ip, String code,String requestHome) throws MyException;
+
+	/**
+	 * 登出
+	 * @param accountInfo 当前登陆人员
+	 * @return
+	 */
+	Result logout(AccountInfo accountInfo);
+
+	/**
+	 * 官网登录
+	 * @param data 加密后的用户数据
+	 * @param ip 登陆IP
+	 * @param code 验证码
+	 * @param requestHome 请求来源
+	 * @return
+	 * @throws MyException 
+	 */
+	Result douccnLoging(String data, String ip, String code, String requestHome) throws MyException;
+
+
+	/**
+	 * 官网手机验证码登录
+	 * @param phone
+	 * @param ip
+	 * @param code
+	 * @return
+	 * @throws MyException 
+	 */
+	Result doUccnPhoneLoging(String phone, String ip, String code,String requestHome) throws MyException;
+	
+	
+	/**
+	 * 登陆验证成功添加登陆token
+	 * @param account 登陆账号
+	 * @param ip 登陆IP
+	 * @param isManage 是否是管理员账号
+	 * @param requestHome 请求来源
+	 * @return
+	 * @throws MyException
+	 */
+	public Result loginSuccess(Account account,String ip, boolean isManage, String requestHome) throws MyException;
+
+	/**
+	 * 作者: Cheng Fei
+	 * 创建日期: 2018/10/30 13:10
+	 * 描述 : 获取账户信息
+	 * @param token Token
+	 * @return
+	 */
+	Result getAccountInfo(String token, String requestHome);
+}

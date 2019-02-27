@@ -1,0 +1,33 @@
+package com.jy.dao.content.file.directory;
+
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+import com.jy.entiy.content.file.directory.Documentdirectory;
+import com.jy.entiy.content.file.directory.DocumentdirectoryExample;
+
+public interface DocumentdirectoryMapper {
+    int countByExample(DocumentdirectoryExample example);
+
+    int deleteByExample(DocumentdirectoryExample example);
+
+    int deleteByPrimaryKey(Long documentdirectoryid);
+
+    int insert(Documentdirectory record);
+
+    int insertSelective(Documentdirectory record);
+
+    List<Documentdirectory> selectByExample(DocumentdirectoryExample example);
+
+    Documentdirectory selectByPrimaryKey(Long documentdirectoryid);
+
+    int updateByExampleSelective(@Param("record") Documentdirectory record, @Param("example") DocumentdirectoryExample example);
+
+    int updateByExample(@Param("record") Documentdirectory record, @Param("example") DocumentdirectoryExample example);
+
+    int updateByPrimaryKeySelective(Documentdirectory record);
+
+    int updateByPrimaryKey(Documentdirectory record);
+    
+    List<Long> getDocumentDirectoryIDByParentID(@Param("parent_id") Long parent_id);
+}

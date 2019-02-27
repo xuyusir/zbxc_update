@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.web.info.SetcostomerserviceinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.web.info.Setcostomerserviceinfo" >
+    <id column="SetCostomerServiceInfoID" property="setcostomerserviceinfoid" jdbcType="INTEGER" />
+    <result column="Start" property="start" jdbcType="VARCHAR" />
+    <result column="Site" property="site" jdbcType="VARCHAR" />
+    <result column="Dialog" property="dialog" jdbcType="VARCHAR" />
+    <result column="WorkTime" property="worktime" jdbcType="VARCHAR" />
+    <result column="Position1" property="position1" jdbcType="VARCHAR" />
+    <result column="QQ1" property="qq1" jdbcType="VARCHAR" />
+    <result column="Position2" property="position2" jdbcType="VARCHAR" />
+    <result column="QQ2" property="qq2" jdbcType="VARCHAR" />
+    <result column="Position3" property="position3" jdbcType="VARCHAR" />
+    <result column="QQ3" property="qq3" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    SetCostomerServiceInfoID, Start, Site, Dialog, WorkTime, Position1, QQ1, Position2, 
+    QQ2, Position3, QQ3, CreateTime, UpdateTime, CreatePersonID, UpdatePersonID, UpdateBy, 
+    CreateBy
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.web.info.SetcostomerserviceinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SetCostomerServiceInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from SetCostomerServiceInfo
+    where SetCostomerServiceInfoID = #{setcostomerserviceinfoid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from SetCostomerServiceInfo
+    where SetCostomerServiceInfoID = #{setcostomerserviceinfoid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.web.info.SetcostomerserviceinfoExample" >
+    delete from SetCostomerServiceInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.web.info.Setcostomerserviceinfo" >
+    insert into SetCostomerServiceInfo (SetCostomerServiceInfoID, Start, 
+      Site, Dialog, WorkTime, 
+      Position1, QQ1, Position2, 
+      QQ2, Position3, QQ3, 
+      CreateTime, UpdateTime, CreatePersonID, 
+      UpdatePersonID, UpdateBy, CreateBy
+      )
+    values (#{setcostomerserviceinfoid,jdbcType=INTEGER}, #{start,jdbcType=VARCHAR}, 
+      #{site,jdbcType=VARCHAR}, #{dialog,jdbcType=VARCHAR}, #{worktime,jdbcType=VARCHAR}, 
+      #{position1,jdbcType=VARCHAR}, #{qq1,jdbcType=VARCHAR}, #{position2,jdbcType=VARCHAR}, 
+      #{qq2,jdbcType=VARCHAR}, #{position3,jdbcType=VARCHAR}, #{qq3,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.web.info.Setcostomerserviceinfo" >
+    insert into SetCostomerServiceInfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="setcostomerserviceinfoid != null" >
+        SetCostomerServiceInfoID,
+      </if>
+      <if test="start != null" >
+        Start,
+      </if>
+      <if test="site != null" >
+        Site,
+      </if>
+      <if test="dialog != null" >
+        Dialog,
+      </if>
+      <if test="worktime != null" >
+        WorkTime,
+      </if>
+      <if test="position1 != null" >
+        Position1,
+      </if>
+      <if test="qq1 != null" >
+        QQ1,
+      </if>
+      <if test="position2 != null" >
+        Position2,
+      </if>
+      <if test="qq2 != null" >
+        QQ2,
+      </if>
+      <if test="position3 != null" >
+        Position3,
+      </if>
+      <if test="qq3 != null" >
+        QQ3,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="setcostomerserviceinfoid != null" >
+        #{setcostomerserviceinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="start != null" >
+        #{start,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null" >
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="dialog != null" >
+        #{dialog,jdbcType=VARCHAR},
+      </if>
+      <if test="worktime != null" >
+        #{worktime,jdbcType=VARCHAR},
+      </if>
+      <if test="position1 != null" >
+        #{position1,jdbcType=VARCHAR},
+      </if>
+      <if test="qq1 != null" >
+        #{qq1,jdbcType=VARCHAR},
+      </if>
+      <if test="position2 != null" >
+        #{position2,jdbcType=VARCHAR},
+      </if>
+      <if test="qq2 != null" >
+        #{qq2,jdbcType=VARCHAR},
+      </if>
+      <if test="position3 != null" >
+        #{position3,jdbcType=VARCHAR},
+      </if>
+      <if test="qq3 != null" >
+        #{qq3,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.web.info.SetcostomerserviceinfoExample" resultType="java.lang.Integer" >
+    select count(*) from SetCostomerServiceInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SetCostomerServiceInfo
+    <set >
+      <if test="record.setcostomerserviceinfoid != null" >
+        SetCostomerServiceInfoID = #{record.setcostomerserviceinfoid,jdbcType=INTEGER},
+      </if>
+      <if test="record.start != null" >
+        Start = #{record.start,jdbcType=VARCHAR},
+      </if>
+      <if test="record.site != null" >
+        Site = #{record.site,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dialog != null" >
+        Dialog = #{record.dialog,jdbcType=VARCHAR},
+      </if>
+      <if test="record.worktime != null" >
+        WorkTime = #{record.worktime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.position1 != null" >
+        Position1 = #{record.position1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qq1 != null" >
+        QQ1 = #{record.qq1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.position2 != null" >
+        Position2 = #{record.position2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qq2 != null" >
+        QQ2 = #{record.qq2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.position3 != null" >
+        Position3 = #{record.position3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qq3 != null" >
+        QQ3 = #{record.qq3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SetCostomerServiceInfo
+    set SetCostomerServiceInfoID = #{record.setcostomerserviceinfoid,jdbcType=INTEGER},
+      Start = #{record.start,jdbcType=VARCHAR},
+      Site = #{record.site,jdbcType=VARCHAR},
+      Dialog = #{record.dialog,jdbcType=VARCHAR},
+      WorkTime = #{record.worktime,jdbcType=VARCHAR},
+      Position1 = #{record.position1,jdbcType=VARCHAR},
+      QQ1 = #{record.qq1,jdbcType=VARCHAR},
+      Position2 = #{record.position2,jdbcType=VARCHAR},
+      QQ2 = #{record.qq2,jdbcType=VARCHAR},
+      Position3 = #{record.position3,jdbcType=VARCHAR},
+      QQ3 = #{record.qq3,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      CreateBy = #{record.createby,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.web.info.Setcostomerserviceinfo" >
+    update SetCostomerServiceInfo
+    <set >
+      <if test="start != null" >
+        Start = #{start,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null" >
+        Site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="dialog != null" >
+        Dialog = #{dialog,jdbcType=VARCHAR},
+      </if>
+      <if test="worktime != null" >
+        WorkTime = #{worktime,jdbcType=VARCHAR},
+      </if>
+      <if test="position1 != null" >
+        Position1 = #{position1,jdbcType=VARCHAR},
+      </if>
+      <if test="qq1 != null" >
+        QQ1 = #{qq1,jdbcType=VARCHAR},
+      </if>
+      <if test="position2 != null" >
+        Position2 = #{position2,jdbcType=VARCHAR},
+      </if>
+      <if test="qq2 != null" >
+        QQ2 = #{qq2,jdbcType=VARCHAR},
+      </if>
+      <if test="position3 != null" >
+        Position3 = #{position3,jdbcType=VARCHAR},
+      </if>
+      <if test="qq3 != null" >
+        QQ3 = #{qq3,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SetCostomerServiceInfoID = #{setcostomerserviceinfoid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.web.info.Setcostomerserviceinfo" >
+    update SetCostomerServiceInfo
+    set Start = #{start,jdbcType=VARCHAR},
+      Site = #{site,jdbcType=VARCHAR},
+      Dialog = #{dialog,jdbcType=VARCHAR},
+      WorkTime = #{worktime,jdbcType=VARCHAR},
+      Position1 = #{position1,jdbcType=VARCHAR},
+      QQ1 = #{qq1,jdbcType=VARCHAR},
+      Position2 = #{position2,jdbcType=VARCHAR},
+      QQ2 = #{qq2,jdbcType=VARCHAR},
+      Position3 = #{position3,jdbcType=VARCHAR},
+      QQ3 = #{qq3,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      CreateBy = #{createby,jdbcType=VARCHAR}
+    where SetCostomerServiceInfoID = #{setcostomerserviceinfoid,jdbcType=INTEGER}
+  </update>
+</mapper>

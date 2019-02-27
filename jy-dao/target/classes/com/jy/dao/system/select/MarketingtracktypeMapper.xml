@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.select.MarketingtracktypeMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.select.Marketingtracktype" >
+    <id column="MarketingTrackTypeID" property="marketingtracktypeid" jdbcType="INTEGER" />
+    <result column="MarketingTrackTypeName" property="marketingtracktypename" jdbcType="VARCHAR" />
+    <result column="DisplayOrder" property="displayorder" jdbcType="INTEGER" />
+    <result column="Code" property="code" jdbcType="VARCHAR" />
+    <result column="Status" property="status" jdbcType="INTEGER" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    MarketingTrackTypeID, MarketingTrackTypeName, DisplayOrder, Code, Status, CreateBy, 
+    CreateTime, CreatePersonID, UpdateBy, UpdateTime, UpdatePersonID, Remark
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.system.select.MarketingtracktypeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from MarketingTrackType
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from MarketingTrackType
+    where MarketingTrackTypeID = #{marketingtracktypeid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from MarketingTrackType
+    where MarketingTrackTypeID = #{marketingtracktypeid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.system.select.MarketingtracktypeExample" >
+    delete from MarketingTrackType
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.system.select.Marketingtracktype" >
+    insert into MarketingTrackType (MarketingTrackTypeID, MarketingTrackTypeName, 
+      DisplayOrder, Code, Status, 
+      CreateBy, CreateTime, CreatePersonID, 
+      UpdateBy, UpdateTime, UpdatePersonID, 
+      Remark)
+    values (#{marketingtracktypeid,jdbcType=INTEGER}, #{marketingtracktypename,jdbcType=VARCHAR}, 
+      #{displayorder,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{createby,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, 
+      #{updateby,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.select.Marketingtracktype" >
+    insert into MarketingTrackType
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="marketingtracktypeid != null" >
+        MarketingTrackTypeID,
+      </if>
+      <if test="marketingtracktypename != null" >
+        MarketingTrackTypeName,
+      </if>
+      <if test="displayorder != null" >
+        DisplayOrder,
+      </if>
+      <if test="code != null" >
+        Code,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="marketingtracktypeid != null" >
+        #{marketingtracktypeid,jdbcType=INTEGER},
+      </if>
+      <if test="marketingtracktypename != null" >
+        #{marketingtracktypename,jdbcType=VARCHAR},
+      </if>
+      <if test="displayorder != null" >
+        #{displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.system.select.MarketingtracktypeExample" resultType="java.lang.Integer" >
+    select count(*) from MarketingTrackType
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update MarketingTrackType
+    <set >
+      <if test="record.marketingtracktypeid != null" >
+        MarketingTrackTypeID = #{record.marketingtracktypeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.marketingtracktypename != null" >
+        MarketingTrackTypeName = #{record.marketingtracktypename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayorder != null" >
+        DisplayOrder = #{record.displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        Code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        Status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update MarketingTrackType
+    set MarketingTrackTypeID = #{record.marketingtracktypeid,jdbcType=INTEGER},
+      MarketingTrackTypeName = #{record.marketingtracktypename,jdbcType=VARCHAR},
+      DisplayOrder = #{record.displayorder,jdbcType=INTEGER},
+      Code = #{record.code,jdbcType=VARCHAR},
+      Status = #{record.status,jdbcType=INTEGER},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      Remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.system.select.Marketingtracktype" >
+    update MarketingTrackType
+    <set >
+      <if test="marketingtracktypename != null" >
+        MarketingTrackTypeName = #{marketingtracktypename,jdbcType=VARCHAR},
+      </if>
+      <if test="displayorder != null" >
+        DisplayOrder = #{displayorder,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        Code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where MarketingTrackTypeID = #{marketingtracktypeid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.system.select.Marketingtracktype" >
+    update MarketingTrackType
+    set MarketingTrackTypeName = #{marketingtracktypename,jdbcType=VARCHAR},
+      DisplayOrder = #{displayorder,jdbcType=INTEGER},
+      Code = #{code,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=INTEGER},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where MarketingTrackTypeID = #{marketingtracktypeid,jdbcType=INTEGER}
+  </update>
+</mapper>

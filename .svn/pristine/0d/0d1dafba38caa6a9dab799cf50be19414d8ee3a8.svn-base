@@ -1,0 +1,879 @@
+package com.jy.service.order;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.jy.common.exception.MyException;
+import com.jy.common.redis.JedisClient;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.ExcelUtils;
+import com.jy.common.utils.LiuUtils;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.content.product.course.PersoncourseMapper;
+import com.jy.dao.content.product.product.ProductbindcousreMapper;
+import com.jy.dao.content.product.product.ProductdiscountMapper;
+import com.jy.dao.content.product.product.ProductinfoMapper;
+import com.jy.dao.function.person.PersonservicesMapper;
+import com.jy.dao.order.order.OrderactionlogMapper;
+import com.jy.dao.order.order.OrderdetailsMapper;
+import com.jy.dao.order.order.OrdersMapper;
+import com.jy.dao.order.order.OrderscolseMapper;
+import com.jy.dao.order.shopping_cart.ShoppingcartMapper;
+import com.jy.dao.order.shopping_cart.ShoppingcartitemMapper;
+import com.jy.dao.system.dictionaries.DictionariesMapper;
+import com.jy.dao.system.select.OrderstatusMapper;
+import com.jy.entiy.account.account.Account;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.AuthorityCode;
+import com.jy.entiy.constant.Constant;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.product.course.Personcourse;
+import com.jy.entiy.content.product.product.Productbindcousre;
+import com.jy.entiy.content.product.product.ProductbindcousreExample;
+import com.jy.entiy.content.product.product.Productinfo;
+import com.jy.entiy.function.person.Personservices;
+import com.jy.entiy.function.person.PersonservicesExample;
+import com.jy.entiy.order.order.Orderdetails;
+import com.jy.entiy.order.order.OrderdetailsExample;
+import com.jy.entiy.order.order.Orders;
+import com.jy.entiy.order.order.OrdersExample;
+import com.jy.entiy.order.order.Orderscolse;
+import com.jy.entiy.order.shopping_cart.Shoppingcart;
+import com.jy.entiy.order.shopping_cart.ShoppingcartExample;
+import com.jy.entiy.order.shopping_cart.Shoppingcartitem;
+import com.jy.entiy.order.shopping_cart.ShoppingcartitemExample;
+import com.jy.service.base.BaseService;
+
+/**
+ * 前后台订单管理业务逻辑层实现类
+ * 
+ * @ClassName:OrdersServiceImpl
+ * @Description:
+ * @author:liuhong
+ * @date:2018年8月17日
+ */
+@Service
+public class OrdersServiceImpl extends BaseService implements OrdersService {
+
+	@Value("${Alipay_APP_ID}")
+	private String Alipay_APP_ID;
+
+	@Resource
+	OrderdetailsMapper orderdetailsMapper;
+
+	@Resource
+	OrderscolseMapper orderscolseMapper;
+
+	@Resource
+	ProductbindcousreMapper productbindcousreMapper;
+
+	@Resource
+	AccountMapper accountMapper;
+
+	@Resource
+	OrderstatusMapper orderstatusMapper;
+
+	@Resource
+	OrderactionlogMapper orderLog;
+
+	@Resource
+	DictionariesMapper dictionariesMapper;
+
+	@Resource
+	OrdersMapper ordersMapper;
+
+	@Resource
+	ProductinfoMapper productinfoMapper;
+
+	@Resource
+	ProductdiscountMapper productdiscountMapper;
+
+	@Resource
+	PersoncourseMapper personcourseMapper;
+
+	@Resource
+	ShoppingcartMapper shoppingcartMapper;
+
+	// redis
+	@Resource
+	private JedisClient jedisClient;
+
+	@Resource
+	ShoppingcartitemMapper shoppingcartitemMapper;
+
+	@Resource
+	PersonservicesMapper personservicesMapper;
+
+	@Value("${REDIS_PASSWORD}")
+	private String REDIS_PASSWORD;
+
+	@Value("${SESSION_EXPIRE}")
+	private Integer SESSION_EXPIRE;
+
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_ORDER";
+
+	/**
+	 * 获取订单列表
+	 * 
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 * @throws MyException
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Result getOrder(Map<String, Object> param, AccountInfo accountInfo) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.ORDERS_SELECT);
+		if (result.getStatus() != 200) {// 没有权限则为个人用户，只能看自己的订单
+			OrdersExample example = new OrdersExample();
+			com.jy.entiy.order.order.OrdersExample.Criteria criteria = example.createCriteria();
+			criteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+
+			if (param.get("orderStatus") != null) {
+				List<String> strings = LiuUtils.getIDS(param.get("orderStatus").toString());
+				List<Integer> integers = new ArrayList<>();
+				for (String string : strings) {
+					integers.add(Integer.parseInt(string));
+				}
+				criteria.andOrderstatusIn(integers);
+			}
+
+			int count = ordersMapper.countByExample(example);
+			PageHelper.startPage((Integer) param.get("page"), (Integer) param.get("pageSize"));
+			example.setOrderByClause("CreateTime DESC");
+			List<Orders> orders = ordersMapper.selectByExample(example);
+			List<Map<String, Object>> list = new ArrayList<>();
+			for (Orders orders2 : orders) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("order", orders2);
+				OrderdetailsExample example2 = new OrderdetailsExample();
+				com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria2 = example2.createCriteria();
+				criteria2.andOrderidEqualTo(orders2.getOrderid());
+				List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example2);
+				StringBuffer sb = new StringBuffer();
+				List<Map<String, Object>> list2 = new ArrayList<>();
+				for (Orderdetails orderdetails2 : orderdetails) {
+					Productinfo productinfo = productinfoMapper.selectByPrimaryKey(orderdetails2.getProductid());
+					sb.append(productinfo.getProductname() + ",");
+					Map<String, Object> map2 = new HashMap<>();
+					map2.put("productinfo", productinfo);
+					if (productinfo.getFileid() != null) {
+						Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(productinfo.getFileid());
+						fileinfo.setFilepath(aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath()));
+						map2.put("fileinfo", fileinfo);
+					}
+					list2.add(map2);
+				}
+				if (sb.length() > 0) {
+					map.put("productinfos", sb.substring(0, sb.length() - 1));
+				} else {
+					map.put("productinfos", null);
+				}
+				map.put("productinfo", list2);
+				map.put("orderdetails", orderdetails);
+				list.add(map);
+			}
+			Map<String, Object> map = new HashMap<>();
+			map.put("rows", list);
+			map.put("count", count);
+			return Result.succee(map);
+		} else {// 后台管理员
+			if (param.get("orderStatus") != null && !param.get("orderStatus").toString().equals("0")) {
+				param.put("orderStatus", Integer.parseInt(param.get("orderStatus").toString()));
+			} else {
+				param.put("orderStatus", null);
+			}
+			List<Orders> orders = ordersMapper.selectOrders(param);
+			int count = ordersMapper.selectOrdersCount(param);
+			List<Map<String, Object>> list = new ArrayList<>();
+			for (Orders orders2 : orders) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("order", orders2);
+				OrderdetailsExample example = new OrderdetailsExample();
+				com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+				criteria.andOrderidEqualTo(orders2.getOrderid());
+				List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example);
+				StringBuffer sb = new StringBuffer();
+				for (Orderdetails orderdetails2 : orderdetails) {
+					sb.append(
+							productinfoMapper.selectByPrimaryKey(orderdetails2.getProductid()).getProductname() + ",");
+				}
+				if (sb.length() > 0) {
+					map.put("productinfos", sb.substring(0, sb.length() - 1));
+				} else {
+					map.put("productinfos", null);
+				}
+				Account account = new Account();
+				Account account2 = accountMapper.selectByPrimaryKey(orders2.getAccountid());
+				account.setName(account2.getName());
+				account.setPhone(account2.getPhone());
+				map.put("account", account);
+				list.add(map);
+			}
+			Map<String, Object> m = new HashMap<>();
+			m.put("rows", list);
+			m.put("count", count);
+			return Result.succee(m);
+		}
+
+	}
+
+	/**
+	 * 删除订单
+	 * 
+	 * @throws MyException
+	 */
+	@Override
+	public Result deleteOrder(String ids, AccountInfo accountInfo) throws MyException {
+		List<Long> longs = new ArrayList<>();
+		List<String> strings = LiuUtils.getIDS(ids);
+		for (String string : strings) {
+			longs.add(Long.valueOf(string));
+		}
+		for (Long orderId : longs) {
+			// 查询订单信息，判断权限用
+			Orders orders = ordersMapper.selectByPrimaryKey(orderId);
+			if (orders == null) {
+				return Result.build(ResultEnum.DELETE_SQL_ERROR);
+			}
+
+			if (orders.getOrderstatus() != 4) {
+				return Result.build(ResultEnum.DELETE_SQL_ERROR);
+			}
+
+			Result result = checkAuthority(accountInfo, AuthorityCode.ORDERS_DELETE);
+			if (result.getStatus() != 200) {// 没有删除权限
+				return result;
+			}
+
+			// 删除订单详情
+			OrderdetailsExample example = new OrderdetailsExample();
+			com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+			criteria.andOrderidEqualTo(orderId);
+			orderdetailsMapper.deleteByExample(example);
+
+			// 删除订单信息
+			ordersMapper.deleteByPrimaryKey(orderId);
+
+			log(DB_LOG_TYPE, orders, accountInfo, 3, "Orders", null);
+		}
+
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 生成订单
+	 * 
+	 * @param account
+	 * @param orderName
+	 * @param cartItems
+	 * @return
+	 * @throws MyException
+	 */
+	@Override
+	public Result addOrder(AccountInfo accountInfo, Long ProductID,String ids) throws MyException {
+
+		if (accountInfo.getAccount()
+				.getDictionariesid() != (dictionariesMapper.getDictionariesIDByCode(Constant.ACCOUNT_TYPE_PERSON))) {
+			// 判断当前用户类型。只有前台用户能添加订单，后台管理员不能添加订单 return
+			Result.build(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		// 生成订单信息
+		Orders order = new Orders();
+		String orderCode = LiuUtils.getOrderIdByUUId();
+		order.setCreatetime(new Date());
+		order.setOrdercode(orderCode);
+		order.setAccountid(accountInfo.getAccount().getAccountid());
+		order.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		order.setOrderstatus(1);
+		order.setOrderdate(new Date());
+
+		if (ids == null || ids.equals("")) {
+			Productinfo productinfo = productinfoMapper.selectByPrimaryKey(ProductID);
+			order.setAmountprice(productinfo.getProductprice());
+			Orderdetails orderdetails = new Orderdetails();
+			int i = ordersMapper.insertSelective(order);// 插入订单信息
+			log(DB_LOG_TYPE, order, accountInfo, 1, "Orders", null);
+
+			if (i < 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			orderdetails.setOrderid(order.getOrderid());
+			orderdetails.setProductid(ProductID);
+			orderdetails.setQuantity(1);
+			orderdetails.setUnitprice(productinfo.getProductprice());
+			int j = orderdetailsMapper.insertSelective(orderdetails);
+			if (j < 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			log(DB_LOG_TYPE, orderdetails, accountInfo, 1, "OrderDetails", null);
+		} else {// 从购物车中添加信息
+			ShoppingcartExample example = new ShoppingcartExample();
+			com.jy.entiy.order.shopping_cart.ShoppingcartExample.Criteria criteria = example.createCriteria();
+			criteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+			List<Shoppingcart> shoppingcarts = shoppingcartMapper.selectByExample(example);
+			
+			if (shoppingcarts.size() != 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			
+			//处理选中的购物车详情ID
+			List<String> strings = LiuUtils.getIDS(ids);
+			List<Long> longs = new ArrayList<>();
+			for (String string : strings) {
+				longs.add(Long.valueOf(string));
+			}
+			
+			//查询选中的购物车详情
+			ShoppingcartitemExample example2 = new ShoppingcartitemExample();
+			com.jy.entiy.order.shopping_cart.ShoppingcartitemExample.Criteria criteria2 = example2.createCriteria();
+			criteria2.andCartidEqualTo(shoppingcarts.get(0).getCartid());
+			criteria2.andCartitemidIn(longs);
+			List<Shoppingcartitem> shoppingcartitems = shoppingcartitemMapper.selectByExample(example2);
+			
+			
+			BigDecimal aumontPrice = new BigDecimal(0);
+			for (Shoppingcartitem shoppingcartitem : shoppingcartitems) {
+				aumontPrice = aumontPrice.add(shoppingcartitem.getUnitprice());
+			}
+			order.setAmountprice(aumontPrice);
+			int i = ordersMapper.insertSelective(order);
+			if (i < 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			log(DB_LOG_TYPE, order, accountInfo, 1, "Orders", null);
+			if (shoppingcartitems.size() < 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+			for (Shoppingcartitem shoppingcartitem : shoppingcartitems) {
+				Orderdetails orderdetails = new Orderdetails();
+				orderdetails.setOrderid(order.getOrderid());
+				orderdetails.setProductid(shoppingcartitem.getProductid());
+				orderdetails.setQuantity(1);
+				int j = orderdetailsMapper.insertSelective(orderdetails);
+				if (j < 1) {
+					return Result.build(ResultEnum.INSERT_SQL_ERROR);
+				}
+				// 删除购物车详情
+				shoppingcartitemMapper.deleteByPrimaryKey(shoppingcartitem.getCartitemid());
+				log(DB_LOG_TYPE, orderdetails, accountInfo, 1, "OrderDetails", null);
+			}
+		}
+		
+		BigDecimal a = BigDecimal.valueOf(0); 
+
+		if (order.getAmountprice().compareTo(a)==0){
+			order.setOrderstatus(3);
+			ordersMapper.updateByPrimaryKeySelective(order);
+			OrderdetailsExample example = new OrderdetailsExample();
+			com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+			criteria.andOrderidEqualTo(order.getOrderid());
+			List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example);
+			for (Orderdetails orderdetails2 : orderdetails) {
+				// 循环取得产品信息
+				Productinfo productinfo = productinfoMapper.selectByPrimaryKey(orderdetails2.getProductid());
+				// 获取产品下的所有课程
+				ProductbindcousreExample example1 = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria1 = example1
+						.createCriteria();
+				criteria1.andProductidEqualTo(productinfo.getProductid());
+				List<Productbindcousre> productbindcousres = productbindcousreMapper.selectByExample(example1);
+				for (Productbindcousre productbindcousre : productbindcousres) {
+					// 插入个人课表
+					Personcourse personcourse = new Personcourse();
+					personcourse.setAccountid(order.getAccountid());
+					personcourse.setCourseid(productbindcousre.getCourseid());
+					personcourse.setProductid(productinfo.getProductid());
+					personcourse.setIsactive(2);
+					personcourseMapper.insertSelective(personcourse);
+				}
+			}
+			return Result.succee();
+		}else {
+			// 设置定时关闭订单线程
+			Thread t = new Mythread(order.getOrderid());
+			t.start();
+			return Result.succee(order.getOrderid());
+		}
+	}
+
+	/**
+	 * 获取订单详情
+	 */
+	/*
+	 * @Override public Result getOrderDetails(Map<String, Object> param,
+	 * AccountInfo accountInfo) {
+	 * 
+	 * List<Orderdetails> OrderDetails = dao.getOrderDetails(param);
+	 * 
+	 * if (!checkSelectRight(accountInfo, SERVICE_CODE)) {// 检测权限 Integer
+	 * dictionariesID =
+	 * dictionariesMapper.getDictionariesIDByCode(Constant.ACCOUNT_TYPE_PERSON);
+	 * 
+	 * if (accountInfo.getAccount().getDictionariesid() != (dictionariesID)) { //
+	 * 无权限则判断是否为前台用户，前台用户则可以查询自己订单，前台用户则可以查看自己订单，后台管理员则结束请求 return
+	 * Result.build(ResultEnum.DELETE_SQL_ERROR); } else { // 判断订单详情是否属于当前登录用户 for
+	 * (Orderdetails orderdetails2 : OrderDetails) { // 取得OrdersID Map<String,
+	 * Object> p = new HashMap<>(); p.put("OrderDetailsID",
+	 * orderdetails2.getOrderdetailsid()); List<Orderdetails> od =
+	 * dao.getOrderDetails(param);
+	 * 
+	 * // 取得accountid p = new HashMap<>(); p.put("OrderID", od.get(0).getOrderid());
+	 * List<Orders> orders = dao.getOrder(p); if (orders.get(0).getAccountid() !=
+	 * accountInfo.getAccount().getAccountid()) { return
+	 * Result.build(ResultEnum.SELECT_SQL_ERROR); } } } param.put("AccountID",
+	 * accountInfo.getAccount().getAccountid()); }
+	 * 
+	 * return Result.succee(OrderDetails); }
+	 */
+
+	/**
+	 * 获取订单状态
+	 */
+	/*
+	 * @Override public Result getOrderStatus() {
+	 * 
+	 * List<Orderstatus> list = dao.getOrderStatus();
+	 * 
+	 * return Result.succee(list); }
+	 */
+
+	/**
+	 * 获取支付状态
+	 */
+	/*
+	 * @Override public Result getPayStatus() { List<Paystatus> list =
+	 * payStatus.selectByExample(null); return Result.succee(list); }
+	 */
+
+	/**
+	 * 修改订单
+	 * 
+	 * @throws MyException
+	 */
+	@Override
+	public Result putOrder(AccountInfo account, Orders order) throws MyException {
+		Orders orders = ordersMapper.selectByPrimaryKey(order.getOrderid());
+		Result result = checkAuthority(account, AuthorityCode.ORDERS_UPDATE);
+		if (result.getStatus() != 200) {
+			// 前端用户关闭订单
+			if (!orders.getAccountid().equals(account.getAccount().getAccountid())) {
+				return Result.build(ResultEnum.NOT_UPDATE_RIGHTS);
+			}
+			if (!(order.getOrderstatus() == 4 && orders.getOrderstatus() == 1)) {
+				return Result.build(ResultEnum.NOT_UPDATE_RIGHTS);
+			}
+			// 只能有状态和订单ID生效
+			Orders orders2 = new Orders();
+			orders2.setOrderid(order.getOrderid());
+			orders2.setOrderstatus(order.getOrderstatus());
+			order = orders2;
+		}
+
+		if (orders == null) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		order.setUpdatepersonid(account.getAccount().getAccountid());
+		order.setUpdatetime(new Date());
+
+		if (order.getOrderstatus() != null && order.getOrderstatus() == 4 && orders.getOrderstatus() != 1) {
+			// 只有未付款订单可以被关闭
+			return Result.build(ResultEnum.NOT_UPDATE_RIGHTS);
+		}
+
+		if (order.getOrderstatus() != null && order.getOrderstatus() == 3 && orders.getOrderstatus() == 2) {
+			// 查询订单详情，将用户以购买产品下的课程添加到个人课程表下
+			// 查询所有订单详情
+			OrderdetailsExample example = new OrderdetailsExample();
+			com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+			criteria.andOrderidEqualTo(order.getOrderid());
+			List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example);
+
+			for (Orderdetails orderdetails2 : orderdetails) {
+				// 循环取得产品信息
+				Productinfo productinfo = productinfoMapper.selectByPrimaryKey(orderdetails2.getProductid());
+				// 获取产品下的所有课程
+				ProductbindcousreExample example1 = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria1 = example1
+						.createCriteria();
+				criteria1.andProductidEqualTo(productinfo.getProductid());
+				List<Productbindcousre> productbindcousres = productbindcousreMapper.selectByExample(example1);
+				for (Productbindcousre productbindcousre : productbindcousres) {
+					// 插入个人课表
+					Personcourse personcourse = new Personcourse();
+					personcourse.setAccountid(orders.getAccountid());
+					personcourse.setCourseid(productbindcousre.getCourseid());
+					personcourse.setProductid(productinfo.getProductid());
+					personcourse.setIsactive(2);
+					personcourseMapper.insertSelective(personcourse);
+				}
+			}
+
+			Account account2 = accountMapper.selectByPrimaryKey(orders.getAccountid());
+			
+			//查服务
+			PersonservicesExample example2 = new PersonservicesExample();
+			com.jy.entiy.function.person.PersonservicesExample.Criteria criteria2 = example2.createCriteria();
+			criteria2.andAccountidEqualTo(orders.getAccountid());
+			List<Personservices> lists = personservicesMapper.selectByExample(example2);
+			
+			// 若不是VIP,省级VIP
+			if (lists.size()<1) {
+				// 自动升级为VIP
+				account2.setIsmember(true);
+				accountMapper.updateByPrimaryKeySelective(account2);
+
+				// 自动添加VIP服务
+				for (int i = 1; i < 7; i++) {
+					Personservices personservices = new Personservices();
+					personservices.setAccountid(orders.getAccountid());
+					personservices.setServicetypeid(i);
+					personservices.setPersonservicestatusid(2);
+					personservicesMapper.insertSelective(personservices);
+				}
+			}
+		}
+
+		int i = ordersMapper.updateByPrimaryKeySelective(order);
+
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		log(DB_LOG_TYPE, orders, account, 2, "Orders", order);
+
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 删除订单详情信息
+	 *//*
+		 * @Override public Result deleteOrderdetails(Long orderdetailsID, AccountInfo
+		 * accountInfo) {
+		 * 
+		 * // 查询订单信息，为后面插入日志和判断权限准备 Map<String, Object> param = new HashMap<>();
+		 * param.put("OrderDetailsID", orderdetailsID); List<Orderdetails> list =
+		 * dao.getOrderDetails(param); if (list == null || list.size() == 0) {
+		 * 
+		 * return Result.build(ResultEnum.DELETE_SQL_ERROR); } Map<String, Object>
+		 * param1 = new HashMap<>(); param1.put("OrderID", list.get(0).getOrderid());
+		 * List<Orders> orders = dao.getOrder(param1); if
+		 * (!checkDeleteRight(accountInfo, SERVICE_CODE)) {// 判断用户有误权限 //
+		 * 无权限则只能删除自己名下的订单详情
+		 * 
+		 * if (orders.size() > 0 && accountInfo.getAccount().getAccountid() ==
+		 * orders.get(0).getAccountid()) { dao.deleteOrderdetails(param);
+		 * 
+		 * // 插入订单操作日志 Orderactionlog log = new Orderactionlog();
+		 * log.setActionlogtime(new Date()); log.setOrderid(orders.get(0).getOrderid());
+		 * log.setOrderdetailsid(orderdetailsID.longValue());
+		 * log.setActionuser(accountInfo.getAccount().getName());
+		 * log.setOrderstatus(ORDER_STATAR_STATUS); log.setPaystatus(PAY_START_STATUS);
+		 * log.setRemark("删除订单详情信息"); log.setActionlogtime(new Date());
+		 * log.setAccountid(accountInfo.getAccount().getAccountid());
+		 * orderLog.insert(log);
+		 * 
+		 * // 插入数据库操作日志 String log1 = "ID为[" + accountInfo.getAccount().getAccountid() +
+		 * "]的用户删除了订单详情信息，订单详情ID为[" + orderdetailsID + "]"; try {
+		 * this.dbLog(accountInfo.getAccount().getAccountid(),
+		 * accountInfo.getAccount().getName(), log1, DB_LOG_TYPE); } catch (MyException
+		 * e) { e.printStackTrace(); }
+		 * 
+		 * } else { return Result.build(ResultEnum.DELETE_SQL_ERROR); } } else {
+		 * dao.deleteOrderdetails(param);
+		 * 
+		 * // 插入订单操作日志 Orderactionlog log = new Orderactionlog();
+		 * log.setActionlogtime(new Date()); log.setOrderid(orders.get(0).getOrderid());
+		 * log.setOrderdetailsid(orderdetailsID.longValue());
+		 * log.setActionuser(accountInfo.getAccount().getName());
+		 * log.setOrderstatus(orders.get(0).getOrderstatusid());
+		 * log.setPaystatus(orders.get(0).getPaystatusid()); log.setRemark("删除订单详情信息");
+		 * log.setActionlogtime(new Date());
+		 * log.setAccountid(accountInfo.getAccount().getAccountid());
+		 * orderLog.insert(log);
+		 * 
+		 * // 插入数据库操作日志 String log1 = "ID为[" + accountInfo.getAccount().getAccountid() +
+		 * "]的用户删除了订单详情信息，订单详情ID为[" + orderdetailsID + "]"; try {
+		 * this.dbLog(accountInfo.getAccount().getAccountid(),
+		 * accountInfo.getAccount().getName(), log1, DB_LOG_TYPE); } catch (MyException
+		 * e) { e.printStackTrace(); }
+		 * 
+		 * } return Result.build(ResultEnum.SUCCESS); }
+		 */
+
+	/*
+	 * @Override public Result addOrderdetails(AccountInfo account,
+	 * List<Orderdetails> orderDetail) {
+	 * 
+	 * // 判断所有订单详情是否同属一个订单 long temp = -1; for (Orderdetails details : orderDetail)
+	 * { if (temp != -1) { if (temp != details.getOrderid()) { return
+	 * Result.build(ResultEnum.INSERT_SQL_ERROR); } } temp = details.getOrderid(); }
+	 * 
+	 * // 查询订单信息,判断订单是否存在 Map<String, Object> param = new HashMap<>();
+	 * param.put("OrderID", orderDetail.get(0).getOrderid()); List<Orders> list =
+	 * dao.getOrder(param); if (list.size() < 1) { return
+	 * Result.build(ResultEnum.INSERT_SQL_ERROR); }
+	 * 
+	 * // 插入订单详情 for (Orderdetails details : orderDetail) {
+	 * details.setIsdelete("N"); details.setOrderstatusid(ORDER_STATAR_STATUS);
+	 * details.setPaystatusid(PAY_START_STATUS); dao.insertDetails(details);
+	 * 
+	 * // 插入订单操作日志 Orderactionlog log = new Orderactionlog();
+	 * log.setActionlogtime(new Date()); log.setOrderid(details.getOrderid());
+	 * log.setOrderdetailsid(details.getOrderdetailsid().longValue());
+	 * log.setActionuser(account.getAccount().getName());
+	 * log.setOrderstatus(ORDER_STATAR_STATUS); log.setPaystatus(PAY_START_STATUS);
+	 * log.setRemark("插入订单详情信息"); log.setActionlogtime(new Date());
+	 * log.setAccountid(account.getAccount().getAccountid()); orderLog.insert(log);
+	 * 
+	 * // 插入数据库操作日志 String log1 = "ID为[" + account.getAccount().getAccountid() +
+	 * "]的用户添加了订单详情信息，订单详情ID为[" + details.getOrderdetailsid() + "]"; try {
+	 * this.dbLog(account.getAccount().getAccountid(),
+	 * account.getAccount().getName(), log1, DB_LOG_TYPE); } catch (MyException e) {
+	 * e.printStackTrace(); } }
+	 * 
+	 * return Result.build(ResultEnum.SUCCESS); }
+	 */
+
+	/**
+	 * 修改订单详情信息
+	 */
+	/*
+	 * @Override public Result putOrderdetails(AccountInfo account, Orderdetails
+	 * details) { if (account.getAccount().getAccountid().intValue() ==
+	 * dictionariesMapper .getDictionariesIDByCode(Constant.ACCOUNT_TYPE_PERSON)) {
+	 * // 若是前台用户，则只允许修改产品数量 Orderdetails detail = new Orderdetails();
+	 * detail.setQuantity(details.getQuantity()); details = detail; } else { //
+	 * 后台管理员则判定权限 if (!checkUpdateRight(account, SERVICE_CODE)) { return
+	 * Result.build(ResultEnum.UPDATE_SQL_ERROR); } }
+	 * 
+	 * Map<String, Object> param = new HashMap<>(); param.put("OrderDetailsID",
+	 * details.getOrderdetailsid()); List<Orderdetails> orderdetails =
+	 * dao.getOrderDetails(param);
+	 * 
+	 * if (orderdetails == null || orderdetails.size() == 0) { return
+	 * Result.build(ResultEnum.UPDATE_SQL_ERROR); }
+	 * 
+	 * dao.updateOrderdetails(details);
+	 * 
+	 * // 插入订单操作日志 Orderactionlog log = new Orderactionlog();
+	 * log.setActionlogtime(new Date());
+	 * log.setOrderid(orderdetails.get(0).getOrderid());
+	 * log.setOrderdetailsid(details.getOrderdetailsid().longValue());
+	 * log.setActionuser(account.getAccount().getName());
+	 * log.setOrderstatus(orderdetails.get(0).getOrderstatusid());
+	 * log.setPaystatus(orderdetails.get(0).getPaystatusid());
+	 * log.setRemark("修改订单详情信息"); log.setActionlogtime(new Date());
+	 * log.setAccountid(account.getAccount().getAccountid()); orderLog.insert(log);
+	 * 
+	 * // 插入数据库操作日志 String log1 = "ID为[" + account.getAccount().getAccountid() +
+	 * "]的用户修改了订单详情信息，订单详情ID为[" + details.getOrderdetailsid() + "]"; try {
+	 * this.dbLog(account.getAccount().getAccountid(),
+	 * account.getAccount().getName(), log1, DB_LOG_TYPE); } catch (MyException e) {
+	 * e.printStackTrace(); }
+	 * 
+	 * return Result.build(ResultEnum.SUCCESS); }
+	 */
+
+	@Override
+	public Map<String, String> payMoney(Long orderId, AccountInfo accountInfo) {
+
+		Map<String, String> param = new HashMap<>();
+
+		Orders orders = ordersMapper.selectByPrimaryKey(orderId);
+		if (orders == null) {// 订单不存在
+			param.put("result", "false");
+			return param;
+		}
+		if (!orders.getAccountid().equals(accountInfo.getAccount().getAccountid())) {
+			// 登录者不是订单拥有着
+			param.put("result", "false");
+			return param;
+		}
+
+		if (orders.getOrderstatus() != 1) {
+			param.put("result", "false");
+			return param;
+		}
+
+		if (orders.getOrdercode() == null || orders.getAmountprice() == null) {
+			// 订单号与总价都不能为空
+			param.put("result", "false");
+			return param;
+		}
+		param.put("out_trade_no", orders.getOrdercode());
+		param.put("total_amount", orders.getAmountprice().toString());
+		param.put("subject", "中博星辰产品购买");
+
+		OrderdetailsExample example = new OrderdetailsExample();
+		com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+		criteria.andOrderidEqualTo(orderId);
+		List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example);
+		StringBuffer sb = new StringBuffer();
+		sb.append("购买产品名称：");
+		List<Productinfo> productinfos = productinfoMapper.selectByExample(null);
+		for (Orderdetails orderdetails2 : orderdetails) {
+			for (Productinfo productinfo : productinfos) {
+				if (productinfo.getProductid().equals(orderdetails2.getProductid())) {
+					sb.append(productinfo.getProductname());
+					sb.append("，");
+				}
+			}
+		}
+		param.put("body", sb.substring(0, sb.length() - 1));
+		param.put("result", "true");
+		return param;
+	}
+
+	@Override
+	public Result paySucess(Map<String, String> param) {
+
+		if (!Alipay_APP_ID.equals(param.get("app_id"))) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		OrdersExample example = new OrdersExample();
+		com.jy.entiy.order.order.OrdersExample.Criteria criteria = example.createCriteria();
+		criteria.andOrdercodeEqualTo(param.get("out_trade_no"));
+		List<Orders> orders = ordersMapper.selectByExample(example);
+		if (orders.size() != 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		Orders order = orders.get(0);
+
+		if (!order.getAmountprice().toString().equals(param.get("total_amount"))) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		if (order.getOrderstatus() == 1) {
+			order.setOrderstatus(2);
+			order.setOrderdate(new Date());
+			int i = ordersMapper.updateByPrimaryKeySelective(order);
+			if (i < 1) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+		}
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result orderscolse(AccountInfo accountInfo, Integer time) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.ORDERS_COLSE_TIME_UPDATE);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+		Orderscolse orderscolse = new Orderscolse();
+		orderscolse.setTime(time);
+		orderscolse.setCode(Constant.ORDER_COLSE_TIME);
+		int i = orderscolseMapper.updateByPrimaryKeySelective(orderscolse);
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+		log(DB_LOG_TYPE, orderscolseMapper.selectByPrimaryKey(Constant.ORDER_COLSE_TIME), accountInfo, 2, "OrdersColse",
+				orderscolse);
+		return Result.succee();
+	}
+
+	@Override
+	public Result orderscolse() {
+
+		return Result.succee(orderscolseMapper.selectByPrimaryKey(Constant.ORDER_COLSE_TIME));
+	}
+
+	@Override
+	public HSSFWorkbook exportOrders(Integer OrderStatus, AccountInfo accountInfo, String s, String date)
+			throws MyException {
+		Map<String, List<List<String>>> excel = new HashMap<>();
+		List<List<String>> rows = new ArrayList<>();
+		List<String> row1 = new ArrayList<>();
+		row1.add("订单编号");
+		row1.add("提交时间");
+		row1.add("姓名");
+		row1.add("购买产品");
+		row1.add("订单金额");
+		row1.add("手机号");
+		row1.add("订单状态");
+		rows.add(row1);
+		Map<String, Object> param = new HashMap<>();
+		if (OrderStatus != null && OrderStatus > 0) {
+			param.put("orderStatus", OrderStatus);
+		}
+		if (s != null && !s.equals("")) {
+			param.put("s", "%" + s + "%");
+		}
+		if (date != null && !date.equals("") && !date.equals("null")) {
+			date = date.substring(0, 10);
+			param.put("date", "%" + date + "%");
+		}
+		Result result = getOrder(param, accountInfo);
+		Map<String, Object> data = (Map<String, Object>) result.getData();
+		List<Map<String, Object>> data1 = (List<Map<String, Object>>) data.get("rows");
+		for (Map<String, Object> map : data1) {
+			List<String> row = new ArrayList<>();
+			Orders order = (Orders) map.get("order");
+			row.add(order.getOrdercode() + "");
+			if (order.getCreatetime() != null) {
+				row.add(LiuUtils.timeFormatChange(order.getCreatetime()) + "");
+			} else {
+				row.add("");
+			}
+
+			Account account = (Account) map.get("account");
+
+			if (account == null || account.getName() == null) {
+				row.add("");
+			} else {
+				row.add(account.getName() + "");
+			}
+			if (map.get("productinfos") == null) {
+				row.add("");
+			} else {
+				row.add(map.get("productinfos") + "");
+			}
+			if (order.getAmountprice() == null) {
+				row.add("");
+			} else {
+				row.add(order.getAmountprice() + "");
+			}
+			if (account == null || account.getPhone() == null) {
+				row.add("");
+			} else {
+				row.add(account.getPhone() + "");
+			}
+
+			if (order.getOrderstatus() == 1) {
+				row.add("未付款");
+			} else if (order.getOrderstatus() == 2) {
+				row.add("待确认");
+			} else if (order.getOrderstatus() == 3) {
+				row.add("已确认");
+			} else if (order.getOrderstatus() == 4) {
+				row.add("已关闭");
+			} else {
+				row.add("已删除");
+			}
+			rows.add(row);
+		}
+		excel.put("订单信息", rows);
+
+		return ExcelUtils.getExcelFileStream(excel);
+	}
+
+}

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.AppointserviceconfigMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.Appointserviceconfig" >
+    <id column="AppointServiceID" property="appointserviceid" jdbcType="BIGINT" />
+    <result column="AppointServiceTimeID" property="appointservicetimeid" jdbcType="INTEGER" />
+    <result column="AppointServiceName" property="appointservicename" jdbcType="VARCHAR" />
+    <result column="AppointDate" property="appointdate" jdbcType="TIMESTAMP" />
+    <result column="AppointTeacher" property="appointteacher" jdbcType="VARCHAR" />
+    <result column="AppointTotalNum" property="appointtotalnum" jdbcType="INTEGER" />
+    <result column="AppointLeftNum" property="appointleftnum" jdbcType="INTEGER" />
+    <result column="ServiceTypeID" property="servicetypeid" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="IsDelete" property="isdelete" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    AppointServiceID, AppointServiceTimeID, AppointServiceName, AppointDate, AppointTeacher, 
+    AppointTotalNum, AppointLeftNum, ServiceTypeID, CreateTime, CreateBy, CreatePersonID, 
+    UpdateTime, UpdateBy, UpdatePersonID, IsDelete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.AppointserviceconfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AppointServiceConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from AppointServiceConfig
+    where AppointServiceID = #{appointserviceid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from AppointServiceConfig
+    where AppointServiceID = #{appointserviceid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.AppointserviceconfigExample" >
+    delete from AppointServiceConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.Appointserviceconfig" >
+    insert into AppointServiceConfig (AppointServiceID, AppointServiceTimeID, 
+      AppointServiceName, AppointDate, AppointTeacher, 
+      AppointTotalNum, AppointLeftNum, ServiceTypeID, 
+      CreateTime, CreateBy, CreatePersonID, 
+      UpdateTime, UpdateBy, UpdatePersonID, 
+      IsDelete)
+    values (#{appointserviceid,jdbcType=BIGINT}, #{appointservicetimeid,jdbcType=INTEGER}, 
+      #{appointservicename,jdbcType=VARCHAR}, #{appointdate,jdbcType=TIMESTAMP}, #{appointteacher,jdbcType=VARCHAR}, 
+      #{appointtotalnum,jdbcType=INTEGER}, #{appointleftnum,jdbcType=INTEGER}, #{servicetypeid,jdbcType=INTEGER}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT}, 
+      #{isdelete,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.Appointserviceconfig">
+    insert into AppointServiceConfig
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="appointserviceid != null" >
+        AppointServiceID,
+      </if>
+      <if test="appointservicetimeid != null" >
+        AppointServiceTimeID,
+      </if>
+      <if test="appointservicename != null" >
+        AppointServiceName,
+      </if>
+      <if test="appointdate != null" >
+        AppointDate,
+      </if>
+      <if test="appointteacher != null" >
+        AppointTeacher,
+      </if>
+      <if test="appointtotalnum != null" >
+        AppointTotalNum,
+      </if>
+      <if test="appointleftnum != null" >
+        AppointLeftNum,
+      </if>
+      <if test="servicetypeid != null" >
+        ServiceTypeID,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="isdelete != null" >
+        IsDelete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="appointserviceid != null" >
+        #{appointserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="appointservicetimeid != null" >
+        #{appointservicetimeid,jdbcType=INTEGER},
+      </if>
+      <if test="appointservicename != null" >
+        #{appointservicename,jdbcType=VARCHAR},
+      </if>
+      <if test="appointdate != null" >
+        #{appointdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointteacher != null" >
+        #{appointteacher,jdbcType=VARCHAR},
+      </if>
+      <if test="appointtotalnum != null" >
+        #{appointtotalnum,jdbcType=INTEGER},
+      </if>
+      <if test="appointleftnum != null" >
+        #{appointleftnum,jdbcType=INTEGER},
+      </if>
+      <if test="servicetypeid != null" >
+        #{servicetypeid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.AppointserviceconfigExample" resultType="java.lang.Integer" >
+    select count(*) from AppointServiceConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update AppointServiceConfig
+    <set >
+      <if test="record.appointserviceid != null" >
+        AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT},
+      </if>
+      <if test="record.appointservicetimeid != null" >
+        AppointServiceTimeID = #{record.appointservicetimeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.appointservicename != null" >
+        AppointServiceName = #{record.appointservicename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointdate != null" >
+        AppointDate = #{record.appointdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.appointteacher != null" >
+        AppointTeacher = #{record.appointteacher,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointtotalnum != null" >
+        AppointTotalNum = #{record.appointtotalnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.appointleftnum != null" >
+        AppointLeftNum = #{record.appointleftnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.servicetypeid != null" >
+        ServiceTypeID = #{record.servicetypeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.isdelete != null" >
+        IsDelete = #{record.isdelete,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update AppointServiceConfig
+    set AppointServiceID = #{record.appointserviceid,jdbcType=BIGINT},
+      AppointServiceTimeID = #{record.appointservicetimeid,jdbcType=INTEGER},
+      AppointServiceName = #{record.appointservicename,jdbcType=VARCHAR},
+      AppointDate = #{record.appointdate,jdbcType=TIMESTAMP},
+      AppointTeacher = #{record.appointteacher,jdbcType=VARCHAR},
+      AppointTotalNum = #{record.appointtotalnum,jdbcType=INTEGER},
+      AppointLeftNum = #{record.appointleftnum,jdbcType=INTEGER},
+      ServiceTypeID = #{record.servicetypeid,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      IsDelete = #{record.isdelete,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.person.Appointserviceconfig" >
+    update AppointServiceConfig
+    <set >
+      <if test="appointservicetimeid != null" >
+        AppointServiceTimeID = #{appointservicetimeid,jdbcType=INTEGER},
+      </if>
+      <if test="appointservicename != null" >
+        AppointServiceName = #{appointservicename,jdbcType=VARCHAR},
+      </if>
+      <if test="appointdate != null" >
+        AppointDate = #{appointdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="appointteacher != null" >
+        AppointTeacher = #{appointteacher,jdbcType=VARCHAR},
+      </if>
+      <if test="appointtotalnum != null" >
+        AppointTotalNum = #{appointtotalnum,jdbcType=INTEGER},
+      </if>
+      <if test="appointleftnum != null" >
+        AppointLeftNum = #{appointleftnum,jdbcType=INTEGER},
+      </if>
+      <if test="servicetypeid != null" >
+        ServiceTypeID = #{servicetypeid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="isdelete != null" >
+        IsDelete = #{isdelete,jdbcType=CHAR},
+      </if>
+    </set>
+    where AppointServiceID = #{appointserviceid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.person.Appointserviceconfig" >
+    update AppointServiceConfig
+    set AppointServiceTimeID = #{appointservicetimeid,jdbcType=INTEGER},
+      AppointServiceName = #{appointservicename,jdbcType=VARCHAR},
+      AppointDate = #{appointdate,jdbcType=TIMESTAMP},
+      AppointTeacher = #{appointteacher,jdbcType=VARCHAR},
+      AppointTotalNum = #{appointtotalnum,jdbcType=INTEGER},
+      AppointLeftNum = #{appointleftnum,jdbcType=INTEGER},
+      ServiceTypeID = #{servicetypeid,jdbcType=INTEGER},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      IsDelete = #{isdelete,jdbcType=CHAR}
+    where AppointServiceID = #{appointserviceid,jdbcType=BIGINT}
+  </update>
+</mapper>

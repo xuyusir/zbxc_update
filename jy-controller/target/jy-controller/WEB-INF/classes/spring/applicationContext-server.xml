@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   					   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+	<!-- 扫描server -->
+	<context:component-scan base-package="com.jy.service"/>
+
+	<!-- 阿里云OSS -->
+	<bean id="aliyunOSSClientUtil" class="com.jy.common.utils.AliyunOSSClientUtil" scope="prototype">
+		<property name="intranetEndpoint" value="${INTRANET_ENDPOINT}"/>
+		<property name="outerNetEndpoint" value="${OUTER_NET_ENDPOINT}"/>
+		<property name="accessKeyID" value="${ACCESS_KEY_ID}"/>
+		<property name="accessKeySecret" value="${ACCESS_KEY_SECRET}"/>
+		<property name="bucketName" value="${BACKET_NAME}"/>
+		<property name="expiration" value="${EXPIRATION}"/>
+		<property name="clientIntranetEndpoint" value="${CLIENT_INTRANET_ENDPOINT}"/>
+		<property name="useNginx" value="${USE_NGINX}"/>
+		<property name="nginxUrl" value="${NGINX_URL}"/>
+		<property name="regionId" value="${REGION_ID}"/>
+		<property name="jedisClient" ref="jedisClient"/>
+		<property name="redisPassword" value="${REDIS_PASSWORD}"/>
+	</bean>
+</beans>
+
+
+
+
+
+
+
+

@@ -1,0 +1,214 @@
+package com.jy.common.redis;
+
+
+import java.util.List;
+
+import redis.clients.jedis.Jedis;
+
+/**
+ * 
+ * @ClassName:  JedisClient   
+ * @Description:redis 连接接口 
+ * @author: chengfei
+ * @date:   2018-05-23 14:00
+ */
+public interface JedisClient {
+	
+	Jedis getJedis(String password);
+	
+	/**
+	 * redis set key value
+ 	 * @param key
+	 * @param value
+	 * @param password
+	 * @return
+	 */
+	String set(String key, String value, String password);
+	
+	/**
+	 * redis set key value
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	String set(String key, String value);
+
+	/**
+	 * redis get key
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	String get(String key, String password);
+	
+	/**
+	 * redis get key
+	 * @param key
+	 * @return
+	 */
+	String get(String key);
+
+	/**
+	 * redis del key
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	Long del(String key, String password);
+	
+	/**
+	 * redis del key
+	 * @param key
+	 * @return
+	 */
+	Long del(String key);
+
+	/**
+	 * redis是否存在key
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	Boolean exists(String key, String password);
+	
+	/**
+	 * redis是否存在key
+	 * @param key
+	 * @return
+	 */
+	Boolean exists(String key);
+	
+	/**
+	 * redis 设置有效时间
+	 * @param key
+	 * @param seconds
+	 * @param password
+	 * @return
+	 */
+	Long expire(String key, int seconds, String password);
+	
+	/**
+	 * redis设置有效时间
+	 * @param key
+	 * @param seconds
+	 * @return
+	 */
+	Long expire(String key, int seconds);
+	
+	/**
+	 * redis ttl
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	Long ttl(String key, String password);
+	
+	/**
+	 * redis ttl
+	 * @param key
+	 * @return
+	 */
+	Long ttl(String key);
+
+	/**
+	 * redis incr
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	Long incr(String key, String password);
+	
+	/**
+	 * redis incr
+	 * @param key
+	 * @return
+	 */
+	Long incr(String key);
+
+	/**
+	 * redis hset
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @param password
+	 * @return
+	 */
+	Long hset(String key, String field, String value, String password);
+	
+	/**
+	 * redis hset
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	Long hset(String key, String field, String value);
+
+	/**
+	 * redis hget
+	 * @param key
+	 * @param field
+	 * @param password
+	 * @return
+	 */
+	String hget(String key, String field, String password);
+	
+	/**
+	 * redis hget
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	String hget(String key, String field);
+
+	/**
+	 * redis hdel
+	 * @param password
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	Long hdel(String password, String key, String... field);
+	
+	/**
+	 * redis hdel
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	Long hdel(String key, String... field);
+
+	/**
+	 * redis hexists
+	 * @param key
+	 * @param field
+	 * @param password
+	 * @return
+	 */
+	boolean hexists(String key, String field, String password);
+	
+	/**
+	 * redis hexists
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	boolean hexists(String key, String hexists);
+
+	/**
+	 * redis hvals
+	 * @param key
+	 * @param password
+	 * @return
+	 */
+	List<String> hvals(String key, String password);
+	
+	/**
+	 * redis hvals
+	 * @param key
+	 * @return
+	 */
+	List<String> hvals(String key);
+	
+
+}

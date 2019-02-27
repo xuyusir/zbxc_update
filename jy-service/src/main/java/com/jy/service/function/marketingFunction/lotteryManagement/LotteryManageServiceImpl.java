@@ -1,0 +1,954 @@
+package com.jy.service.function.marketingFunction.lotteryManagement;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.common.utils.ExcelUtils;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.function.marketingFunction.lotteryManagement.DrawlotteryconfigMapper;
+import com.jy.dao.function.marketingFunction.lotteryManagement.DrawlotteryitemMapper;
+import com.jy.dao.function.marketingFunction.lotteryManagement.PersondrawlotteryMapper;
+import com.jy.dao.system.inMail.MessageMapper;
+import com.jy.dao.system.inMail.MessagetextMapper;
+import com.jy.dao.system.select.DrawlotterylevelMapper;
+import com.jy.entiy.account.account.Account;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.file.file.Usefile;
+import com.jy.entiy.content.file.file.UsefileExample;
+import com.jy.entiy.function.marketingFunction.lotteryManagement.*;
+import com.jy.entiy.function.marketingFunction.lotteryManagement.PersondrawlotteryExample.Criteria;
+import com.jy.entiy.system.inMail.Message;
+import com.jy.entiy.system.inMail.Messagetext;
+import com.jy.entiy.system.select.Drawlotterylevel;
+import com.jy.service.base.BaseService;
+import com.jy.service.function.marketingFunction.votingManagement.Qr_code;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import javax.annotation.Resource;
+import java.io.*;
+import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.*;
+
+/**
+ * @ClassName: LotteryManageServiceImpl
+ * @Description:抽奖管理实现类
+ * @author: chenye
+ * @date: 2018-09-13 10:24
+ */
+@Service
+public class LotteryManageServiceImpl extends BaseService implements LotteryManageService {
+
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_MARKETING_FUNCTION";
+
+	private static final int GIFTLEVEL = 99;// 谢谢参与
+
+	private static final int STAUTS = 2;// 状态为禁止
+
+	private static final String TABLE_NAME = "DrawLotteryItem";
+
+	// 抽奖地址
+	private static final String webLotteryUrl = "/prize";
+
+	// pc端服务器地址
+	@Value("${WEB_SERVER_URL}")
+	private String WEB_SERVER_URL;
+	// 移动端服务器地址
+	@Value("${MOBILE_SERVER_URL}")
+	private String MOBILE_SERVER_URL;
+
+	@Resource
+	private DrawlotteryconfigMapper drawlotteryconfigMapper;
+	@Resource
+	private DrawlotteryitemMapper drawlotteryitemMapper;
+	@Resource
+	private PersondrawlotteryMapper persondrawlotteryMapper;
+	@Resource
+	private DrawlotterylevelMapper drawlotterylevelMapper;
+	@Resource
+	private AccountMapper accountMapper;
+	@Resource
+	private FileinfoMapper fileinfoMapper;
+	@Resource
+	private MessageMapper messageMapper;
+	@Resource
+	private MessagetextMapper messagetextMapper;
+
+	public static int drawGift(List<Drawlotteryitem> drawlotteryitemList) {
+
+		if (null != drawlotteryitemList && drawlotteryitemList.size() > 0) {
+			List<Float> orgProbList = new ArrayList<Float>(drawlotteryitemList.size());
+			for (Drawlotteryitem drawlotteryitem : drawlotteryitemList) {
+				// 按顺序将概率添加到集合中
+				orgProbList.add(drawlotteryitem.getGetlotteryprobalility());
+			}
+
+			return draw(orgProbList);
+
+		}
+		return -1;
+	}
+
+	public static int draw(List<Float> giftProbList) {
+
+		List<Float> sortRateList = new ArrayList<Float>();
+
+		// 计算概率总和
+		Float sumRate = 0F;
+		for (Float prob : giftProbList) {
+			sumRate += prob;
+		}
+
+		if (sumRate != 0) {
+			Float rate = 0F; // 概率所占比例
+			for (Float prob : giftProbList) {
+				rate += prob;
+				// 构建一个比例区段组成的集合(避免概率和不为1)
+				sortRateList.add(rate / sumRate);
+			}
+
+			// 随机生成一个随机数，并排序
+			Float random = (float) Math.random();
+			sortRateList.add(random);
+			Collections.sort(sortRateList);
+
+			// 返回该随机数在比例集合中的索引
+			return sortRateList.indexOf(random);
+		}
+
+		return -1;
+	}
+
+	@Override
+	public Result getLotteryList(AccountInfo accountInfo, String AUTHORITY_CODE, Integer votestatusid, String search,
+			Integer page, Integer pageSize) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 处理参数
+		search = this.checkSearch(search);
+		if (votestatusid != null) {
+			if (votestatusid == 0) {
+				votestatusid = null;
+			}
+
+		}
+		List<Drawlotteryconfig> rows = drawlotteryconfigMapper.selectDrawlotteryconfigList(votestatusid, search,
+				(page - 1) * pageSize, pageSize);
+		int count = drawlotteryconfigMapper.selectCountDrawlotteryconfigList(votestatusid, search);
+		if (rows != null && rows.size() != 0) {
+			for (Drawlotteryconfig drawlotteryconfig : rows) {
+				if (drawlotteryconfig.getTwodimensionpath() != null) {
+					drawlotteryconfig
+							.setTwodimensionpath(aliyunOSSClientUtil.getUrl(drawlotteryconfig.getTwodimensionpath()));
+				}
+			}
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", rows);
+		map.put("count", count);
+		aliyunOSSClientUtil.closeOSSClient();
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result addLottery(AccountInfo accountInfo, String AUTHORITY_CODE, Drawlotteryconfig drawlotteryconfig,
+			String qRpath) throws MyException, FileNotFoundException, IOException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		// 参数非空检查
+		if (StringUtils.isBlank(drawlotteryconfig.getDrawlotterytitle()) || drawlotteryconfig.getDrawlotteryno() == null
+				|| drawlotteryconfig.getGetlotteryno() == null || drawlotteryconfig.getVoteparticipanttypeid() == null
+				|| drawlotteryconfig.getVoteparticipanttypeid() == null
+				|| drawlotteryconfig.getDrawlotteryconfigid() != null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		if (drawlotteryconfig.getGetlotteryno() <= 0 || drawlotteryconfig.getDrawlotteryno() <= 0) {
+			return Result.build(20001, 400, "可中奖次数和可抽奖次数不能为0或负数!");
+		}
+
+		if (drawlotteryconfig.getGetlotteryno() > drawlotteryconfig.getDrawlotteryno()) {
+			return Result.build(20001, 400, "可中奖次数不能大于可抽奖次数!");
+		}
+
+		List<Drawlotteryitem> drawlotteryitems = drawlotteryconfig.getDrawlotteryitems();
+		if (drawlotteryitems == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+			if (drawlotteryitem != null) {
+				if (drawlotteryitem.getLotteryset() == null || drawlotteryitem.getLotteryno() == null
+						|| drawlotteryitem.getDrawlotterylevelid() == null) {
+					return Result.build(ResultEnum.PARAMETER_ERROR);
+				}
+			}
+			if (drawlotteryitem.getLotteryno() < 0) {
+				return Result.build(20001, 400, "奖品数量不能为负!");
+			}
+		}
+
+		drawlotteryconfig.setCeateby(accountInfo.getAccount().getName());
+		drawlotteryconfig.setCreatetime(new Date());
+		drawlotteryconfig.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		// 默认启用
+		drawlotteryconfig.setVotestatusid(1);
+
+		Float rate = 0f;
+		if (drawlotteryitems != null && drawlotteryitems.size() != 0) {
+			for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+				Float getlotteryprobalility = drawlotteryitem.getGetlotteryprobalility();
+				if (getlotteryprobalility != null && getlotteryprobalility != 0f) {
+					Float p = (Float) getlotteryprobalility / 100;
+					rate += p;
+				}
+			}
+
+			if (rate > 1f) {
+				return Result.build(20001, 400, "奖项概率和不能大于100%!");
+			}
+		}
+
+		int i = drawlotteryconfigMapper.insertSelective(drawlotteryconfig);
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+			drawlotteryitem.setDrawlotteryconfigid(drawlotteryconfig.getDrawlotteryconfigid());
+			Float getlotteryprobalility = drawlotteryitem.getGetlotteryprobalility();
+			if (getlotteryprobalility != null && getlotteryprobalility != 0f) {
+				Float p = (Float) getlotteryprobalility / 100;
+				drawlotteryitem.setGetlotteryprobalility(p);
+			}
+			int i2 = drawlotteryitemMapper.insertSelective(drawlotteryitem);
+			if (i2 < 1) {
+				throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+			}
+			if (drawlotteryitem.getPicturepathid() != null) {// 将图片id插入文件引用表
+				this.addUseFile(drawlotteryitem.getPicturepathid(), TABLE_NAME,
+						(long) drawlotteryitem.getDrawlotteryitemid());
+			}
+		}
+
+		/**
+		 *
+		 * 二维码生成
+		 */
+		Qr_code qr_code = new Qr_code();
+		// 移动端地址
+		qr_code.getQrCodeImg(MOBILE_SERVER_URL + webLotteryUrl + "?drawlotteryconfigid="
+				+ drawlotteryconfig.getDrawlotteryconfigid(), qRpath);
+
+		File f = new File(qRpath);
+		FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(f.toPath()), false, f.getName(),
+				(int) f.length(), f.getParentFile());
+		InputStream input = new FileInputStream(f);
+		OutputStream os = fileItem.getOutputStream();
+		IOUtils.copy(input, os);
+		MultipartFile mulFile = new CommonsMultipartFile(fileItem);
+		// 取扩展名
+		String fileName = mulFile.getOriginalFilename();
+		String extName = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+		String rqCodeFolder = createRQCodeFolder();
+		// 执行上传
+		String fileFullPath = aliyunOSSClientUtil.uploadFile(rqCodeFolder, fileName, mulFile.getSize(),
+				mulFile.getInputStream(), accountInfo.getAccount().getAccountid());
+
+		if (StringUtils.isBlank(fileFullPath)) {
+			return Result.build(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+		Fileinfo fileinfo = new Fileinfo();
+		fileinfo.setType(4);// 二维码图片
+		fileinfo.setFilename(fileName);
+		fileinfo.setFiletype(extName);
+		fileinfo.setFilefullpath(fileFullPath);
+		fileinfo.setFilepath(rqCodeFolder);
+		fileinfo.setFilesize(mulFile.getSize() + "");
+		fileinfo.setCreateby(accountInfo.getAccount().getName());
+		fileinfo.setCreatepersonid(accountInfo.getAccount().getAccountid());
+		fileinfo.setCreatetime(new Date());
+
+		// 添加到数据库
+		int fileNum = fileinfoMapper.insertSelective(fileinfo);
+
+		// 插入失败删除文件
+		if (fileNum < 1) {
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			return Result.build(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+		if (fileinfo.getFileid() != null) {// 将图片id插入文件引用表
+			this.addUseFile(fileinfo.getFileid(), TABLE_NAME, (long) drawlotteryconfig.getDrawlotteryconfigid());
+		}
+
+		drawlotteryconfig.setTwodimensionpath(fileFullPath);// 二维码地址
+		drawlotteryconfigMapper.updateByPrimaryKeySelective(drawlotteryconfig);
+		// 数据库操作日志
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+					"上传文件:[ " + fileName + " ]", DB_LOG_TYPE);
+		} catch (Exception e) {
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			throw new MyException(ResultEnum.UPLOAD_FILE_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log = "添加了一个抽奖 : [ ";
+		log += StringUtils.isBlank(drawlotteryconfig.getDrawlotterytitle()) ? ""
+				: "抽奖标题=" + drawlotteryconfig.getDrawlotterytitle() + ",";
+		log += drawlotteryconfig.getDrawlotteryconfigid() == null ? ""
+				: "抽奖id=" + drawlotteryconfig.getDrawlotteryconfigid() + ",";
+		log += StringUtils.isBlank(drawlotteryconfig.getCeateby()) ? "" : "创建者=" + drawlotteryconfig.getCeateby() + ",";
+		log += drawlotteryconfig.getCreatepersonid() == null ? ""
+				: "创建者id=" + drawlotteryconfig.getCreatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+		} catch (Exception e) {
+			aliyunOSSClientUtil.deleteFile(fileFullPath);
+			e.printStackTrace();
+			throw new RuntimeException("插入数据库操作日志失败!");
+		}
+
+		aliyunOSSClientUtil.closeOSSClient();
+		return Result.succee();
+	}
+
+	@Override
+	public Result updateLottery(AccountInfo accountInfo, String AUTHORITY_CODE, Drawlotteryconfig drawlotteryconfig)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (drawlotteryconfig.getDrawlotteryconfigid() == null) {// 主键不能为空
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		drawlotteryconfig.setUpdateby(accountInfo.getAccount().getName());
+		drawlotteryconfig.setUpdatetime(new Date());
+		drawlotteryconfig.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+
+		Drawlotteryconfig old_drawlotteryconfig = drawlotteryconfigMapper
+				.selectByPrimaryKey(drawlotteryconfig.getDrawlotteryconfigid());
+		if (drawlotteryconfig.getGetlotteryno() == null) {
+			drawlotteryconfig.setGetlotteryno(old_drawlotteryconfig.getGetlotteryno());
+		}
+		if (drawlotteryconfig.getDrawlotteryno() == null) {
+			drawlotteryconfig.setDrawlotteryno(old_drawlotteryconfig.getDrawlotteryno());
+		}
+
+		if (drawlotteryconfig.getGetlotteryno() <= 0 || drawlotteryconfig.getDrawlotteryno() <= 0) {
+			return Result.build(20001, 400, "可中奖次数和可抽奖次数不能为0或负数!");
+		}
+
+		if (drawlotteryconfig.getGetlotteryno() > drawlotteryconfig.getDrawlotteryno()) {
+			return Result.build(20001, 400, "可中奖次数不能大于可抽奖次数!");
+		}
+
+		List<Drawlotteryitem> drawlotteryitems = drawlotteryconfig.getDrawlotteryitems();
+		if (drawlotteryitems != null) {
+			for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+				if (drawlotteryitem != null) {
+					if (drawlotteryitem.getLotteryset() == null || drawlotteryitem.getLotteryno() == null
+							|| drawlotteryitem.getDrawlotterylevelid() == null) {
+						return Result.build(ResultEnum.PARAMETER_ERROR);
+					}
+				}
+				if (drawlotteryitem.getLotteryno() < 0) {
+					return Result.build(20001, 400, "奖品数量不能为负!");
+				}
+			}
+		}
+
+		int i = drawlotteryconfigMapper.updateByPrimaryKeySelective(drawlotteryconfig);
+
+		if (i < 1) {
+			throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		Float rate = 0f;
+		if (drawlotteryitems != null && drawlotteryitems.size() != 0) {
+			for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+				Float getlotteryprobalility = drawlotteryitem.getGetlotteryprobalility();
+				if (getlotteryprobalility != null && getlotteryprobalility != 0f) {
+					Float p = (Float) getlotteryprobalility / 100;
+					rate += p;
+				}
+			}
+
+			if (rate > 1f) {
+				return Result.build(20001, 400, "奖项概率和不能大于100%!");
+			}
+		}
+
+		if (drawlotteryitems != null && drawlotteryitems.size() != 0) {
+			/**
+			 *
+			 * 删除原奖项
+			 */
+			DrawlotteryitemExample drawlotteryitemExample = new DrawlotteryitemExample();
+			com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample.Criteria createCriteria = drawlotteryitemExample
+					.createCriteria();
+			createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfig.getDrawlotteryconfigid());
+			List<Drawlotteryitem> selectByExample = drawlotteryitemMapper.selectByExample(drawlotteryitemExample);
+			drawlotteryitemMapper.deleteByExample(drawlotteryitemExample);
+			for (Drawlotteryitem old : selectByExample) {
+				if (old.getPicturepathid() != null) {
+					// this.deleteFile(accountInfo, DB_LOG_TYPE, old.getPicturepathid(), TABLE_NAME,
+					// (long) old.getDrawlotteryitemid());// 删除文件引用表中的原纪录
+					// 删除文件引用
+					UsefileExample example = new UsefileExample();
+					com.jy.entiy.content.file.file.UsefileExample.Criteria criteria = example.createCriteria();
+					criteria.andTablenameEqualTo(TABLE_NAME);
+					criteria.andFileidEqualTo(old.getPicturepathid());
+					criteria.andUseidEqualTo((long) old.getDrawlotteryitemid());
+					List<Usefile> list = usefileMapper.selectByExample(example);
+					if (list.size() != 0) {
+						int iu = usefileMapper.deleteByPrimaryKey(list.get(0).getId());
+						if (iu < 1) {
+							System.err.println("抽奖删除文件引用错误。。。。。。。。。。。。。。。。。。。。");
+							throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+						}
+					}
+				}
+			}
+
+			for (Drawlotteryitem drawlotteryitem : drawlotteryitems) {
+				Float getlotteryprobalility = drawlotteryitem.getGetlotteryprobalility();
+				if (getlotteryprobalility != null && getlotteryprobalility != 0f) {
+					Float p = (Float) getlotteryprobalility / 100;
+					drawlotteryitem.setGetlotteryprobalility(p);
+				}
+				Integer drawlotteryitemid = drawlotteryitem.getDrawlotteryitemid();
+				if (drawlotteryitemid != null) {
+					// 原奖项记录
+					// Drawlotteryitem old =
+					// drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+
+					// int i2 = drawlotteryitemMapper.updateByPrimaryKeySelective(drawlotteryitem);
+					// if (drawlotteryitem.getPicturepathid() != null) {// 将新图片id插入文件引用表
+					//
+					// // 插入新图片引用记录
+					// this.addUseFile(drawlotteryitem.getPicturepathid(), TABLE_NAME, (long)
+					// drawlotteryitemid);
+					// }
+					// if (old.getPicturepathid() != null) {
+					// this.deleteFile(accountInfo, DB_LOG_TYPE, old.getPicturepathid(), TABLE_NAME,
+					// (long) old.getDrawlotteryitemid());// 删除文件引用表中的原纪录
+					// }
+
+					//
+					// if (i2 < 1) {
+					// throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+					// }
+
+					/**
+					 * 插入新奖项
+					 *
+					 */
+
+					drawlotteryitem.setDrawlotteryconfigid(drawlotteryconfig.getDrawlotteryconfigid());
+
+					int i3 = drawlotteryitemMapper.insertSelective(drawlotteryitem);
+					if (i3 < 1) {
+						throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+					}
+					if (drawlotteryitem.getPicturepathid() != null) {// 将图片id插入文件引用表
+						this.addUseFile(drawlotteryitem.getPicturepathid(), TABLE_NAME,
+								(long) drawlotteryitem.getDrawlotteryitemid());
+						// 插入原有文件路径(解决bug6291)
+						Fileinfo old_file = fileinfoMapper.selectByPrimaryKey(drawlotteryitem.getPicturepathid());
+						Fileinfo fileinfo = new Fileinfo();
+						// fileinfo.setFileid(drawlotteryitem.getPicturepathid());
+						fileinfo.setFilepath(drawlotteryitem.getPicturepath());
+						fileinfo.setFilefullpath(old_file.getFilefullpath());
+						fileinfo.setCreatepersonid(old_drawlotteryconfig.getCreatepersonid());
+						fileinfoMapper.insertSelective(fileinfo);
+					}
+
+				} else {
+					drawlotteryitem.setDrawlotteryconfigid(drawlotteryconfig.getDrawlotteryconfigid());
+					int i2 = drawlotteryitemMapper.insertSelective(drawlotteryitem);
+
+					if (i2 < 1) {
+						throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+					}
+				}
+
+			}
+			// 删除未引用的原文件
+			for (Drawlotteryitem old : selectByExample) {
+				if (old.getPicturepathid() != null) {
+					// this.deleteFile(accountInfo, DB_LOG_TYPE, old.getPicturepathid(), TABLE_NAME,
+					// (long) old.getDrawlotteryitemid());// 删除文件引用表中的原纪录
+					UsefileExample example2 = new UsefileExample();
+					com.jy.entiy.content.file.file.UsefileExample.Criteria criteria2 = example2.createCriteria();
+					criteria2.andFileidEqualTo(old.getPicturepathid());
+					int iuf = usefileMapper.countByExample(example2);
+
+					Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(old.getPicturepathid());
+					// 没有其他表引用删除文件
+					if (iuf == 0 && fileinfo != null) {
+						i = fileinfoMapper.deleteByPrimaryKey(old.getPicturepathid());
+						if (i >= 1) {
+							System.err.println("删除了奖项图片" + old.getPicturepathid());
+						}
+						dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+								"删除了文件[ " + fileinfo.getFilename() + " ]", DB_LOG_TYPE);
+						aliyunOSSClientUtil.deleteFile(fileinfo.getFilefullpath());
+						aliyunOSSClientUtil.closeOSSClient();
+						/*
+						 * if (!deleteFile) { throw new MyException(ResultEnum.DELETE_FILE_ERROR); }
+						 */
+					}
+				}
+			}
+		}
+
+		// 插入数据库操作日志
+		String log = "修改了一个抽奖 : [ ";
+		log += StringUtils.isBlank(drawlotteryconfig.getDrawlotterytitle()) ? ""
+				: "抽奖标题=" + drawlotteryconfig.getDrawlotterytitle() + ",";
+		log += drawlotteryconfig.getDrawlotteryconfigid() == null ? ""
+				: "抽奖id=" + drawlotteryconfig.getDrawlotteryconfigid() + ",";
+		log += StringUtils.isBlank(drawlotteryconfig.getUpdateby()) ? ""
+				: "修改者=" + drawlotteryconfig.getUpdateby() + ",";
+		log += drawlotteryconfig.getUpdatepersonid() == null ? ""
+				: "修改者id=" + drawlotteryconfig.getUpdatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result deleteLottery(AccountInfo accountInfo, String AUTHORITY_CODE, Integer drawlotteryconfigid)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (drawlotteryconfigid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		Drawlotteryconfig selectByPrimaryKey = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+		if (selectByPrimaryKey == null) {
+			return Result.build(ResultEnum.DATA_NOT_EXIST);
+		}
+
+		DrawlotteryitemExample drawlotteryitemExample = new DrawlotteryitemExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample.Criteria createCriteria = drawlotteryitemExample
+				.createCriteria();
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+
+		int i = drawlotteryitemMapper.deleteByExample(drawlotteryitemExample);
+		if (i < 1) {
+			throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+		}
+		//删除二维码图片
+		aliyunOSSClientUtil.deleteFile(selectByPrimaryKey.getTwodimensionpath());
+		int i2 = drawlotteryconfigMapper.deleteByPrimaryKey(drawlotteryconfigid);// 删除失败需要回滚
+		if (i2 < 1) {
+			throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+		}
+		// 插入数据库操作日志
+		String log = "删除了一个抽奖 :  抽奖id为";
+		log += drawlotteryconfigid;
+		log += "删除者";
+		log += accountInfo.getAccount().getName();
+
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result getLotteryInfo(AccountInfo accountInfo, String AUTHORITY_CODE, Integer drawlotteryconfigid)
+			throws MyException {
+		// 检测权限
+		// Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		// if (checkAuthority.getStatus() != 200) {
+		// return checkAuthority;
+		// }
+		if (drawlotteryconfigid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+		DrawlotteryitemExample drawlotteryitemExample = new DrawlotteryitemExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample.Criteria createCriteria = drawlotteryitemExample
+				.createCriteria();
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		List<Drawlotteryitem> selectByExample = drawlotteryitemMapper.selectByExample(drawlotteryitemExample);
+		if (selectByExample != null && selectByExample.size() != 0) {
+			for (Drawlotteryitem drawlotteryitem : selectByExample) {
+				if (drawlotteryitem != null) {
+					Float getlotteryprobalility = drawlotteryitem.getGetlotteryprobalility();
+					if (getlotteryprobalility != null && getlotteryprobalility != 0f) {
+						Float p = getlotteryprobalility * 100;
+						DecimalFormat decimalFormat = new DecimalFormat(".00");
+						String p2 = decimalFormat.format(p);
+						p = Float.parseFloat(p2);
+						drawlotteryitem.setGetlotteryprobalility(p);
+					}
+					drawlotteryitem.setStatus(drawlotteryconfig.getVotestatusid());
+					Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(drawlotteryitem.getPicturepathid());
+					if (fileinfo != null && fileinfo.getFilefullpath() != null) {
+						drawlotteryitem.setPicturepath(aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath()));
+
+					} else {
+						drawlotteryitem.setPicturepath(null);
+					}
+				}
+			}
+		}
+
+		drawlotteryconfig.setDrawlotteryitems(selectByExample);
+		return Result.succee(drawlotteryconfig);
+
+	}
+
+	@Override
+	public Result exportListView(AccountInfo accountInfo, String AUTHORITY_CODE, Integer drawlotteryconfigid)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		PersondrawlotteryExample persondrawlotteryExample = new PersondrawlotteryExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.PersondrawlotteryExample.Criteria createCriteria = persondrawlotteryExample
+				.createCriteria();
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		List<Persondrawlottery> persondrawlotteryList = persondrawlotteryMapper
+				.selectByExample(persondrawlotteryExample);
+		if (persondrawlotteryList == null) {
+			return Result.build(ResultEnum.SELECT_NULL);
+		}
+		for (Persondrawlottery persondrawlottery : persondrawlotteryList) {
+			Account account = accountMapper.selectByPrimaryKey(persondrawlottery.getAccountid());
+			persondrawlottery.setName(account.getName());
+			Integer drawlotteryitemid = persondrawlottery.getDrawlotteryitemid();
+			if (drawlotteryitemid != null) {
+				Drawlotteryitem drawlotteryitem = drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+				persondrawlottery.setLotteryset(drawlotteryitem.getLotteryset());
+				Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+				persondrawlottery.setDrawlotterytitle(drawlotteryconfig.getDrawlotterytitle());
+
+			}
+			Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+			persondrawlottery.setDrawlotterytitle(drawlotteryconfig.getDrawlotterytitle());
+		}
+
+		return Result.succee(persondrawlotteryList);
+	}
+
+	@Override
+	public Result exportList(AccountInfo accountInfo, String AUTHORITY_CODE, Integer drawlotteryconfigid, String url)
+			throws MyException, ParseException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		PersondrawlotteryExample persondrawlotteryExample = new PersondrawlotteryExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.PersondrawlotteryExample.Criteria createCriteria = persondrawlotteryExample
+				.createCriteria();
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		List<Persondrawlottery> persondrawlotteryList = persondrawlotteryMapper
+				.selectByExample(persondrawlotteryExample);
+		if (persondrawlotteryList == null) {
+			return Result.build(ResultEnum.SELECT_NULL);
+		}
+		for (Persondrawlottery persondrawlottery : persondrawlotteryList) {
+			Account account = accountMapper.selectByPrimaryKey(persondrawlottery.getAccountid());
+			persondrawlottery.setName(account.getName());
+			Integer drawlotteryitemid = persondrawlottery.getDrawlotteryitemid();
+			if (drawlotteryitemid != null) {
+				Drawlotteryitem drawlotteryitem = drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+				persondrawlottery.setLotteryset(drawlotteryitem.getLotteryset());
+				Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+				persondrawlottery.setDrawlotterytitle(drawlotteryconfig.getDrawlotterytitle());
+			} else {
+				persondrawlottery.setLotteryset("未中奖");
+				Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+				persondrawlottery.setDrawlotterytitle(drawlotteryconfig.getDrawlotterytitle());
+			}
+
+		}
+		Map<String, List<List<String>>> map = new HashMap<>();
+		List<List<String>> list = new ArrayList<>();
+		List<String> list2 = new ArrayList<>();
+		list2.add("抽奖活动标题");
+		list2.add("中奖账号");
+		list2.add("中奖人姓名");
+		list2.add("中奖奖品");
+		list2.add("中奖时间");
+
+		list.add(list2);
+		for (Persondrawlottery persondrawlottery : persondrawlotteryList) {
+			if (persondrawlottery.getLotteryset() != null) {
+				List<String> list3 = new ArrayList<>();
+				list3.add(persondrawlottery.getDrawlotterytitle() + "");
+				Account account = accountMapper.selectByPrimaryKey(persondrawlottery.getAccountid());
+				list3.add(account.getPhone() + "");
+				list3.add(persondrawlottery.getName() + "");
+				list3.add(persondrawlottery.getLotteryset() + "");
+				if (persondrawlottery.getWinningtime() != null) {
+					String Handletime = DateUtils.dateFormat(persondrawlottery.getWinningtime(),
+							DateUtils.DATE_TIME_PATTERN);
+					list3.add(Handletime + "");
+				} else {
+					list3.add(persondrawlottery.getWinningtime() + "");
+				}
+				list.add(list3);
+			}
+
+		}
+		map.put("抽奖结果表", list);
+
+		HSSFWorkbook workbook = ExcelUtils.getExcelFileStream(map);
+		return Result.succee(workbook);
+	}
+
+	@Override
+	public synchronized Result lotterying(AccountInfo accountInfo, String AUTHORITY_CODE, Integer drawlotteryconfigid,
+			Persondrawlottery persondrawlottery) throws MyException {
+		Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+		if (drawlotteryconfig == null) {
+			return Result.build(20001, 400, "没有该活动!");
+		}
+		if(accountInfo == null) {
+			return Result.build(20001, 400, "请先登录!");
+		}
+		DrawlotteryitemExample drawlotteryitemExample = new DrawlotteryitemExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample.Criteria createCriteria = drawlotteryitemExample
+				.createCriteria();
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		List<Drawlotteryitem> drawlotteryitemList = drawlotteryitemMapper.selectByExample(drawlotteryitemExample);
+
+		drawlotteryconfig.setDrawlotteryitems(drawlotteryitemList);
+
+		PersondrawlotteryExample persondrawlotteryExample = new PersondrawlotteryExample();
+		com.jy.entiy.function.marketingFunction.lotteryManagement.PersondrawlotteryExample.Criteria createCriteria2 = persondrawlotteryExample
+				.createCriteria();
+		createCriteria2.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+		createCriteria2.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		List<Persondrawlottery> PersondrawlotteryList = persondrawlotteryMapper
+				.selectByExample(persondrawlotteryExample);// 查询用户抽奖记录
+
+		Integer drawlotteryno = drawlotteryconfig.getDrawlotteryno();// 可抽奖次数
+		Integer getlotteryno = drawlotteryconfig.getGetlotteryno();// 可中奖次数
+		int num = PersondrawlotteryList.size();// 已抽奖次数
+		int num2 = 0;// 已中奖次数
+		// 超过可抽奖次数
+		if (drawlotteryno <= num) {
+			return Result.succee();
+		}
+
+		List<Drawlotteryitem> availableDrawlotteryitemList = new ArrayList<Drawlotteryitem>();// 数量不为0的奖品
+
+		for (Drawlotteryitem drawlotteryitem : drawlotteryitemList) {
+			//获取奖品图片
+			Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(drawlotteryitem.getPicturepathid());
+			if (fileinfo != null && fileinfo.getFilefullpath() != null) {
+				drawlotteryitem.setPicturepath(aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath()));
+
+			} else {
+				drawlotteryitem.setPicturepath(null);
+			}
+//			Drawlotteryitem selectByPrimaryKey = drawlotteryitemMapper
+//					.selectByPrimaryKey(drawlotteryitem.getDrawlotteryitemid());
+			Integer lotteryno = drawlotteryitem.getLotteryno();// 奖品数量
+			if (lotteryno == null) {
+				throw new MyException(ResultEnum.SELECT_ERROR);
+			}
+
+			if (lotteryno != 0) {
+				availableDrawlotteryitemList.add(drawlotteryitem);
+			}
+		}
+
+		for (Persondrawlottery persondrawlottery1 : PersondrawlotteryList) {
+			Integer drawlotteryitemid = persondrawlottery1.getDrawlotteryitemid();
+			if (drawlotteryitemid != null) {
+				Drawlotteryitem drawlotteryitem = drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+				Integer drawlotterylevelid = drawlotteryitem.getDrawlotterylevelid();// 抽奖记录的中奖级别id
+				if (drawlotterylevelid != GIFTLEVEL) {// 中奖了
+					num2++;
+					// 全部奖品派送完
+					if (availableDrawlotteryitemList.size() == 0 && num2 < getlotteryno) {
+						// 插入抽奖操作记录
+						persondrawlottery.setAccountid(accountInfo.getAccount().getAccountid());
+						persondrawlottery.setDrawlotteryconfigid(drawlotteryconfigid);
+						persondrawlottery.setWinningtime(new Date());
+						int i = persondrawlotteryMapper.insertSelective(persondrawlottery);
+						if (i < 1) {
+							throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+						}
+
+						return Result.succee();
+					}
+
+				}
+			}
+
+		}
+		// 用户超过中奖次数
+		if (num2 >= getlotteryno) {
+			persondrawlottery.setAccountid(accountInfo.getAccount().getAccountid());
+			persondrawlottery.setDrawlotteryconfigid(drawlotteryconfigid);
+			persondrawlottery.setWinningtime(new Date());
+			int i = persondrawlotteryMapper.insertSelective(persondrawlottery);// 插入抽奖操作记录
+			if (i < 1) {
+				throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+			}
+			return Result.succee();
+		}
+
+		int index = drawGift(availableDrawlotteryitemList);// 抽奖
+		if (index < 0) {
+			// 插入抽奖操作记录
+			persondrawlottery.setAccountid(accountInfo.getAccount().getAccountid());
+			persondrawlottery.setDrawlotteryconfigid(drawlotteryconfigid);
+			persondrawlottery.setWinningtime(new Date());
+			int i = persondrawlotteryMapper.insertSelective(persondrawlottery);
+			if (i < 1) {
+				throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+			}
+			return Result.succee();
+		}
+		Integer drawlotteryitemid = availableDrawlotteryitemList.get(index).getDrawlotteryitemid();
+		Drawlotteryitem drawlotteryitem = drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+		if (drawlotteryitem.getLotteryno() == null) {
+			throw new MyException(ResultEnum.SELECT_ERROR);
+		}
+		if (drawlotteryitem.getLotteryno() >= 1) {
+			drawlotteryitem.setLotteryno(drawlotteryitem.getLotteryno() - 1);// 中奖之后奖品数量-1
+			drawlotteryitemMapper.updateByPrimaryKeySelective(drawlotteryitem);
+		}
+
+		persondrawlottery.setAccountid(accountInfo.getAccount().getAccountid());
+		persondrawlottery.setDrawlotteryconfigid(drawlotteryconfigid);
+		persondrawlottery.setDrawlotteryitemid(drawlotteryitemid);
+		persondrawlottery.setWinningtime(new Date());
+		int i = persondrawlotteryMapper.insertSelective(persondrawlottery);
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+		// 发送中奖消息
+
+		Messagetext messagetext = new Messagetext();
+		messagetext.setCreateby(drawlotteryconfig.getCeateby());
+		messagetext.setCreatetime(new Date());
+		messagetext.setTitle("中奖通知");
+		messagetext.setContent("恭喜你在" + "《" + drawlotteryconfig.getDrawlotterytitle() + "》" + "活动中抽中"
+				+ availableDrawlotteryitemList.get(index).getLotteryset());
+		int m1 = messagetextMapper.insertSelective(messagetext);
+		if (m1 < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+		Message message = new Message();
+		message.setMessageid(messagetext.getId());
+		message.setSendid(drawlotteryconfig.getCreatepersonid());
+		message.setReadingstatus(0);
+		message.setRecid(accountInfo.getAccount().getAccountid());
+		message.setCreateby(drawlotteryconfig.getCeateby());
+		message.setCreatetime(new Date());
+
+		int m2 = messageMapper.insertSelective(message);
+		if (m2 < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+		return Result.succee(availableDrawlotteryitemList.get(index));// 返回抽到的奖项,前台根据奖项级别展示抽奖结果
+	}
+
+	@Override
+	public Result load() {
+		List<Drawlotterylevel> selectByExample = drawlotterylevelMapper.selectByExample(null);
+		return Result.succee(selectByExample);
+	}
+
+	@Override
+	public Result lotteryingRecord(AccountInfo accountInfo, Integer drawlotteryconfigid) {
+		if (accountInfo == null) {
+			return Result.build(20001, 400, "请先登录!");
+		}
+		// 非个人用户
+		if (accountInfo.getAccount().getDictionariesid() != 14) {
+			return Result.build(20001, 400, "该账号不是个人用户!");
+		}
+
+		// 判断活动类型
+		Drawlotteryconfig drawlotteryconfig = drawlotteryconfigMapper.selectByPrimaryKey(drawlotteryconfigid);
+		if (drawlotteryconfig == null) {
+			return Result.build(20001, 400, "没有该活动!");
+		}
+		if (drawlotteryconfig.getVotestatusid() == STAUTS) {
+			return Result.build(20001, 400, "该活动已结束!");
+		}
+		if (drawlotteryconfig.getVoteparticipanttypeid() != null && drawlotteryconfig.getVoteparticipanttypeid() == 2) {
+			if (accountInfo.getAccount().getIsmember() == null) {
+				return Result.build(20001, 400, "该抽奖活动仅供会员参与!");
+			}
+			if (!accountInfo.getAccount().getIsmember()) {
+				return Result.build(20001, 400, "该抽奖活动仅供会员参与!");
+			}
+		}
+
+		// 初始可抽奖次数
+		Integer drawlotteryno = drawlotteryconfig.getDrawlotteryno();
+		PersondrawlotteryExample persondrawlotteryExample = new PersondrawlotteryExample();
+		Criteria createCriteria = persondrawlotteryExample.createCriteria();
+		createCriteria.andAccountidEqualTo(accountInfo.getAccount().getAccountid());
+		createCriteria.andDrawlotteryconfigidEqualTo(drawlotteryconfigid);
+		// 中奖记录
+		List<Persondrawlottery> selectByExample = persondrawlotteryMapper.selectByExample(persondrawlotteryExample);
+		if (selectByExample != null && selectByExample.size() != 0) {
+			for (Persondrawlottery persondrawlottery : selectByExample) {
+				// 奖项id
+				Integer drawlotteryitemid = persondrawlottery.getDrawlotteryitemid();
+				Drawlotteryitem drawlotteryitem = drawlotteryitemMapper.selectByPrimaryKey(drawlotteryitemid);
+				if (drawlotteryitem != null) {
+					Drawlotterylevel drawlotterylevel = drawlotterylevelMapper
+							.selectByPrimaryKey(drawlotteryitem.getDrawlotterylevelid());
+					persondrawlottery.setDrawLotteryLevelName(drawlotterylevel.getDrawlotterylevelname());
+					persondrawlottery.setLotteryset(drawlotteryitem.getLotteryset());
+				}
+
+			}
+		}
+		// 当前可抽奖次数
+		int num = drawlotteryno - (selectByExample.size());
+		Map<String, Object> map = new HashMap<>();
+		map.put("num", num);
+		map.put("record", selectByExample);
+		return Result.succee(map);
+
+	}
+
+}

@@ -1,0 +1,469 @@
+package com.jy.service.function.enterprise.recruitment.rz;
+
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.DateUtils;
+import com.jy.common.utils.LiuUtils;
+import com.jy.dao.account.account.AccountMapper;
+import com.jy.dao.function.enterprise.enterpriseFunction.AccountenterpriseMapper;
+import com.jy.dao.function.enterprise.enterpriseFunction.PersonrecruitingprocessMapper;
+import com.jy.dao.function.enterprise.info.EnterpriseinfoMapper;
+import com.jy.dao.function.enterprise.recruitment.EnterprisejobvacancyMapper;
+import com.jy.dao.function.enterprise.recruitment.EnterpriserecruitingprocessMapper;
+import com.jy.dao.function.person.PersondeliveryapplicationMapper;
+import com.jy.dao.function.person.RecruitmentprocesslogMapper;
+import com.jy.entiy.account.account.Account;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.enterpriseFunction.Accountenterprise;
+import com.jy.entiy.function.enterprise.enterpriseFunction.Personrecruitingprocess;
+import com.jy.entiy.function.enterprise.info.Enterpriseinfo;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+import com.jy.entiy.function.enterprise.recruitment.Enterpriserecruitingprocess;
+import com.jy.entiy.function.enterprise.recruitment.EnterpriserecruitingprocessExample;
+import com.jy.entiy.function.person.Persondeliveryapplication;
+import com.jy.entiy.function.person.PersondeliveryapplicationExample;
+import com.jy.entiy.function.person.Recruitmentprocesslog;
+import com.jy.service.function.enterprise.base.BaseEnterpriseService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+
+/**
+ * @ClassName: PersonDeliveryApplicationServiceImpl
+ * @Description 企业招聘职位接口实现类
+ * @author: cheng fei
+ * @date: 2018-09-07 11:07
+ */
+
+@Service
+public class PersonDeliveryApplicationServiceImpl extends BaseEnterpriseService implements PersonDeliveryApplicationService {
+    /**
+     * 数据库操作日志类型
+     */
+    private static final String DB_LOG_TYPE = "DB_LOG_PERSON_DELIVERY_APPLICATION";
+
+    /**
+     * 审核处理状态
+     * 0.待处理
+     * 1.已同意
+     * 2.已拒绝
+     */
+    private static final Integer [] APPLICATION_STATUS = {1, 2, 3};
+
+    /**
+     * 简历流程状态
+     * 0.主动投递-待处理
+     * 1.主动投递-不合适
+     * 2.面试-进行中
+     * 3.面试-不合适
+     * 4.录用-待入职
+     * 5.录用-已入职
+     * 6.录用-未入职
+     */
+    private static final Integer [] PERSON_DELIVERY_STATUS = {1, 2, 3, 4, 5, 6, 7};
+
+    @Resource
+    private PersondeliveryapplicationMapper persondeliveryapplicationMapper;
+
+    @Resource
+    private PersonrecruitingprocessMapper personrecruitingprocessMapper;
+
+    @Resource
+    private AccountMapper accountMapper;
+
+    @Resource
+    private EnterpriseinfoMapper enterpriseinfoMapper;
+
+    @Resource
+    private EnterprisejobvacancyMapper enterprisejobvacancyMapper;
+
+    @Resource
+    private RecruitmentprocesslogMapper recruitmentprocesslogMapper;
+
+    @Resource
+    private EnterpriserecruitingprocessMapper enterpriserecruitingprocessMapper;
+
+    @Resource
+    private  AccountenterpriseMapper accountenterpriseMapper;
+
+    @Override
+    public Result insertPersonDeliveryApplication(AccountInfo accountInfo, Integer jobID, Long accountID) throws MyException {
+
+        //判断账号类型
+        if (!accountInfo.getAccount().isPerson()){
+            return  Result.build(ResultEnum.ACCOUNT_ERROR);
+        }
+
+        //判断是否是重复投递
+        if ((boolean) checkPersonDeliveryApplication(jobID, accountID).getData()) {
+            return Result.succee();
+        }
+
+        Date date = new Date();
+        Account account = accountMapper.selectByPrimaryKey(accountID);
+        Enterprisejobvacancy job = enterprisejobvacancyMapper.selectByPrimaryKey(jobID);
+        Enterpriseinfo enterpriseinfo = enterpriseinfoMapper.selectByPrimaryKey(job.getEnterpriseid());
+
+        //插入个人简历投递申请表
+        Persondeliveryapplication persondeliveryapplication = new Persondeliveryapplication();
+        persondeliveryapplication.setAccountid(accountID);
+        persondeliveryapplication.setEjobvacancyid(jobID);
+        //审核未待处理
+        persondeliveryapplication.setApplicationstatusid(APPLICATION_STATUS[0]);
+        //投递状态为主动投递-待处理
+        persondeliveryapplication.setPdeliverystatusid(PERSON_DELIVERY_STATUS[0]);
+        //设置投递日期
+        persondeliveryapplication.setDeliverydate(date);
+        //生成服务单号
+        persondeliveryapplication.setServiceno(LiuUtils.getServeIdByUUId());
+
+        int i = persondeliveryapplicationMapper.insertSelective(persondeliveryapplication);
+        if (i < 1) {
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+        //插入数据到后台招聘审核表
+        Personrecruitingprocess personrecruitingprocess = new Personrecruitingprocess();
+        personrecruitingprocess.setAccountid(accountID);
+        personrecruitingprocess.setEjobvacancyid(jobID);
+        personrecruitingprocess.setApplicationstatusid(APPLICATION_STATUS[0]);
+        personrecruitingprocess.setPdeliverystatusid(PERSON_DELIVERY_STATUS[0]);
+        personrecruitingprocess.setApplicationtime(date);
+        personrecruitingprocess.setEnterpriseid(enterpriseinfo.getEnterpriseid());
+        personrecruitingprocess.setServiceno(persondeliveryapplication.getServiceno());
+
+        i = personrecruitingprocessMapper.insertSelective(personrecruitingprocess);
+        if (i < 1) {
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+        //插入到简历投递日志表中
+        Recruitmentprocesslog recruitmentprocesslog = new Recruitmentprocesslog();
+        recruitmentprocesslog.setPdeliverystatusid(PERSON_DELIVERY_STATUS[0]);
+        recruitmentprocesslog.setApplicationstatusid(APPLICATION_STATUS[0]);
+        recruitmentprocesslog.setEjobvacancyid(jobID);
+        recruitmentprocesslog.setAccountid(accountID);
+        recruitmentprocesslog.setServiceno(persondeliveryapplication.getServiceno());
+        recruitmentprocesslog.setCreatetime(date);
+        recruitmentprocesslog.setCreatepersonid(accountID);
+        i = recruitmentprocesslogMapper.insertSelective(recruitmentprocesslog);
+        if (i < 1) {
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+        //数据库操作日志
+        String log = "[ " + account.getName() + " ]向[ " + enterpriseinfoMapper.getEnterpriseNameByAccountID(accountID) + " ]企业[ " + job.getJobtitle() + " ]职业投递了简历";
+        this.dbLog(accountID, account.getName(), log, DB_LOG_TYPE);
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result updateDeliverStatus(AccountInfo accountInfo, String ids, Integer status) throws MyException {
+
+        //检测参数
+        if (!Arrays.asList(PERSON_DELIVERY_STATUS).contains(status.intValue())) {
+            return  Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        //判断是否是企业用户
+        if (!this.checkIsEnterpriseAccount(accountInfo.getAccount())){
+            return  Result.build(ResultEnum.ACCOUNT_ERROR);
+        }
+
+        String[] split = ids.split(",");
+        for (String idStr : split) {
+            //查询职位信息
+            Enterpriserecruitingprocess enterpriserecruitingprocess = enterpriserecruitingprocessMapper.selectByPrimaryKey(Long.parseLong(idStr));
+
+            //查询当前状态是否已审核通过
+            if(enterpriserecruitingprocess.getApplicationstatusid().intValue() != APPLICATION_STATUS[1]){
+                Account account = accountMapper.selectByPrimaryKey(enterpriserecruitingprocess.getAccountid());
+                Recruitmentprocesslog recruitmentprocesslog = recruitmentprocesslogMapper.selectLastLog(enterpriserecruitingprocess.getAccountid(), enterpriserecruitingprocess.getEjobvacancyid(), null);
+
+                return  Result.build(500, 0,"[ " + account.getName() + " ]的[ " + getStatus(recruitmentprocesslog.getPdeliverystatusid()) + " ]的审核未通过!");
+            }
+            if (status >= 6){
+                enterpriserecruitingprocess.setApplicationstatusid(APPLICATION_STATUS[1]);
+            }else {
+                enterpriserecruitingprocess.setApplicationstatusid(APPLICATION_STATUS[0]);
+            }
+            enterpriserecruitingprocess.setPdeliverystatusid(status);
+            enterpriserecruitingprocess.setApplicationtime(new Date());
+
+            updateEnterpriserecruitingprocess(enterpriserecruitingprocess, accountInfo.getAccount());
+        }
+        return Result.succee();
+
+    }
+
+    @Override
+    public Result getPersonDeliveryApplicationCount(AccountInfo accountInfo, Integer personDeliveryStatusID) {
+
+        //检测参数
+        if (!Arrays.asList(PERSON_DELIVERY_STATUS).contains(personDeliveryStatusID.intValue())) {
+            Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        //判断是否是企业用户
+        if (!this.checkIsEnterpriseAccount(accountInfo.getAccount())){
+            return  Result.build(ResultEnum.ACCOUNT_ERROR);
+        }
+
+        Integer enterpriseID = accountenterpriseMapper.getEnterpriseIDByAccountID(accountInfo.getAccount().getAccountid());
+
+        EnterpriserecruitingprocessExample example = new EnterpriserecruitingprocessExample();
+        EnterpriserecruitingprocessExample.Criteria criteria = example.createCriteria();
+        criteria.andPdeliverystatusidEqualTo(personDeliveryStatusID);
+        criteria.andEnterpriseidEqualTo(enterpriseID);
+
+        int count = enterpriserecruitingprocessMapper.countByExample(example);
+
+        return Result.succee(count);
+    }
+
+    @Override
+    public Result updateConfirmEntryTime(AccountInfo accountInfo, Enterpriserecruitingprocess enterpriserecruitingprocess) throws MyException {
+
+        //检测账号类型
+        if (!this.checkIsEnterpriseAccount(accountInfo.getAccount())){
+            return Result.build(ResultEnum.ACCOUNT_ERROR);
+        }
+
+        //修改数据
+        int i = enterpriserecruitingprocessMapper.updateByPrimaryKeySelective(enterpriserecruitingprocess);
+        if (i < 1){
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result updateInterviewTime(AccountInfo accountInfo,Long id, String interviewTime) throws MyException {
+
+        //检测账号类型
+        if (!this.checkIsEnterpriseAccount(accountInfo.getAccount())){
+            return Result.build(ResultEnum.ACCOUNT_ERROR);
+        }
+
+        Enterpriserecruitingprocess enterpriserecruitingprocess = new Enterpriserecruitingprocess();
+        enterpriserecruitingprocess.setId(id);
+        try {
+            enterpriserecruitingprocess.setInterviewdate(DateUtils.dateParse(interviewTime, DateUtils.MINUTE_PATTERN));
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        //查询企业招聘表中信息
+        Enterpriserecruitingprocess oldEnterpriseRecruitingProcess = enterpriserecruitingprocessMapper.selectByPrimaryKey(id);
+
+        //修改企业招聘表
+        int i = enterpriserecruitingprocessMapper.updateByPrimaryKeySelective(enterpriserecruitingprocess);
+        if (i < 1){
+            throw  new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        //修改个人投递表
+        PersondeliveryapplicationExample persondeliveryapplicationExample = new PersondeliveryapplicationExample();
+        PersondeliveryapplicationExample.Criteria criteria = persondeliveryapplicationExample.createCriteria();
+        criteria.andEjobvacancyidEqualTo(oldEnterpriseRecruitingProcess.getEjobvacancyid());
+        criteria.andAccountidEqualTo(oldEnterpriseRecruitingProcess.getAccountid());
+        Persondeliveryapplication persondeliveryapplication = new Persondeliveryapplication();
+        persondeliveryapplication.setInterviewdate(enterpriserecruitingprocess.getInterviewdate());
+        i = persondeliveryapplicationMapper.updateByExampleSelective(persondeliveryapplication, persondeliveryapplicationExample);
+        if (i < 1){
+            throw  new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        //修改企招聘审核表
+        //查询企业招聘审核表最新数据ID
+        Long lastDataID = personrecruitingprocessMapper.getLastDataID(oldEnterpriseRecruitingProcess.getAccountid(), oldEnterpriseRecruitingProcess.getEjobvacancyid());
+
+        Personrecruitingprocess personrecruitingprocess = new Personrecruitingprocess();
+        personrecruitingprocess.setPersonrecruitingprocessid(lastDataID);
+        personrecruitingprocess.setInterviewdate(enterpriserecruitingprocess.getInterviewdate());
+
+        i = personrecruitingprocessMapper.updateByPrimaryKeySelective(personrecruitingprocess);
+        if (i < 1){
+            throw  new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        return Result.succee();
+    }
+
+    @Override
+    public Result checkPersonDeliveryApplication(Integer jobID, Long accountID) {
+
+        PersondeliveryapplicationExample example = new PersondeliveryapplicationExample();
+        PersondeliveryapplicationExample.Criteria criteria = example.createCriteria();
+        criteria.andAccountidEqualTo(accountID);
+        criteria.andEjobvacancyidEqualTo(jobID);
+        int count = persondeliveryapplicationMapper.countByExample(example);
+
+        return Result.succee(count >= 1);
+    }
+
+
+    @Override
+    public Result getPersonDeliveryApplicationList(AccountInfo accountInfo, Integer jobID, String search, Integer personDeliveryStatusID, Integer page, Integer pageSize) {
+
+        //检测是否是企业用户账号
+        if (!checkIsEnterpriseAccount(accountInfo.getAccount())) {
+            return Result.build(ResultEnum.LOGIN_UNAUTHORIZED);
+        }
+
+        //处理参数
+        if (jobID == 0) {
+            jobID = null;
+        }
+        search = this.checkSearch(search);
+        if (!Arrays.asList(PERSON_DELIVERY_STATUS).contains(personDeliveryStatusID.intValue())) {
+            return Result.build(ResultEnum.PARAMETER_ERROR);
+        }
+
+        Accountenterprise accountenterprise = this.getAccountenterpriseByAccountID(accountInfo.getAccount().getAccountid());
+
+        //分页
+        PageHelper.startPage(page, pageSize);
+        //查询
+        List<Map<String, Object>> list = enterpriserecruitingprocessMapper.getPersonDeliveryApplicationListByEnterprise(accountenterprise.getEnterpriseid(), jobID, search, personDeliveryStatusID);
+
+        //获取阿里云文件访问地址
+        for (Map<String, Object> map : list) {
+            if (map.get("FilePath") !=null && StringUtils.isNotBlank(map.get("FilePath").toString())){
+                map.put("FilePath", aliyunOSSClientUtil.getUrl(map.get("FilePath").toString()));
+            }
+        }
+        aliyunOSSClientUtil.closeOSSClient();
+
+        PageInfo<Map<String, Object>> info = new PageInfo<>(list);
+
+        //返回
+        Map<String, Object> map = new HashMap<>();
+        map.put("rows", info.getList());
+        map.put("count", info.getTotal());
+        return Result.succee(map);
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2018/11/8 15:40
+     * 描述 : 修改企业职位招聘流程状态
+     *
+     * @param enterpriserecruitingprocess
+     * @param account
+     */
+    private void updateEnterpriserecruitingprocess(Enterpriserecruitingprocess enterpriserecruitingprocess, Account account) throws MyException {
+
+        int i = enterpriserecruitingprocessMapper.updateByPrimaryKeySelective(enterpriserecruitingprocess);
+        if (i < 1) {
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        //添加数据到后台招聘审核表
+        Personrecruitingprocess personrecruitingprocess = new Personrecruitingprocess();
+        personrecruitingprocess.setApplicationstatusid(enterpriserecruitingprocess.getApplicationstatusid());
+        personrecruitingprocess.setPdeliverystatusid(enterpriserecruitingprocess.getPdeliverystatusid());
+        personrecruitingprocess.setEjobvacancyid(enterpriserecruitingprocess.getEjobvacancyid());
+        personrecruitingprocess.setAccountid(enterpriserecruitingprocess.getAccountid());
+        personrecruitingprocess.setApplicationtime(new Date());
+        personrecruitingprocess.setEnterpriseid(enterpriserecruitingprocess.getEnterpriseid());
+        personrecruitingprocess.setCreatetime(new Date());
+        personrecruitingprocess.setCreatepersonid(account.getAccountid());
+        personrecruitingprocess.setCreateby(account.getName());
+        personrecruitingprocess.setApplicationtime(enterpriserecruitingprocess.getApplicationtime());
+
+        i = personrecruitingprocessMapper.insertSelective(personrecruitingprocess);
+        if (i < 1) {
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+
+        //录用以后的招聘流程不许要后台审核
+        if (enterpriserecruitingprocess.getApplicationstatusid() >= PERSON_DELIVERY_STATUS[5]){
+            personrecruitingprocess.setHandletime(enterpriserecruitingprocess.getApplicationtime());
+            //同步数据到个人投递表
+            updatePersonDeliveryApplication(personrecruitingprocess);
+        }
+
+        //添加招聘流程日志
+        Recruitmentprocesslog recruitmentprocesslog = new Recruitmentprocesslog();
+        recruitmentprocesslog.setPdeliverystatusid(enterpriserecruitingprocess.getPdeliverystatusid());
+        recruitmentprocesslog.setApplicationstatusid(enterpriserecruitingprocess.getApplicationstatusid());
+        recruitmentprocesslog.setEjobvacancyid(enterpriserecruitingprocess.getEjobvacancyid());
+        recruitmentprocesslog.setAccountid(enterpriserecruitingprocess.getAccountid());
+        recruitmentprocesslog.setCreatetime(new Date());
+        recruitmentprocesslog.setCreatepersonid(account.getAccountid());
+        i = recruitmentprocesslogMapper.insertSelective(recruitmentprocesslog);
+        if (i < 1) {
+            throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+        }
+
+        Account account1 = accountMapper.selectByPrimaryKey(enterpriserecruitingprocess.getAccountid());
+        Enterpriseinfo enterpriseinfo = enterpriseinfoMapper.selectByPrimaryKey(enterpriserecruitingprocess.getEnterpriseid());
+        Enterprisejobvacancy job = enterprisejobvacancyMapper.selectByPrimaryKey(enterpriserecruitingprocess.getEjobvacancyid());
+
+        //数据库操作日志
+        String log = "[ " + enterpriseinfo.getEnterprisename() + " ]企业修改[ " + account1.getName() + " ]投递的[ " + job.getJobtitle() + " ]岗位状态为[ " + getStatus(enterpriserecruitingprocess.getPdeliverystatusid()) + " ]";
+        this.dbLog(account.getAccountid(), account.getName(), log, DB_LOG_TYPE);
+
+    }
+
+    private String getStatus(Integer status) {
+        switch (status) {
+            case 1:
+                return "主动投递-待处理";
+            case 2:
+                return "主动投递-不合适";
+            case 3:
+                return "面试-进行中";
+            case 4:
+                return "面试-不合适";
+            case 5:
+                return "录用-待入职";
+            case 6:
+                return "录用-已入职";
+            case 7:
+                return "录用-未入职";
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * 作者: cheng fei
+     * 创建日期: 2019/1/2 20:48
+     * 描述 : 同步审核状态到个人投递申请表
+     * @param personrecruitingprocess
+     * @throws MyException
+     */
+    private void updatePersonDeliveryApplication(Personrecruitingprocess personrecruitingprocess) throws MyException {
+        PersondeliveryapplicationExample example = new PersondeliveryapplicationExample();
+        PersondeliveryapplicationExample.Criteria criteria = example.createCriteria();
+        criteria.andAccountidEqualTo(personrecruitingprocess.getAccountid());
+        criteria.andEjobvacancyidEqualTo(personrecruitingprocess.getEjobvacancyid());
+        List<Persondeliveryapplication> list = persondeliveryapplicationMapper.selectByExample(example);
+        if (list == null || list.size() == 0) {
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+
+        Persondeliveryapplication persondeliveryapplication = list.get(0);
+        persondeliveryapplication.setApplicationstatusid(personrecruitingprocess.getApplicationstatusid());
+        persondeliveryapplication.setPdeliverystatusid(personrecruitingprocess.getPdeliverystatusid());
+        persondeliveryapplication.setDeliverydate(personrecruitingprocess.getApplicationtime());
+        persondeliveryapplication.setHandletime(personrecruitingprocess.getHandletime());
+
+        int i = persondeliveryapplicationMapper.updateByPrimaryKeySelective(persondeliveryapplication);
+        if (i < 1) {
+            throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+        }
+    }
+
+}

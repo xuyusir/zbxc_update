@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.jy.dao.function.person.QualificationcertificateMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.function.person.Qualificationcertificate">
+		<id column="QCID" property="qcid" jdbcType="INTEGER" />
+		<result column="CertificateTypeID" property="certificatetypeid"
+			jdbcType="INTEGER" />
+		<result column="ResumeID" property="resumeid" jdbcType="BIGINT" />
+		<result column="QCTitle" property="qctitle" jdbcType="VARCHAR" />
+		<result column="IsTotalPass" property="istotalpass"
+			jdbcType="CHAR" />
+		<result column="PassedSubject" property="passedsubject"
+			jdbcType="VARCHAR" />
+		<result column="Score" property="score" jdbcType="REAL" />
+		<result column="QCDate" property="qcdate" jdbcType="TIMESTAMP" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		QCID, CertificateTypeID, ResumeID, QCTitle, IsTotalPass, PassedSubject,
+		Score, QCDate,
+		CreateBy, CreateTime, CreatePersonID, UpdateBy, UpdateTime, UpdatePersonID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.function.person.QualificationcertificateExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from QualificationCertificate
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from QualificationCertificate
+		where QCID = #{qcid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from QualificationCertificate
+		where QCID = #{qcid,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.function.person.QualificationcertificateExample">
+		delete from QualificationCertificate
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.function.person.Qualificationcertificate">
+		insert into QualificationCertificate (QCID, CertificateTypeID, ResumeID,
+		QCTitle, IsTotalPass, PassedSubject,
+		Score, QCDate, CreateBy,
+		CreateTime, CreatePersonID, UpdateBy,
+		UpdateTime, UpdatePersonID)
+		values (#{qcid,jdbcType=INTEGER}, #{certificatetypeid,jdbcType=INTEGER},
+		#{resumeid,jdbcType=BIGINT},
+		#{qctitle,jdbcType=VARCHAR}, #{istotalpass,jdbcType=CHAR}, #{passedsubject,jdbcType=VARCHAR},
+		#{score,jdbcType=REAL}, #{qcdate,jdbcType=TIMESTAMP},
+		#{createby,jdbcType=VARCHAR},
+		#{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, #{updateby,jdbcType=VARCHAR},
+		#{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.function.person.Qualificationcertificate">
+		<selectKey keyProperty="qcid" order="AFTER"
+			resultType="Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into QualificationCertificate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="qcid != null">
+				QCID,
+			</if>
+			<if test="certificatetypeid != null">
+				CertificateTypeID,
+			</if>
+			<if test="resumeid != null">
+				ResumeID,
+			</if>
+			<if test="qctitle != null">
+				QCTitle,
+			</if>
+			<if test="istotalpass != null">
+				IsTotalPass,
+			</if>
+			<if test="passedsubject != null">
+				PassedSubject,
+			</if>
+			<if test="score != null">
+				Score,
+			</if>
+			<if test="qcdate != null">
+				QCDate,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="qcid != null">
+				#{qcid,jdbcType=INTEGER},
+			</if>
+			<if test="certificatetypeid != null">
+				#{certificatetypeid,jdbcType=INTEGER},
+			</if>
+			<if test="resumeid != null">
+				#{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="qctitle != null">
+				#{qctitle,jdbcType=VARCHAR},
+			</if>
+			<if test="istotalpass != null">
+				#{istotalpass,jdbcType=CHAR},
+			</if>
+			<if test="passedsubject != null">
+				#{passedsubject,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=REAL},
+			</if>
+			<if test="qcdate != null">
+				#{qcdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.function.person.QualificationcertificateExample"
+		resultType="java.lang.Integer">
+		select count(*) from QualificationCertificate
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update QualificationCertificate
+		<set>
+			<if test="record.qcid != null">
+				QCID = #{record.qcid,jdbcType=INTEGER},
+			</if>
+			<if test="record.certificatetypeid != null">
+				CertificateTypeID = #{record.certificatetypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.resumeid != null">
+				ResumeID = #{record.resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="record.qctitle != null">
+				QCTitle = #{record.qctitle,jdbcType=VARCHAR},
+			</if>
+			<if test="record.istotalpass != null">
+				IsTotalPass = #{record.istotalpass,jdbcType=CHAR},
+			</if>
+			<if test="record.passedsubject != null">
+				PassedSubject = #{record.passedsubject,jdbcType=VARCHAR},
+			</if>
+			<if test="record.score != null">
+				Score = #{record.score,jdbcType=REAL},
+			</if>
+			<if test="record.qcdate != null">
+				QCDate = #{record.qcdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update QualificationCertificate
+		set QCID = #{record.qcid,jdbcType=INTEGER},
+		CertificateTypeID = #{record.certificatetypeid,jdbcType=INTEGER},
+		ResumeID = #{record.resumeid,jdbcType=BIGINT},
+		QCTitle = #{record.qctitle,jdbcType=VARCHAR},
+		IsTotalPass = #{record.istotalpass,jdbcType=CHAR},
+		PassedSubject = #{record.passedsubject,jdbcType=VARCHAR},
+		Score = #{record.score,jdbcType=REAL},
+		QCDate = #{record.qcdate,jdbcType=TIMESTAMP},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.function.person.Qualificationcertificate">
+		update QualificationCertificate
+		<set>
+			<if test="certificatetypeid != null">
+				CertificateTypeID = #{certificatetypeid,jdbcType=INTEGER},
+			</if>
+			<if test="resumeid != null">
+				ResumeID = #{resumeid,jdbcType=BIGINT},
+			</if>
+			<if test="qctitle != null">
+				QCTitle = #{qctitle,jdbcType=VARCHAR},
+			</if>
+			<if test="istotalpass != null">
+				IsTotalPass = #{istotalpass,jdbcType=CHAR},
+			</if>
+			<if test="passedsubject != null">
+				PassedSubject = #{passedsubject,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				Score = #{score,jdbcType=REAL},
+			</if>
+			<if test="qcdate != null">
+				QCDate = #{qcdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where QCID = #{qcid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.function.person.Qualificationcertificate">
+		update QualificationCertificate
+		set CertificateTypeID = #{certificatetypeid,jdbcType=INTEGER},
+		ResumeID = #{resumeid,jdbcType=BIGINT},
+		QCTitle = #{qctitle,jdbcType=VARCHAR},
+		IsTotalPass = #{istotalpass,jdbcType=CHAR},
+		PassedSubject = #{passedsubject,jdbcType=VARCHAR},
+		Score = #{score,jdbcType=REAL},
+		QCDate = #{qcdate,jdbcType=TIMESTAMP},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+		where QCID = #{qcid,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.db_log.DblogMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.system.db_log.Dblog" >
+    <id column="DbLogID" property="dblogid" jdbcType="BIGINT" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="DbLog" property="dblog" jdbcType="VARCHAR" />
+    <result column="DictionariesID" property="dictionariesid" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <insert id="insertSelective" parameterType="com.jy.entiy.system.db_log.Dblog" >
+    insert into DbLog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="dblogid != null" >
+        DbLogID,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="dblog != null" >
+        DbLog,
+      </if>
+      <if test="dictionariesid != null" >
+        DictionariesID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="dblogid != null" >
+        #{dblogid,jdbcType=BIGINT},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dblog != null" >
+        #{dblog,jdbcType=VARCHAR},
+      </if>
+      <if test="dictionariesid != null" >
+        #{dictionariesid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  
+  <select id="selectDbLogByParem" resultMap="BaseResultMap">
+		SELECT
+			DbLogID,
+			CreatePersonID,
+			CreateBy,
+			CreateTime,
+			DbLog,
+			DictionariesID
+		FROM
+			DbLog
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="DictionariesID != null">
+					AND DictionariesID = #{DictionariesID}
+				</if>
+				<if test="startTime != null">
+	  				<![CDATA[ AND CreateTime >= #{startTime} ]]>
+				</if>
+				<if test="endTime != null">
+	  				<![CDATA[ AND CreateTime <= #{endTime} ]]>
+				</if>
+				<if test="search != null">
+					AND (CreateBy like #{search} OR DbLog like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+			DbLogID DESC
+		LIMIT
+			#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectDbLogCountByParem" resultType="int">
+		SELECT
+			count(DbLogID)
+		FROM
+			DbLog
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="DictionariesID != null">
+					AND DictionariesID = #{DictionariesID}
+				</if>
+				<if test="startTime != null">
+	  				<![CDATA[ AND CreateTime >= #{startTime} ]]>
+				</if>
+				<if test="endTime != null">
+	  				<![CDATA[ AND CreateTime <= #{endTime} ]]>
+				</if>
+				<if test="search != null">
+					AND (CreateBy like #{search} OR DbLog like #{search})
+				</if>
+			</trim>
+		</where>
+	</select>
+
+    <delete id="deleteDbLog">
+        <![CDATA[ DELETE FROM DbLog WHERE CreateTime < #{time};]]>
+    </delete>
+</mapper>

@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.staff.StaffarchivesMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.staff.Staffarchives" >
+    <id column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <id column="DepartmentID" property="departmentid" jdbcType="INTEGER" />
+    <id column="DepartmentPostID" property="departmentpostid" jdbcType="INTEGER" />
+    <result column="InductionDate" property="inductiondate" jdbcType="TIMESTAMP" />
+    <result column="PoliticsStatusID" property="politicsstatusid" jdbcType="INTEGER" />
+    <result column="EmergencyContact" property="emergencycontact" jdbcType="VARCHAR" />
+    <result column="EmergencyPhone" property="emergencyphone" jdbcType="VARCHAR" />
+    <result column="University" property="university" jdbcType="VARCHAR" />
+    <result column="College" property="college" jdbcType="VARCHAR" />
+    <result column="Specialty" property="specialty" jdbcType="VARCHAR" />
+    <result column="EducationID" property="educationid" jdbcType="INTEGER" />
+    <result column="SocialSecurityCard" property="socialsecuritycard" jdbcType="VARCHAR" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+    <result column="AttachmentPath" property="attachmentpath" jdbcType="VARCHAR" />
+    <result column="AttachmentName" property="attachmentname" jdbcType="VARCHAR" />
+    <result column="AttachmentType" property="attachmenttype" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="FileID" property="fileid" jdbcType="BIGINT" />
+    <result column="NativePlace" property="nativeplace" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    AccountID, DepartmentID, DepartmentPostID, InductionDate, PoliticsStatusID, EmergencyContact, 
+    EmergencyPhone, University, College, Specialty, EducationID, SocialSecurityCard, 
+    Remark, AttachmentPath, AttachmentName, AttachmentType, CreateTime, CreateBy, CreatePersonID, 
+    UpdateTime, UpdateBy, UpdatePersonID, FileID, NativePlace
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.staff.StaffarchivesExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from StaffArchives
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.jy.entiy.staff.StaffarchivesKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from StaffArchives
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and DepartmentID = #{departmentid,jdbcType=INTEGER}
+      and DepartmentPostID = #{departmentpostid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.jy.entiy.staff.StaffarchivesKey" >
+    delete from StaffArchives
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and DepartmentID = #{departmentid,jdbcType=INTEGER}
+      and DepartmentPostID = #{departmentpostid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.staff.StaffarchivesExample" >
+    delete from StaffArchives
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.staff.Staffarchives" >
+    insert into StaffArchives (AccountID, DepartmentID, DepartmentPostID, 
+      InductionDate, PoliticsStatusID, EmergencyContact, 
+      EmergencyPhone, University, College, 
+      Specialty, EducationID, SocialSecurityCard, 
+      Remark, AttachmentPath, AttachmentName, 
+      AttachmentType, CreateTime, CreateBy, 
+      CreatePersonID, UpdateTime, UpdateBy, 
+      UpdatePersonID, FileID, NativePlace
+      )
+    values (#{accountid,jdbcType=BIGINT}, #{departmentid,jdbcType=INTEGER}, #{departmentpostid,jdbcType=INTEGER}, 
+      #{inductiondate,jdbcType=TIMESTAMP}, #{politicsstatusid,jdbcType=INTEGER}, #{emergencycontact,jdbcType=VARCHAR}, 
+      #{emergencyphone,jdbcType=VARCHAR}, #{university,jdbcType=VARCHAR}, #{college,jdbcType=VARCHAR}, 
+      #{specialty,jdbcType=VARCHAR}, #{educationid,jdbcType=INTEGER}, #{socialsecuritycard,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{attachmentpath,jdbcType=VARCHAR}, #{attachmentname,jdbcType=VARCHAR}, 
+      #{attachmenttype,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{fileid,jdbcType=BIGINT}, #{nativeplace,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.staff.Staffarchives" >
+    insert into StaffArchives
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+      <if test="departmentid != null" >
+        DepartmentID,
+      </if>
+      <if test="departmentpostid != null" >
+        DepartmentPostID,
+      </if>
+      <if test="inductiondate != null" >
+        InductionDate,
+      </if>
+      <if test="politicsstatusid != null" >
+        PoliticsStatusID,
+      </if>
+      <if test="emergencycontact != null" >
+        EmergencyContact,
+      </if>
+      <if test="emergencyphone != null" >
+        EmergencyPhone,
+      </if>
+      <if test="university != null" >
+        University,
+      </if>
+      <if test="college != null" >
+        College,
+      </if>
+      <if test="specialty != null" >
+        Specialty,
+      </if>
+      <if test="educationid != null" >
+        EducationID,
+      </if>
+      <if test="socialsecuritycard != null" >
+        SocialSecurityCard,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="attachmentpath != null" >
+        AttachmentPath,
+      </if>
+      <if test="attachmentname != null" >
+        AttachmentName,
+      </if>
+      <if test="attachmenttype != null" >
+        AttachmentType,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="fileid != null" >
+        FileID,
+      </if>
+      <if test="nativeplace != null" >
+        NativePlace,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="departmentid != null" >
+        #{departmentid,jdbcType=INTEGER},
+      </if>
+      <if test="departmentpostid != null" >
+        #{departmentpostid,jdbcType=INTEGER},
+      </if>
+      <if test="inductiondate != null" >
+        #{inductiondate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="politicsstatusid != null" >
+        #{politicsstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="emergencycontact != null" >
+        #{emergencycontact,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyphone != null" >
+        #{emergencyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="university != null" >
+        #{university,jdbcType=VARCHAR},
+      </if>
+      <if test="college != null" >
+        #{college,jdbcType=VARCHAR},
+      </if>
+      <if test="specialty != null" >
+        #{specialty,jdbcType=VARCHAR},
+      </if>
+      <if test="educationid != null" >
+        #{educationid,jdbcType=INTEGER},
+      </if>
+      <if test="socialsecuritycard != null" >
+        #{socialsecuritycard,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentpath != null" >
+        #{attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentname != null" >
+        #{attachmentname,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmenttype != null" >
+        #{attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="fileid != null" >
+        #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="nativeplace != null" >
+        #{nativeplace,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.staff.StaffarchivesExample" resultType="java.lang.Integer" >
+    select count(*) from StaffArchives
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update StaffArchives
+    <set >
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+      <if test="record.departmentid != null" >
+        DepartmentID = #{record.departmentid,jdbcType=INTEGER},
+      </if>
+      <if test="record.departmentpostid != null" >
+        DepartmentPostID = #{record.departmentpostid,jdbcType=INTEGER},
+      </if>
+      <if test="record.inductiondate != null" >
+        InductionDate = #{record.inductiondate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.politicsstatusid != null" >
+        PoliticsStatusID = #{record.politicsstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.emergencycontact != null" >
+        EmergencyContact = #{record.emergencycontact,jdbcType=VARCHAR},
+      </if>
+      <if test="record.emergencyphone != null" >
+        EmergencyPhone = #{record.emergencyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.university != null" >
+        University = #{record.university,jdbcType=VARCHAR},
+      </if>
+      <if test="record.college != null" >
+        College = #{record.college,jdbcType=VARCHAR},
+      </if>
+      <if test="record.specialty != null" >
+        Specialty = #{record.specialty,jdbcType=VARCHAR},
+      </if>
+      <if test="record.educationid != null" >
+        EducationID = #{record.educationid,jdbcType=INTEGER},
+      </if>
+      <if test="record.socialsecuritycard != null" >
+        SocialSecurityCard = #{record.socialsecuritycard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attachmentpath != null" >
+        AttachmentPath = #{record.attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attachmentname != null" >
+        AttachmentName = #{record.attachmentname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attachmenttype != null" >
+        AttachmentType = #{record.attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.fileid != null" >
+        FileID = #{record.fileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.nativeplace != null" >
+        NativePlace = #{record.nativeplace,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update StaffArchives
+    set AccountID = #{record.accountid,jdbcType=BIGINT},
+      DepartmentID = #{record.departmentid,jdbcType=INTEGER},
+      DepartmentPostID = #{record.departmentpostid,jdbcType=INTEGER},
+      InductionDate = #{record.inductiondate,jdbcType=TIMESTAMP},
+      PoliticsStatusID = #{record.politicsstatusid,jdbcType=INTEGER},
+      EmergencyContact = #{record.emergencycontact,jdbcType=VARCHAR},
+      EmergencyPhone = #{record.emergencyphone,jdbcType=VARCHAR},
+      University = #{record.university,jdbcType=VARCHAR},
+      College = #{record.college,jdbcType=VARCHAR},
+      Specialty = #{record.specialty,jdbcType=VARCHAR},
+      EducationID = #{record.educationid,jdbcType=INTEGER},
+      SocialSecurityCard = #{record.socialsecuritycard,jdbcType=VARCHAR},
+      Remark = #{record.remark,jdbcType=VARCHAR},
+      AttachmentPath = #{record.attachmentpath,jdbcType=VARCHAR},
+      AttachmentName = #{record.attachmentname,jdbcType=VARCHAR},
+      AttachmentType = #{record.attachmenttype,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      FileID = #{record.fileid,jdbcType=BIGINT},
+      NativePlace = #{record.nativeplace,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.staff.Staffarchives" >
+    update StaffArchives
+    <set >
+      <if test="inductiondate != null" >
+        InductionDate = #{inductiondate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="politicsstatusid != null" >
+        PoliticsStatusID = #{politicsstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="emergencycontact != null" >
+        EmergencyContact = #{emergencycontact,jdbcType=VARCHAR},
+      </if>
+      <if test="emergencyphone != null" >
+        EmergencyPhone = #{emergencyphone,jdbcType=VARCHAR},
+      </if>
+      <if test="university != null" >
+        University = #{university,jdbcType=VARCHAR},
+      </if>
+      <if test="college != null" >
+        College = #{college,jdbcType=VARCHAR},
+      </if>
+      <if test="specialty != null" >
+        Specialty = #{specialty,jdbcType=VARCHAR},
+      </if>
+      <if test="educationid != null" >
+        EducationID = #{educationid,jdbcType=INTEGER},
+      </if>
+      <if test="socialsecuritycard != null" >
+        SocialSecurityCard = #{socialsecuritycard,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentpath != null" >
+        AttachmentPath = #{attachmentpath,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentname != null" >
+        AttachmentName = #{attachmentname,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmenttype != null" >
+        AttachmentType = #{attachmenttype,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="fileid != null" >
+        FileID = #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="nativeplace != null" >
+        NativePlace = #{nativeplace,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and DepartmentID = #{departmentid,jdbcType=INTEGER}
+      and DepartmentPostID = #{departmentpostid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.staff.Staffarchives" >
+    update StaffArchives
+    set InductionDate = #{inductiondate,jdbcType=TIMESTAMP},
+      PoliticsStatusID = #{politicsstatusid,jdbcType=INTEGER},
+      EmergencyContact = #{emergencycontact,jdbcType=VARCHAR},
+      EmergencyPhone = #{emergencyphone,jdbcType=VARCHAR},
+      University = #{university,jdbcType=VARCHAR},
+      College = #{college,jdbcType=VARCHAR},
+      Specialty = #{specialty,jdbcType=VARCHAR},
+      EducationID = #{educationid,jdbcType=INTEGER},
+      SocialSecurityCard = #{socialsecuritycard,jdbcType=VARCHAR},
+      Remark = #{remark,jdbcType=VARCHAR},
+      AttachmentPath = #{attachmentpath,jdbcType=VARCHAR},
+      AttachmentName = #{attachmentname,jdbcType=VARCHAR},
+      AttachmentType = #{attachmenttype,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      FileID = #{fileid,jdbcType=BIGINT},
+      NativePlace = #{nativeplace,jdbcType=VARCHAR}
+    where AccountID = #{accountid,jdbcType=BIGINT}
+      and DepartmentID = #{departmentid,jdbcType=INTEGER}
+      and DepartmentPostID = #{departmentpostid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.vedio.VedioinfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.vedio.Vedioinfo">
+		<id column="VedioID" property="vedioid" jdbcType="BIGINT" />
+		<result column="VedioTypeID" property="vediotypeid"
+			jdbcType="INTEGER" />
+		<result column="VedioCategoryID" property="vediocategoryid"
+			jdbcType="INTEGER" />
+		<result column="VedioName" property="vedioname"
+			jdbcType="VARCHAR" />
+		<result column="VedioLocationServer"
+			property="vediolocationserver" jdbcType="VARCHAR" />
+		<result column="VedioPath" property="vediopath"
+			jdbcType="VARCHAR" />
+		<result column="VedioLinkUrl" property="vediolinkurl"
+			jdbcType="VARCHAR" />
+		<result column="VedioSize" property="vediosize" jdbcType="REAL" />
+		<result column="CreateTime" property="createtime"
+			jdbcType="TIMESTAMP" />
+		<result column="CreatePersonID" property="createpersonid"
+			jdbcType="BIGINT" />
+		<result column="CreateBy" property="createby"
+			jdbcType="VARCHAR" />
+		<result column="UpdateTime" property="updatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="UpdateBy" property="updateby"
+			jdbcType="VARCHAR" />
+		<result column="UpdatePersonID" property="updatepersonid"
+			jdbcType="BIGINT" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		VedioID, VedioTypeID, VedioCategoryID, VedioName, VedioLocationServer,
+		VedioPath,
+		VedioLinkUrl, VedioSize, CreateTime, CreatePersonID, CreateBy, UpdateTime,
+		UpdateBy,
+		UpdatePersonID
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.vedio.VedioinfoExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from VedioInfo
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from VedioInfo
+		where VedioID = #{vedioid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from VedioInfo
+		where VedioID = #{vedioid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.vedio.VedioinfoExample">
+		delete from VedioInfo
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.jy.entiy.vedio.Vedioinfo">
+		insert into VedioInfo (VedioID, VedioTypeID, VedioCategoryID,
+		VedioName, VedioLocationServer, VedioPath,
+		VedioLinkUrl, VedioSize, CreateTime,
+		CreatePersonID, CreateBy, UpdateTime,
+		UpdateBy, UpdatePersonID)
+		values (#{vedioid,jdbcType=BIGINT}, #{vediotypeid,jdbcType=INTEGER},
+		#{vediocategoryid,jdbcType=INTEGER},
+		#{vedioname,jdbcType=VARCHAR}, #{vediolocationserver,jdbcType=VARCHAR},
+		#{vediopath,jdbcType=VARCHAR},
+		#{vediolinkurl,jdbcType=VARCHAR}, #{vediosize,jdbcType=REAL}, #{createtime,jdbcType=TIMESTAMP},
+		#{createpersonid,jdbcType=BIGINT}, #{createby,jdbcType=VARCHAR},
+		#{updatetime,jdbcType=TIMESTAMP},
+		#{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.vedio.Vedioinfo">
+		<selectKey keyProperty="vedioid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into VedioInfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="vedioid != null">
+				VedioID,
+			</if>
+			<if test="vediotypeid != null">
+				VedioTypeID,
+			</if>
+			<if test="vediocategoryid != null">
+				VedioCategoryID,
+			</if>
+			<if test="vedioname != null">
+				VedioName,
+			</if>
+			<if test="vediolocationserver != null">
+				VedioLocationServer,
+			</if>
+			<if test="vediopath != null">
+				VedioPath,
+			</if>
+			<if test="vediolinkurl != null">
+				VedioLinkUrl,
+			</if>
+			<if test="vediosize != null">
+				VedioSize,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID,
+			</if>
+			<if test="createby != null">
+				CreateBy,
+			</if>
+			<if test="updatetime != null">
+				UpdateTime,
+			</if>
+			<if test="updateby != null">
+				UpdateBy,
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="vedioid != null">
+				#{vedioid,jdbcType=BIGINT},
+			</if>
+			<if test="vediotypeid != null">
+				#{vediotypeid,jdbcType=INTEGER},
+			</if>
+			<if test="vediocategoryid != null">
+				#{vediocategoryid,jdbcType=INTEGER},
+			</if>
+			<if test="vedioname != null">
+				#{vedioname,jdbcType=VARCHAR},
+			</if>
+			<if test="vediolocationserver != null">
+				#{vediolocationserver,jdbcType=VARCHAR},
+			</if>
+			<if test="vediopath != null">
+				#{vediopath,jdbcType=VARCHAR},
+			</if>
+			<if test="vediolinkurl != null">
+				#{vediolinkurl,jdbcType=VARCHAR},
+			</if>
+			<if test="vediosize != null">
+				#{vediosize,jdbcType=REAL},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				#{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="createby != null">
+				#{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				#{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				#{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.vedio.VedioinfoExample"
+		resultType="java.lang.Integer">
+		select count(*) from VedioInfo
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update VedioInfo
+		<set>
+			<if test="record.vedioid != null">
+				VedioID = #{record.vedioid,jdbcType=BIGINT},
+			</if>
+			<if test="record.vediotypeid != null">
+				VedioTypeID = #{record.vediotypeid,jdbcType=INTEGER},
+			</if>
+			<if test="record.vediocategoryid != null">
+				VedioCategoryID = #{record.vediocategoryid,jdbcType=INTEGER},
+			</if>
+			<if test="record.vedioname != null">
+				VedioName = #{record.vedioname,jdbcType=VARCHAR},
+			</if>
+			<if test="record.vediolocationserver != null">
+				VedioLocationServer = #{record.vediolocationserver,jdbcType=VARCHAR},
+			</if>
+			<if test="record.vediopath != null">
+				VedioPath = #{record.vediopath,jdbcType=VARCHAR},
+			</if>
+			<if test="record.vediolinkurl != null">
+				VedioLinkUrl = #{record.vediolinkurl,jdbcType=VARCHAR},
+			</if>
+			<if test="record.vediosize != null">
+				VedioSize = #{record.vediosize,jdbcType=REAL},
+			</if>
+			<if test="record.createtime != null">
+				CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.createpersonid != null">
+				CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="record.createby != null">
+				CreateBy = #{record.createby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatetime != null">
+				UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateby != null">
+				UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="record.updatepersonid != null">
+				UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update VedioInfo
+		set VedioID = #{record.vedioid,jdbcType=BIGINT},
+		VedioTypeID = #{record.vediotypeid,jdbcType=INTEGER},
+		VedioCategoryID = #{record.vediocategoryid,jdbcType=INTEGER},
+		VedioName = #{record.vedioname,jdbcType=VARCHAR},
+		VedioLocationServer = #{record.vediolocationserver,jdbcType=VARCHAR},
+		VedioPath = #{record.vediopath,jdbcType=VARCHAR},
+		VedioLinkUrl = #{record.vediolinkurl,jdbcType=VARCHAR},
+		VedioSize = #{record.vediosize,jdbcType=REAL},
+		CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+		CreateBy = #{record.createby,jdbcType=VARCHAR},
+		UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.vedio.Vedioinfo">
+		update VedioInfo
+		<set>
+			<if test="vediotypeid != null">
+				VedioTypeID = #{vediotypeid,jdbcType=INTEGER},
+			</if>
+			<if test="vediocategoryid != null">
+				VedioCategoryID = #{vediocategoryid,jdbcType=INTEGER},
+			</if>
+			<if test="vedioname != null">
+				VedioName = #{vedioname,jdbcType=VARCHAR},
+			</if>
+			<if test="vediolocationserver != null">
+				VedioLocationServer = #{vediolocationserver,jdbcType=VARCHAR},
+			</if>
+			<if test="vediopath != null">
+				VedioPath = #{vediopath,jdbcType=VARCHAR},
+			</if>
+			<if test="vediolinkurl != null">
+				VedioLinkUrl = #{vediolinkurl,jdbcType=VARCHAR},
+			</if>
+			<if test="vediosize != null">
+				VedioSize = #{vediosize,jdbcType=REAL},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createpersonid != null">
+				CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+			</if>
+			<if test="createby != null">
+				CreateBy = #{createby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null">
+				UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateby != null">
+				UpdateBy = #{updateby,jdbcType=VARCHAR},
+			</if>
+			<if test="updatepersonid != null">
+				UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+			</if>
+		</set>
+		where VedioID = #{vedioid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.vedio.Vedioinfo">
+		update VedioInfo
+		set VedioTypeID = #{vediotypeid,jdbcType=INTEGER},
+		VedioCategoryID = #{vediocategoryid,jdbcType=INTEGER},
+		VedioName = #{vedioname,jdbcType=VARCHAR},
+		VedioLocationServer = #{vediolocationserver,jdbcType=VARCHAR},
+		VedioPath = #{vediopath,jdbcType=VARCHAR},
+		VedioLinkUrl = #{vediolinkurl,jdbcType=VARCHAR},
+		VedioSize = #{vediosize,jdbcType=REAL},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+		CreateBy = #{createby,jdbcType=VARCHAR},
+		UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+		UpdateBy = #{updateby,jdbcType=VARCHAR},
+		UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+		where VedioID = #{vedioid,jdbcType=BIGINT}
+	</update>
+</mapper>

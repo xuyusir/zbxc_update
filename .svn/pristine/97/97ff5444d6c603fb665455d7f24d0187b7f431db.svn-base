@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.system.select.SelectMapper" >
+
+	<insert id="insertSelect" parameterType="map">
+		INSERT INTO ${table_name} 
+		(
+			${column_id},
+			${column_name},
+			Remark,
+			Code,
+			Status,
+			DisplayOrder,
+			CreateTime,
+			CreateBy,
+			CreatePersonID
+		) 
+		VALUES
+		(
+			#{select.id},
+			#{select.name},
+			#{select.remark},
+			#{select.code},
+			#{select.status},
+			#{select.displayOrder},
+			#{select.createTime},
+			#{select.createBy},
+			#{select.createPersonID}
+		)
+	</insert>
+	
+	<select id="getTableName" resultType="string">
+		SELECT 
+			Code 
+		FROM 
+			SelectTable 
+		WHERE 
+			ID = #{id} 
+	</select>
+	
+	<select id="getSelect" resultType="map">
+		SELECT 
+			${column_id} as id,${column_name} as name 
+		FROM 
+			${table_name} 
+		WHERE Status = 1 ORDER BY DisplayOrder
+	</select>
+	
+	<select id="getSelectList" resultType="map">
+		SELECT 
+			${column_id} as id,
+			${column_name} as name,
+			Remark, 
+			CreateTime, 
+			CreateBy, 
+			CreatePersonID, 
+			UpdateTime, 
+    		UpdateBy, 
+    		UpdatePersonID, 
+    		DisplayOrder, 
+    		Code, 
+    		Status
+		FROM 
+			${table_name} 
+	    ORDER BY DisplayOrder
+	</select>
+	
+	<select id="checkCode" resultType="int">
+		SELECT 
+			count(*) 
+		FROM 
+			${table_name} 
+		WHERE 
+			Code = #{code} 
+		<if test= "id != null">
+			AND ${column_id} != #{id}
+		</if>
+	</select>
+	
+    <select id="getOne" resultType="map">
+    	SELECT 
+			${column_id} as id,
+			${column_name} as name,
+			Remark, 
+			CreateTime, 
+			CreateBy, 
+			CreatePersonID, 
+			UpdateTime, 
+    		UpdateBy, 
+    		UpdatePersonID, 
+    		DisplayOrder, 
+    		Code, 
+    		Status
+		FROM 
+			${table_name} 
+	    where
+	      ${column_id} = #{id}
+   </select>
+   
+   <update id="updateSelect">
+   		UPDATE 
+   			${table_name} 
+   		<set>
+   			<if test = "select.name != null">
+   				${column_name} = #{select.name},
+   			</if>
+   			<if test = "select.remark != null">
+   				Remark = #{select.remark},
+   			</if>
+   			<if test = "select.updateTime != null">
+   				UpdateTime = #{select.updateTime},
+   			</if>
+   			<if test = "select.updateBy != null">
+   				UpdateBy = #{select.updateBy},
+   			</if>
+   			<if test = "select.updatePersonID != null">
+   				UpdatePersonID = #{select.updatePersonID},
+   			</if>
+   			<if test = "select.displayOrder != null">
+   				DisplayOrder = #{select.displayOrder},
+   			</if>
+   			<if test = "select.code != null">
+   				Code = #{select.code},
+   			</if>
+   			<if test = "select.status != null">
+   				Status = #{select.status},
+   			</if>
+   		</set>
+   		WHERE 
+   			${column_id} = #{select.id}
+   </update>
+   
+   <delete id="deleteSelect">
+   		DELETE FROM ${table_name} WHERE ${column_id} = #{id}
+   </delete>
+</mapper>

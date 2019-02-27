@@ -1,0 +1,879 @@
+package com.jy.service.content.product.product;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.common.utils.LiuUtils;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.product.course.CourseMapper;
+import com.jy.dao.content.product.course.PersoncourseMapper;
+import com.jy.dao.content.product.product.ProductbindcousreMapper;
+import com.jy.dao.content.product.product.ProductdiscountMapper;
+import com.jy.dao.content.product.product.ProductinfoMapper;
+import com.jy.dao.order.order.OrderdetailsMapper;
+import com.jy.dao.order.order.OrdersMapper;
+import com.jy.dao.system.select.OrderstatusMapper;
+import com.jy.dao.system.select.PaystatusMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.constant.AuthorityCode;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.product.course.Course;
+import com.jy.entiy.content.product.course.Personcourse;
+import com.jy.entiy.content.product.course.PersoncourseExample;
+import com.jy.entiy.content.product.product.Productbindcousre;
+import com.jy.entiy.content.product.product.ProductbindcousreExample;
+import com.jy.entiy.content.product.product.Productdiscount;
+import com.jy.entiy.content.product.product.ProductdiscountExample;
+import com.jy.entiy.content.product.product.Productinfo;
+import com.jy.entiy.content.product.product.ProductinfoExample;
+import com.jy.entiy.content.product.product.ProductinfoExample.Criteria;
+import com.jy.entiy.order.order.Orderdetails;
+import com.jy.entiy.order.order.OrderdetailsExample;
+import com.jy.entiy.order.order.Orders;
+import com.jy.entiy.order.order.OrdersExample;
+import com.jy.service.base.BaseService;
+import com.jy.service.content.product.ProductService;
+
+/**
+ * 产品管理业务逻辑层接口
+ * 
+ * @author liuhong
+ * @date: 2018年8月24日 下午5:40:50
+ * @Package: com.jy.service.product
+ */
+@Service
+public class ProductServiceImpl extends BaseService implements ProductService {
+
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_ORDER";
+
+	@Resource
+	ProductinfoMapper productinfoMapper;
+
+	@Resource
+	OrderdetailsMapper orderdetailsMapper;
+	
+	@Resource
+	ProductbindcousreMapper productbindcousreMapper;
+
+	@Resource
+	OrdersMapper ordersMapper;
+
+
+	@Resource
+	PaystatusMapper paystatusMapper;
+
+	@Resource
+	OrderstatusMapper orderstatusMapper;
+
+	@Resource
+	PersoncourseMapper personcourseMapper;
+
+	@Resource
+	ProductdiscountMapper productdiscountMapper;
+	
+	@Resource
+	FileinfoMapper fileinfoMapper;
+	
+	@Resource
+	CourseMapper courseMapper;
+
+	@Value("${FASTDFS_SERVISE}")
+	private String FASTDFS_SERVISE;
+
+	@Override
+	public Result addProduct(AccountInfo accountInfo, Productinfo productinfo,String courseIDs) throws MyException {
+		if (productinfo.getProductid() == null) {
+			Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_ADD);
+			if (result.getStatus() != 200) {
+				return result;
+			}
+			if (productinfo.getIsauditpassed() == null) {
+				productinfo.setIsauditpassed("Y");
+			}
+			productinfo.setRemove("N");
+			productinfo.setCreatepersonid(accountInfo.getAccount().getAccountid());
+			productinfo.setCreatetime(new Date());
+			productinfo.setIsdelete("N");
+
+			int i = productinfoMapper.insertSelective(productinfo);
+
+			if (i < 1) {
+				return Result.build(ResultEnum.INSERT_SQL_ERROR);
+			}
+
+			if (productinfo.getFileid() != null) {
+				super.addUseFile(productinfo.getFileid(), "ProductInfo", productinfo.getProductid());
+			}
+			
+			//绑定课程
+			if (courseIDs != null) {
+				List<String> strings = LiuUtils.getIDS(courseIDs);
+				for (String string : strings) {
+					Productbindcousre productbindcousre =new Productbindcousre();
+					productbindcousre.setProductid(productinfo.getProductid());
+					productbindcousre.setCourseid(Long.valueOf(string));
+					addProductBindCousre(accountInfo, productbindcousre,1);
+				}
+			}
+
+			// 插入数据库操作日志
+			String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的用户新加入了产品信息，产品ID为["
+					+ productinfo.getProductid() + "]";
+			try {
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+			} catch (MyException e) {
+
+				e.printStackTrace();
+			}
+		}else {
+			Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_UPDATE);
+			if (result.getStatus() != 200) {
+				return result;
+			}
+			Productinfo productinfo2 = productinfoMapper.selectByPrimaryKey(productinfo.getProductid());
+			productinfo.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+			productinfo.setUpdatetime(new Date());
+			int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+			if (i < 1) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+
+			if (productinfo.getFileid() != null && !productinfo.getFileid().equals(productinfo2.getFileid())) {
+				if (productinfo2.getFileid() != null) {
+					super.deleteFile(accountInfo, DB_LOG_TYPE, productinfo2.getFileid(), "ProductInfo",
+							productinfo2.getProductid());
+				}
+
+				super.addUseFile(productinfo.getFileid(), "ProductInfo", productinfo.getProductid());
+			}
+			
+			
+
+			int temp = -1;
+			if (courseIDs != null && !courseIDs.equals("")) {
+				
+				temp = 1;
+				
+				//查询原绑定  并删除
+				ProductbindcousreExample example = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+				criteria.andProductidEqualTo(productinfo.getProductid());
+				List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+				productbindcousreMapper.deleteByExample(example);
+				for (Productbindcousre productbindcousre : list) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("ProductID", productbindcousre.getProductid());
+					map.put("CourseID", productbindcousre.getCourseid());
+					changeCourse(map, accountInfo, "delete", 0);
+				}
+				
+				//重新绑定
+				List<String> strings = LiuUtils.getIDS(courseIDs);
+				for (String string : strings) {
+					
+					Productbindcousre productbindcousre = new Productbindcousre();
+					productbindcousre.setProductid(productinfo.getProductid());
+					productbindcousre.setCourseid(Long.valueOf(string));
+					productbindcousreMapper.insertSelective(productbindcousre);
+					
+					Map<String, Object> map = new HashMap<>();
+					map.put("ProductID", productinfo.getProductid());
+					map.put("CourseID", Long.valueOf(string));
+					changeCourse(map, accountInfo, "add", 0);
+				}
+			}
+			
+			if(productinfo.getIsauditpassed() != null && !productinfo.getIsauditpassed().equals(productinfo2.getIsauditpassed())) {
+				ProductbindcousreExample example = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+				criteria.andProductidEqualTo(productinfo.getProductid());
+				List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+				for (Productbindcousre productbindcousre : list) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("ProductID", productbindcousre.getProductid());
+					map.put("CourseID", productbindcousre.getCourseid());
+					if (productinfo.getIsauditpassed().equals("Y") && temp == -1) {
+						changeCourse(map, accountInfo, "add", 0);
+					}else if(productinfo.getIsauditpassed().equals("N")) {
+						changeCourse(map, accountInfo, "delete", 0);
+					}
+					
+				}
+				
+			}
+			
+			
+			// 插入数据库操作日志
+			String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的用户修改了产品信息，被修改产品ID为["
+					+ productinfo.getProductid() + "]";
+			try {
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+			} catch (MyException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result updateProduct(AccountInfo accountInfo, Productinfo productinfo,String courseIDs) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_UPDATE);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+		Productinfo productinfo2 = productinfoMapper.selectByPrimaryKey(productinfo.getProductid());
+		productinfo.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+		productinfo.setUpdatetime(new Date());
+		int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		if (productinfo.getFileid() != null ) {
+			if (productinfo2.getFileid() != null&& !productinfo.getFileid().equals(productinfo2.getFileid())) {
+				super.deleteFile(accountInfo, DB_LOG_TYPE, productinfo2.getFileid(), "ProductInfo",
+						productinfo2.getProductid());
+			}
+
+			super.addUseFile(productinfo.getFileid(), "ProductInfo", productinfo.getProductid());
+		}
+		
+		
+
+		int temp = -1;
+		if (courseIDs != null && !courseIDs.equals("")) {
+			
+			temp = 1;
+			
+			//查询原绑定  并删除
+			ProductbindcousreExample example = new ProductbindcousreExample();
+			com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+			criteria.andProductidEqualTo(productinfo.getProductid());
+			List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+			productbindcousreMapper.deleteByExample(example);
+			for (Productbindcousre productbindcousre : list) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("ProductID", productbindcousre.getProductid());
+				map.put("CourseID", productbindcousre.getCourseid());
+				changeCourse(map, accountInfo, "delete", 0);
+			}
+			
+			//重新绑定
+			List<String> strings = LiuUtils.getIDS(courseIDs);
+			for (String string : strings) {
+				
+				Productbindcousre productbindcousre = new Productbindcousre();
+				productbindcousre.setProductid(productinfo.getProductid());
+				productbindcousre.setCourseid(Long.valueOf(string));
+				productbindcousreMapper.insertSelective(productbindcousre);
+				
+				Map<String, Object> map = new HashMap<>();
+				map.put("ProductID", productinfo.getProductid());
+				map.put("CourseID", Long.valueOf(string));
+				changeCourse(map, accountInfo, "add", 0);
+			}
+		}
+		
+		if(productinfo.getIsauditpassed() != null && !productinfo.getIsauditpassed().equals(productinfo2.getIsauditpassed())) {
+			ProductbindcousreExample example = new ProductbindcousreExample();
+			com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+			criteria.andProductidEqualTo(productinfo.getProductid());
+			List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+			for (Productbindcousre productbindcousre : list) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("ProductID", productbindcousre.getProductid());
+				map.put("CourseID", productbindcousre.getCourseid());
+				if (productinfo.getIsauditpassed().equals("Y") && temp == -1) {
+					changeCourse(map, accountInfo, "add", 0);
+				}else if(productinfo.getIsauditpassed().equals("N")) {
+					changeCourse(map, accountInfo, "delete", 0);
+				}
+				
+			}
+			
+		}
+		
+		
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的用户修改了产品信息，被修改产品ID为["
+				+ productinfo.getProductid() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 产品审核
+	 * 
+	 * @throws MyException
+	 */
+	@Override
+	public Result checkProduct(AccountInfo accountInfo, Productinfo productinfo) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_CHECK);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+		productinfo.setAuditor(accountInfo.getAccount().getName());
+		int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的用户审核了产品信息，被审核产品ID为["
+				+ productinfo.getProductid() + "]，审核结果为[" + productinfo.getIsauditpassed() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result getProduct(Map<String, Object> param) {
+
+		ProductinfoExample example = new ProductinfoExample();
+		Criteria criteria = example.createCriteria();
+		if (param.get("ProductID") != null) {
+			criteria.andProductidEqualTo((Long) param.get("ProductID"));
+		}
+		if (param.get("ProductName") != null) {
+			criteria.andProductnameLike(param.get("ProductName").toString());
+		}
+		if (param.get("isDelete") != null) {
+			criteria.andIsdeleteEqualTo(param.get("isDelete").toString());
+		}
+		if (param.get("check") != null) {
+			criteria.andIsauditpassedEqualTo(param.get("check").toString());
+		}
+		criteria.andRemoveEqualTo("N");
+		int count = productinfoMapper.countByExample(example);
+
+		if (param.get("page") != null) {
+			PageHelper.startPage((Integer) param.get("page"), (Integer) param.get("pageSize"));
+		}
+		example.setOrderByClause("CreateTime DESC");
+		List<Productinfo> list = productinfoMapper.selectByExampleWithBLOBs(example);
+		List<Map<String, Object>> list2 = new ArrayList<>();
+		for (Productinfo productinfo : list) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("productinfo", productinfo);
+			if (productinfo.getFileid() != null) {
+				Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(productinfo.getFileid());				
+				fileinfo.setFilepath(aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath()));
+				aliyunOSSClientUtil.closeOSSClient();
+				map.put("fileinfo", fileinfo);
+			}
+			list2.add(map);
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", list2);
+		map.put("count", count);
+
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result deleteProduct(AccountInfo accountInfo, String ids, Integer type) throws MyException {
+		if (type == 1) {
+			Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_DELETE1);
+			if (result.getStatus() != 200) {
+				return Result.build(ResultEnum.NOT_DELETE_RIGHTS);
+			}
+			List<String> strings = LiuUtils.getIDS(ids);
+			for (String string : strings) {
+				Productinfo productinfo = productinfoMapper.selectByPrimaryKey(Long.valueOf(string));
+				productinfo.setIsdelete("Y");
+				productinfo.setIsauditpassed("N");
+				int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+				if (i < 1) {
+					return Result.build(ResultEnum.DELETE_SQL_ERROR);
+				}
+				dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+						accountInfo.getAccount().getName() + "将产品放入回收站！", DB_LOG_TYPE);
+				
+				//删除个人课表
+				ProductbindcousreExample example = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+				criteria.andProductidEqualTo(Long.valueOf(string));
+				List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+				for (Productbindcousre productbindcousre : list) {
+					Map<String,Object> map = new HashMap<>();
+					map.put("ProductID", productbindcousre.getProductid());
+					map.put("CourseID", productbindcousre.getCourseid());
+					changeCourse(map, accountInfo, "delete", 0);
+				}
+			}
+			
+		}
+		if (type == 2) {
+			Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_DELETE2);
+			if (result.getStatus() != 200) {
+				return Result.build(ResultEnum.NOT_DELETE_RIGHTS);
+			}
+			List<String> strings = LiuUtils.getIDS(ids);
+			for (String string : strings) {
+				Long ProductID = Long.valueOf(string);
+				Productinfo productinfo = productinfoMapper.selectByPrimaryKey(ProductID);
+				productinfo.setRemove("Y");
+				int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+				if (i < 1) {
+					return Result.build(ResultEnum.DELETE_SQL_ERROR);
+				}
+				
+				//删除个人课表
+				ProductbindcousreExample example = new ProductbindcousreExample();
+				com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+				criteria.andProductidEqualTo(Long.valueOf(string));
+				List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+				for (Productbindcousre productbindcousre : list) {
+					Map<String,Object> map = new HashMap<>();
+					map.put("ProductID", productbindcousre.getProductid());
+					map.put("CourseID", productbindcousre.getCourseid());
+					changeCourse(map, accountInfo, "delete", 0);
+				}
+				
+				log(DB_LOG_TYPE, null, accountInfo, 2, "ProductInfo", productinfo);
+			}
+			
+		}
+		
+		
+		return Result.succee();
+	}
+
+	/****************************************
+	 * 产品绑定课程信息
+	 * 
+	 * @throws MyException
+	 ************************************************/
+	@Override
+	public Result addProductBindCousre(AccountInfo accountInfo, Productbindcousre productbindcousre,int temp)
+			throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCT_BIND_COUSRE_ADD);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+
+		Map<String, Object> param = new HashMap<>();
+		param.put("ProductID", productbindcousre.getProductid());
+		param.put("CourseID", productbindcousre.getCourseid());
+		if (!changeCourse(param, accountInfo, "add",temp)) {
+			return Result.build(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		int i = productbindcousreMapper.insertSelective(productbindcousre);
+		if (i < 1) {
+			return Result.build(ResultEnum.INSERT_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的用户为产品绑定了课程信息，被绑定的产品ID为["
+				+ productbindcousre.getProductid() + "],课程ID为[" + productbindcousre.getCourseid() + "],主键ID为["
+				+ productbindcousre.getProuctbindcourseid() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result updateProductBindCousre(AccountInfo accountInfo, Productbindcousre productbindcousre,
+			String AUTHORITY_CODE) throws MyException {
+		//检查权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != ResultEnum.SUCCESS.getStatus().intValue()) {
+			return checkAuthority;
+		}
+		
+		Map<String, Object> param = new HashMap<>();
+		Productbindcousre pbc = productbindcousreMapper.selectByPrimaryKey(productbindcousre.getProuctbindcourseid());
+		if (productbindcousre.getProductid() != null || productbindcousre.getCourseid() != null) {// 修改绑定信息
+			// 删除原课程
+			param.put("ProductID", pbc.getProuctbindcourseid());
+			param.put("CourseID", pbc.getProuctbindcourseid());
+			boolean flag1 = changeCourse(param, accountInfo, "delete",0);
+			
+
+			// 添加新课程
+			param.put("ProductID", productbindcousre.getProuctbindcourseid());
+			param.put("CourseID", productbindcousre.getProuctbindcourseid());
+			boolean flag2 = changeCourse(param, accountInfo, "add",0);
+
+			if (!(flag1 == flag2 == true)) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+
+			int i = productbindcousreMapper.updateByPrimaryKeySelective(productbindcousre);
+			if (i < 1) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+
+			// 插入数据库操作日志
+			String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员修改了产品课程绑定信息。被修改绑定信息ID为["
+					+ productbindcousre.getProuctbindcourseid() + "]";
+			try {
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1,
+						DB_LOG_TYPE);
+			} catch (MyException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	/**
+	 * 将新绑定或解绑的课程从已购买产品的用户的个人课程增加或删除
+	 */
+	private boolean changeCourse(Map<String, Object> param, AccountInfo accountInfo, String method,int temp) {
+		//未审核，回收站产品不能添加到个人课表
+		if (temp==0) {
+			if (method.equals("add")) {
+				Productinfo productinfo = productinfoMapper.selectByPrimaryKey((Long)param.get("ProductID"));
+				if (productinfo.getIsdelete().equals("Y") || (productinfo.getIsauditpassed() != null && productinfo.getIsauditpassed().equals("N"))||
+						
+						productinfo.getRemove().equals("Y")) {
+					return false;
+				}
+			
+			}
+		}
+		
+		
+		// 获取所有已购买该产品，订单生效的订单详情
+		OrderdetailsExample example = new OrderdetailsExample();
+		com.jy.entiy.order.order.OrderdetailsExample.Criteria criteria = example.createCriteria();
+		criteria.andProductidEqualTo((Long)param.get("ProductID"));
+		List<Orderdetails> orderdetails = orderdetailsMapper.selectByExample(example);
+		
+		if (orderdetails.size()<1) {
+			return true;
+		}
+		
+		//获取所有订单ID
+		List<Long> list = new ArrayList<>();
+		for (Orderdetails details : orderdetails) {
+			list.add(details.getOrderid());
+		}
+		
+
+		//获取所有有效订单
+		OrdersExample example2 = new OrdersExample();
+		com.jy.entiy.order.order.OrdersExample.Criteria criteria2 = example2.createCriteria();
+		criteria2.andOrderidIn(list);
+		criteria2.andOrderstatusEqualTo(3);
+		List<Orders> orders = ordersMapper.selectByExample(example2);
+
+		
+		if (orders.size()<1) {
+			return true;
+		}
+		
+		// 利用Map中Key不重复的原理，提取所有订单中的客户ID
+		Map<Long, Object> map = new HashMap<>();
+		for (Orders orders2 : orders) {
+			map.put(orders2.getAccountid(), "");
+		}
+
+		// 为查询到的所有客户个人课程中添加该课程
+		if (method.equals("add")) {
+			for (Long AccountID : map.keySet()) {
+				Personcourse personcourse = new Personcourse();
+				personcourse.setAccountid(AccountID);
+				personcourse.setCourseid((Long) param.get("CourseID"));
+				personcourse.setProductid((Long) param.get("ProductID"));
+				personcourse.setIsactive(2);
+				personcourse.setCreatetime(new Date());
+				personcourse.setCreateby(accountInfo.getAccount().getName());
+				personcourse.setCreatepersonid(accountInfo.getAccount().getAccountid());
+
+				personcourseMapper.insertSelective(personcourse);
+
+				// 插入数据库操作日志
+				String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员向用户[" + AccountID
+						+ "]的个人课程表中添加产品[" + param.get("ProductID") + "]下的课程[" + param.get("CourseID")
+						+ "](向产品中添加课程时自动向已购买该产品的客户的个人课程中添加的课程。数据创建人即为向该产品中添加课程的管理员。)";
+				try {
+					this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1,
+							DB_LOG_TYPE);
+				} catch (MyException e) {
+
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		if (method.equals("delete")) {
+			for (Long AccountID : map.keySet()) {
+				PersoncourseExample example3 = new PersoncourseExample();
+				com.jy.entiy.content.product.course.PersoncourseExample.Criteria criteria3 = example3.createCriteria();
+				criteria3.andAccountidEqualTo(AccountID);
+				criteria3.andCourseidEqualTo((Long) param.get("CourseID"));
+  				criteria3.andProductidEqualTo((Long) param.get("ProductID"));
+				personcourseMapper.deleteByExample(example3);
+
+				// 插入数据库操作日志
+				String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员删除用户[" + AccountID
+						+ "]的个人课程表中产品[" + param.get("ProductID") + "]下的课程[" + param.get("CourseID")
+						+ "](产品移除课程时自动将已购买该产品的客户的个人课程中对应课程的课程移除。)";
+				try {
+					this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1,
+							DB_LOG_TYPE);
+				} catch (MyException e) {
+
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public Result deleteProductBindCousre(AccountInfo accountInfo, Long productbindcousreid) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCT_BIND_COUSRE_DELETE);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+
+		Productbindcousre productbindcousre = productbindcousreMapper.selectByPrimaryKey(productbindcousreid);
+		Map<String, Object> param = new HashMap<>();
+		param.put("ProductID", productbindcousre.getProductid());
+		param.put("CourseID", productbindcousre.getCourseid());
+		if (!changeCourse(param, accountInfo, "delete",0)) {
+			return Result.build(ResultEnum.DELETE_SQL_ERROR);
+		}
+		int i = productbindcousreMapper.deleteByPrimaryKey(productbindcousreid);
+		if (i < 1) {
+			return Result.build(ResultEnum.DELETE_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员删除了产品课程绑定信息，被删除信息课程ID为["
+				+ productbindcousre.getCourseid() + "],产品ID为[" + productbindcousre.getProductid() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result getProductBindCousre(Productbindcousre productbindcousre) {
+		ProductbindcousreExample example = new ProductbindcousreExample();
+		com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+		if (productbindcousre.getProductid() != null) {
+			criteria.andProductidEqualTo(productbindcousre.getProductid());
+		}
+		if (productbindcousre.getProuctbindcourseid() != null) {
+			criteria.andProuctbindcourseidEqualTo(productbindcousre.getProuctbindcourseid());
+		}
+		if (productbindcousre.getCourseid() != null) {
+			criteria.andCourseidEqualTo(productbindcousre.getCourseid());
+		}
+		
+		List<Course> list = new ArrayList<>();
+		List<Productbindcousre> productbindcousres = productbindcousreMapper.selectByExample(example);
+		for (Productbindcousre productbindcousre2 : productbindcousres) {
+			Course course = courseMapper.selectByPrimaryKey(productbindcousre2.getCourseid());
+			if (course != null ) {
+				list.add(course);
+			}
+			
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("productbindcousres", productbindcousres);
+		map.put("course", list);
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result addProductdiscount(AccountInfo accountInfo, Productdiscount discount, String AUTHORITY_CODE) throws MyException {
+		//检查权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != ResultEnum.SUCCESS.getStatus().intValue()) {
+			return checkAuthority;
+		}
+		int i = productdiscountMapper.insertSelective(discount);
+		if (i < 1) {
+			return Result.build(ResultEnum.INSERT_SQL_ERROR);
+		}
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员增加了产品折扣信息，产品折扣信息ID为["
+				+ discount.getProductdiscountid() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result updateProductdiscount(AccountInfo accountInfo, Productdiscount discount, String AUTHORITY_CODE) throws MyException {
+		//检查权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != ResultEnum.SUCCESS.getStatus().intValue()) {
+			return checkAuthority;
+		}
+		int i = productdiscountMapper.updateByPrimaryKeySelective(discount);
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员修改了产品折扣信息，产品折扣信息ID为["
+				+ discount.getProductdiscountid() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result deleteProductdiscount(AccountInfo accountInfo, Integer ProductDiscountID, String AUTHORITY_CODE) throws MyException {
+		//检查权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != ResultEnum.SUCCESS.getStatus().intValue()) {
+			return checkAuthority;
+		}
+
+		Productdiscount dis = productdiscountMapper.selectByPrimaryKey(ProductDiscountID);
+		int i = productdiscountMapper.deleteByPrimaryKey(ProductDiscountID);
+		if (i < 1) {
+			return Result.build(ResultEnum.DELETE_SQL_ERROR);
+		}
+
+		// 插入数据库操作日志
+		String log1 = "ID为[" + accountInfo.getAccount().getAccountid() + "]的管理员删除了产品折扣信息，产品折扣信息ID为[" + ProductDiscountID
+				+ "]产品ID为[" + dis.getProductid() + "]，折扣为[" + dis.getDiscount() + "]";
+		try {
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log1, DB_LOG_TYPE);
+		} catch (MyException e) {
+
+			e.printStackTrace();
+		}
+		return Result.build(ResultEnum.SUCCESS);
+	}
+
+	@Override
+	public Result getProductdiscount(Productdiscount discount) {
+
+		ProductdiscountExample example = new ProductdiscountExample();
+		com.jy.entiy.content.product.product.ProductdiscountExample.Criteria criteria = example.createCriteria();
+
+		if (discount.getProductdiscountid() != null) {
+			criteria.andProductdiscountidEqualTo(discount.getProductdiscountid());
+		}
+		if (discount.getProductid() != null) {
+			criteria.andProductidEqualTo(discount.getProductid());
+		}
+		if (discount.getEnddate() != null) {
+			criteria.andEnddateGreaterThanOrEqualTo(discount.getEnddate());
+		}
+		if (discount.getStartdate() != null) {
+			criteria.andStartdateLessThanOrEqualTo(discount.getStartdate());
+		}
+		if (discount.getIsactice() != null) {
+			criteria.andIsacticeEqualTo(discount.getIsactice());
+		}
+
+		List<Productdiscount> list = productdiscountMapper.selectByExample(example);
+		Result result = new Result();
+		result.setData(list);
+		return result;
+	}
+
+
+	@Override
+	public Result thumbnail(AccountInfo accountInfo, Long ProductID) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_UPDATE);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+		Productinfo productinfo = productinfoMapper.selectByPrimaryKey(ProductID);
+		if (productinfo.getFileid() == null) {
+			return Result.build(ResultEnum.DELETE_SQL_ERROR);
+		}
+		Long l = productinfo.getFileid();
+		productinfo.setFileid(null);
+		int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+		if (i < 1) {
+			return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+		}
+		super.deleteFile(accountInfo, DB_LOG_TYPE, l, "ProductInfo", productinfo.getProductid());
+		return Result.succee();
+	}
+
+	@Override
+	public Result returns(AccountInfo accountInfo, String ids) throws MyException {
+		Result result = checkAuthority(accountInfo, AuthorityCode.PRODUCTINFO_RETURN);
+		if (result.getStatus() != 200) {
+			return result;
+		}
+		List<String> strings = LiuUtils.getIDS(ids);
+		for (String string : strings) {
+			Long ProductID = Long.valueOf(string);
+			Productinfo productinfo = productinfoMapper.selectByPrimaryKey(ProductID);
+			if (productinfo.getIsdelete().endsWith("N")) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+			productinfo.setIsdelete("N");
+			int i = productinfoMapper.updateByPrimaryKeySelective(productinfo);
+			if (i < 1) {
+				return Result.build(ResultEnum.UPDATE_SQL_ERROR);
+			}
+			String log = accountInfo.getAccount().getName() + "将回收站中的产品还原！";
+			dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+			
+			
+			//添加个人课表
+			ProductbindcousreExample example = new ProductbindcousreExample();
+			com.jy.entiy.content.product.product.ProductbindcousreExample.Criteria criteria = example.createCriteria();
+			criteria.andProductidEqualTo(ProductID);
+			List<Productbindcousre> list = productbindcousreMapper.selectByExample(example);
+			for (Productbindcousre productbindcousre : list) {
+				Map<String,Object> map = new HashMap<>();
+				map.put("ProductID", productbindcousre.getProductid());
+				map.put("CourseID", productbindcousre.getCourseid());
+				changeCourse(map, accountInfo, "add", 0);
+			}
+		}
+		return Result.succee();
+	}
+}

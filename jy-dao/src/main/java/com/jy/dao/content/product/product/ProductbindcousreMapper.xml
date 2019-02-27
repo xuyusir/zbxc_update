@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.product.ProductbindcousreMapper">
+	<resultMap id="BaseResultMap"
+		type="com.jy.entiy.content.product.product.Productbindcousre">
+		<id column="ProuctBindCourseID" property="prouctbindcourseid"
+			jdbcType="BIGINT" />
+		<result column="ProductID" property="productid"
+			jdbcType="BIGINT" />
+		<result column="CourseID" property="courseid" jdbcType="BIGINT" />
+		<result column="ValidDays" property="validdays"
+			jdbcType="INTEGER" />
+		<result column="LectureAttachmentPath"
+			property="lectureattachmentpath" jdbcType="VARCHAR" />
+		<result column="LectureAttachmentName"
+			property="lectureattachmentname" jdbcType="VARCHAR" />
+		<result column="LectureAttachmentType"
+			property="lectureattachmenttype" jdbcType="VARCHAR" />
+		<result column="IsAuditPassed" property="isauditpassed"
+			jdbcType="CHAR" />
+		<result column="AuditComment" property="auditcomment"
+			jdbcType="VARCHAR" />
+		<result column="Auditor" property="auditor" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		ProuctBindCourseID, ProductID, CourseID, ValidDays, LectureAttachmentPath,
+		LectureAttachmentName,
+		LectureAttachmentType, IsAuditPassed, AuditComment, Auditor
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.jy.entiy.content.product.product.ProductbindcousreExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from ProductBindCousre
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from ProductBindCousre
+		where ProuctBindCourseID = #{prouctbindcourseid,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from ProductBindCousre
+		where ProuctBindCourseID = #{prouctbindcourseid,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample"
+		parameterType="com.jy.entiy.content.product.product.ProductbindcousreExample">
+		delete from ProductBindCousre
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert"
+		parameterType="com.jy.entiy.content.product.product.Productbindcousre">
+		insert into ProductBindCousre (ProuctBindCourseID, ProductID, CourseID,
+		ValidDays, LectureAttachmentPath, LectureAttachmentName,
+		LectureAttachmentType, IsAuditPassed, AuditComment,
+		Auditor)
+		values (#{prouctbindcourseid,jdbcType=BIGINT}, #{productid,jdbcType=BIGINT},
+		#{courseid,jdbcType=BIGINT},
+		#{validdays,jdbcType=INTEGER}, #{lectureattachmentpath,jdbcType=VARCHAR},
+		#{lectureattachmentname,jdbcType=VARCHAR},
+		#{lectureattachmenttype,jdbcType=VARCHAR},
+		#{isauditpassed,jdbcType=CHAR}, #{auditcomment,jdbcType=VARCHAR},
+		#{auditor,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.jy.entiy.content.product.product.Productbindcousre">
+		<selectKey keyProperty="prouctbindcourseid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into ProductBindCousre
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="prouctbindcourseid != null">
+				ProuctBindCourseID,
+			</if>
+			<if test="productid != null">
+				ProductID,
+			</if>
+			<if test="courseid != null">
+				CourseID,
+			</if>
+			<if test="validdays != null">
+				ValidDays,
+			</if>
+			<if test="lectureattachmentpath != null">
+				LectureAttachmentPath,
+			</if>
+			<if test="lectureattachmentname != null">
+				LectureAttachmentName,
+			</if>
+			<if test="lectureattachmenttype != null">
+				LectureAttachmentType,
+			</if>
+			<if test="isauditpassed != null">
+				IsAuditPassed,
+			</if>
+			<if test="auditcomment != null">
+				AuditComment,
+			</if>
+			<if test="auditor != null">
+				Auditor,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="prouctbindcourseid != null">
+				#{prouctbindcourseid,jdbcType=BIGINT},
+			</if>
+			<if test="productid != null">
+				#{productid,jdbcType=BIGINT},
+			</if>
+			<if test="courseid != null">
+				#{courseid,jdbcType=BIGINT},
+			</if>
+			<if test="validdays != null">
+				#{validdays,jdbcType=INTEGER},
+			</if>
+			<if test="lectureattachmentpath != null">
+				#{lectureattachmentpath,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureattachmentname != null">
+				#{lectureattachmentname,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureattachmenttype != null">
+				#{lectureattachmenttype,jdbcType=VARCHAR},
+			</if>
+			<if test="isauditpassed != null">
+				#{isauditpassed,jdbcType=CHAR},
+			</if>
+			<if test="auditcomment != null">
+				#{auditcomment,jdbcType=VARCHAR},
+			</if>
+			<if test="auditor != null">
+				#{auditor,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample"
+		parameterType="com.jy.entiy.content.product.product.ProductbindcousreExample"
+		resultType="java.lang.Integer">
+		select count(*) from ProductBindCousre
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update ProductBindCousre
+		<set>
+			<if test="record.prouctbindcourseid != null">
+				ProuctBindCourseID = #{record.prouctbindcourseid,jdbcType=BIGINT},
+			</if>
+			<if test="record.productid != null">
+				ProductID = #{record.productid,jdbcType=BIGINT},
+			</if>
+			<if test="record.courseid != null">
+				CourseID = #{record.courseid,jdbcType=BIGINT},
+			</if>
+			<if test="record.validdays != null">
+				ValidDays = #{record.validdays,jdbcType=INTEGER},
+			</if>
+			<if test="record.lectureattachmentpath != null">
+				LectureAttachmentPath =
+				#{record.lectureattachmentpath,jdbcType=VARCHAR},
+			</if>
+			<if test="record.lectureattachmentname != null">
+				LectureAttachmentName =
+				#{record.lectureattachmentname,jdbcType=VARCHAR},
+			</if>
+			<if test="record.lectureattachmenttype != null">
+				LectureAttachmentType =
+				#{record.lectureattachmenttype,jdbcType=VARCHAR},
+			</if>
+			<if test="record.isauditpassed != null">
+				IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+			</if>
+			<if test="record.auditcomment != null">
+				AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+			</if>
+			<if test="record.auditor != null">
+				Auditor = #{record.auditor,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update ProductBindCousre
+		set ProuctBindCourseID = #{record.prouctbindcourseid,jdbcType=BIGINT},
+		ProductID = #{record.productid,jdbcType=BIGINT},
+		CourseID = #{record.courseid,jdbcType=BIGINT},
+		ValidDays = #{record.validdays,jdbcType=INTEGER},
+		LectureAttachmentPath = #{record.lectureattachmentpath,jdbcType=VARCHAR},
+		LectureAttachmentName =
+		#{record.lectureattachmentname,jdbcType=VARCHAR},
+		LectureAttachmentType =
+		#{record.lectureattachmenttype,jdbcType=VARCHAR},
+		IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+		AuditComment = #{record.auditcomment,jdbcType=VARCHAR},
+		Auditor = #{record.auditor,jdbcType=VARCHAR}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.jy.entiy.content.product.product.Productbindcousre">
+		update ProductBindCousre
+		<set>
+			<if test="productid != null">
+				ProductID = #{productid,jdbcType=BIGINT},
+			</if>
+			<if test="courseid != null">
+				CourseID = #{courseid,jdbcType=BIGINT},
+			</if>
+			<if test="validdays != null">
+				ValidDays = #{validdays,jdbcType=INTEGER},
+			</if>
+			<if test="lectureattachmentpath != null">
+				LectureAttachmentPath = #{lectureattachmentpath,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureattachmentname != null">
+				LectureAttachmentName = #{lectureattachmentname,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureattachmenttype != null">
+				LectureAttachmentType = #{lectureattachmenttype,jdbcType=VARCHAR},
+			</if>
+			<if test="isauditpassed != null">
+				IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+			</if>
+			<if test="auditcomment != null">
+				AuditComment = #{auditcomment,jdbcType=VARCHAR},
+			</if>
+			<if test="auditor != null">
+				Auditor = #{auditor,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ProuctBindCourseID = #{prouctbindcourseid,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.jy.entiy.content.product.product.Productbindcousre">
+		update ProductBindCousre
+		set ProductID = #{productid,jdbcType=BIGINT},
+		CourseID = #{courseid,jdbcType=BIGINT},
+		ValidDays = #{validdays,jdbcType=INTEGER},
+		LectureAttachmentPath = #{lectureattachmentpath,jdbcType=VARCHAR},
+		LectureAttachmentName = #{lectureattachmentname,jdbcType=VARCHAR},
+		LectureAttachmentType = #{lectureattachmenttype,jdbcType=VARCHAR},
+		IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+		AuditComment = #{auditcomment,jdbcType=VARCHAR},
+		Auditor = #{auditor,jdbcType=VARCHAR}
+		where ProuctBindCourseID = #{prouctbindcourseid,jdbcType=BIGINT}
+	</update>
+</mapper>

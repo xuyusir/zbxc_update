@@ -1,0 +1,402 @@
+package com.jy.service.function.enterprise.recruitment.zb;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.function.enterprise.recruitment.EnterprisejobvacancyMapper;
+import com.jy.dao.system.select.EducationbackgroundMapper;
+import com.jy.dao.system.select.JobpropertyMapper;
+import com.jy.dao.system.select.JobtypeMapper;
+import com.jy.dao.system.select.SalarytypeMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.function.enterprise.recruitment.Enterprisejobvacancy;
+import com.jy.entiy.system.select.*;
+import com.jy.entiy.system.select.JobtypeExample.Criteria;
+import com.jy.service.base.BaseService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+
+/**
+ * @ClassName: RecruitmentServiceImpl
+ * @Description:内容-招聘管理接口实现类
+ * @author: chenye
+ * @date: 2018-08-21 15:37
+ */
+@Service
+public class RecruitmentServiceImpl extends BaseService implements RecruitmentService {
+	// 没有做外键检查
+
+	// 菜单数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_RECRUITMENT";
+
+	@Resource
+	private EnterprisejobvacancyMapper enterprisejobvacancyMapper;// 招聘职位表
+	@Resource
+	private JobtypeMapper jobtypeMapper;// 职位类别表
+	@Resource
+	private JobpropertyMapper jobpropertyMapper;// 工作属性
+	@Resource
+	private SalarytypeMapper salarytypeMapper;// 薪水种类
+	@Resource
+	private EducationbackgroundMapper educationbackgroundMapper;// 学历
+
+
+	@Override
+	public Result getPositionInfoByJobTypeID(Integer reqType ,Integer jobtypeid, String jobtitle, Integer page, Integer pageSize) {
+		
+		if(reqType == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}else if(reqType == 1){//官网(不在发布期间的职位不展示)
+			
+			jobtitle = this.checkSearch(jobtitle);// 参数检查
+			List<Enterprisejobvacancy> rows1 = enterprisejobvacancyMapper.getPositionInfoByJobTypeID("Y","Y",jobtypeid, jobtitle, (page - 1) * pageSize, pageSize);
+			for (Enterprisejobvacancy enterprisejobvacancy : rows1) {
+				if(enterprisejobvacancy != null) {
+					Jobtype jobtype = jobtypeMapper.selectByPrimaryKey(enterprisejobvacancy.getJobtypeid());
+					if(jobtype != null) {
+						enterprisejobvacancy.setJobTypeName(jobtype.getJobtypename());
+					}
+                    String educationLevel = null;
+					if (enterprisejobvacancy.getEducationid() != null){
+                        educationLevel = educationbackgroundMapper.getEducationLevelByEducationID(enterprisejobvacancy.getEducationid());
+                    }
+                    enterprisejobvacancy.setEducationName(educationLevel);
+                    Jobproperty jobproperty = jobpropertyMapper.selectByPrimaryKey(enterprisejobvacancy.getJobpropertyid());
+                    if(jobproperty != null){
+                        enterprisejobvacancy.setJobPropertyName(jobproperty.getJobpropertyname());
+                    }
+                }
+			}
+			Integer count1 = enterprisejobvacancyMapper.getPositionInfoCountByJobTypeID("Y",null,jobtypeid, jobtitle);
+			Map<String, Object> map1 = new HashMap<>();
+			map1.put("rows", rows1);
+			map1.put("count", count1);
+			return Result.succee(map1);
+		}else if(reqType == 2) {//官网后台
+			jobtitle = this.checkSearch(jobtitle);// 参数检查
+			List<Enterprisejobvacancy> rows2 = enterprisejobvacancyMapper.getPositionInfoByJobTypeID(null,null,jobtypeid, jobtitle,
+					(page - 1) * pageSize, pageSize);
+			for (Enterprisejobvacancy enterprisejobvacancy : rows2) {
+				if(enterprisejobvacancy != null) {
+					Jobtype jobtype = jobtypeMapper.selectByPrimaryKey(enterprisejobvacancy.getJobtypeid());
+					if(jobtype != null) {
+						enterprisejobvacancy.setJobTypeName(jobtype.getJobtypename());
+					}
+					
+				}
+				
+			}
+			Integer count2 = enterprisejobvacancyMapper.getPositionInfoCountByJobTypeID(null,null,jobtypeid, jobtitle);
+			
+			Map<String, Object> map2 = new HashMap<>();
+			map2.put("rows", rows2);
+			map2.put("count", count2);
+			return Result.succee(map2);
+		}else {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+	}
+
+	@Override
+	public Result insertRecruitment(AccountInfo accountInfo, String AUTHORITY_CODE,
+			Enterprisejobvacancy enterprisejobvacancy) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (enterprisejobvacancy != null) {
+			Long accountid = accountInfo.getAccount().getAccountid();
+			String name = accountInfo.getAccount().getName();
+			enterprisejobvacancy.setCreateby(name);
+			enterprisejobvacancy.setCreatepersonid(accountid);
+			enterprisejobvacancy.setCreatetime(new Date());
+			enterprisejobvacancy.setIsdelete("N");
+			int i = enterprisejobvacancyMapper.insertSelective(enterprisejobvacancy);
+			if (i < 1) {
+				throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+			}
+			// 插入数据库操作日志
+			String log = "新增了招聘信息 : [ ";
+			log += StringUtils.isBlank(enterprisejobvacancy.getJobtitle()) ? ""
+					: "职位标题=" + enterprisejobvacancy.getJobtitle() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getSalary()) ? ""
+					: "薪水=" + enterprisejobvacancy.getSalary() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getCreateby()) ? ""
+					: "创建人=" + enterprisejobvacancy.getCreateby() + ",";
+			log = log.substring(0, log.length() - 1) + " ]";
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+			return Result.succee();
+		} else {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+	}
+
+	@Override
+	public Result updateRecruitment(AccountInfo accountInfo, String AUTHORITY_CODE,
+			Enterprisejobvacancy enterprisejobvacancy) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+
+		if (enterprisejobvacancy.getEjobvacancyid() != null) {
+			Long accountid = accountInfo.getAccount().getAccountid();
+			String name = accountInfo.getAccount().getName();
+			enterprisejobvacancy.setUpdateby(name);
+			enterprisejobvacancy.setUpdatepersonid(accountid);
+			enterprisejobvacancy.setUpdatetmie(new Date());
+			int i = enterprisejobvacancyMapper.updateByPrimaryKeySelective(enterprisejobvacancy);
+			if (i < 1) {
+				throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+			}
+			// 插入数据库操作日志
+			String log = "修改了招聘信息 : [ ";
+			log += StringUtils.isBlank(enterprisejobvacancy.getJobtitle()) ? ""
+					: "职位标题=" + enterprisejobvacancy.getJobtitle() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getSalary()) ? ""
+					: "薪水=" + enterprisejobvacancy.getSalary() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getUpdateby()) ? ""
+					: "创建人=" + enterprisejobvacancy.getUpdateby() + ",";
+			log = log.substring(0, log.length() - 1) + " ]";
+			this.dbLog(accountid, name, log, DB_LOG_TYPE);
+			return Result.succee();
+		} else {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+	}
+
+	@Override
+	public Result deleteRecruitment(AccountInfo accountInfo, String AUTHORITY_CODE, String ids)
+			throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		
+		String[] split = ids.split(",");
+		
+		for (String id : split) {
+			if (!StringUtils.isNumeric(id)) {
+				return Result.build(ResultEnum.PARAMETER_ERROR);
+			}
+			Enterprisejobvacancy selectByPrimaryKey = enterprisejobvacancyMapper.selectByPrimaryKey(Integer.parseInt(id));
+			if (selectByPrimaryKey != null) {
+				int i = enterprisejobvacancyMapper.deleteByPrimaryKey(Integer.parseInt(id));
+				if (i < 1) {
+					throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+				}
+				this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(),
+						"删除了岗位[ " + selectByPrimaryKey.getJobtitle()+ " ]", DB_LOG_TYPE);
+			}else {
+				Result.build(20001,400,"没有该数据!");
+			} 
+		}
+		return Result.succee();
+		
+	}
+
+	@Override
+	public Result auditRecruitment(AccountInfo accountInfo, String AUTHORITY_CODE,
+			Enterprisejobvacancy enterprisejobvacancy) throws MyException {
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (enterprisejobvacancy.getEjobvacancyid() != null) {
+			Long accountid = accountInfo.getAccount().getAccountid();
+			String name = accountInfo.getAccount().getName();
+			enterprisejobvacancy.setCreateby(name);
+			enterprisejobvacancy.setCreatepersonid(accountid);
+			enterprisejobvacancy.setCreatetime(new Date());
+			enterprisejobvacancy.setAuditor(name);
+			enterprisejobvacancy.setIsauditpassed("Y");// 点击审核按钮改变为审核状态
+			int i = enterprisejobvacancyMapper.updateByPrimaryKeySelective(enterprisejobvacancy);
+			if (i < 1) {
+				throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+			}
+			// 插入数据库操作日志
+			String log = "审核了招聘信息 : [ ";
+			log += StringUtils.isBlank(enterprisejobvacancy.getJobtitle()) ? ""
+					: "职位标题=" + enterprisejobvacancy.getJobtitle() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getSalary()) ? ""
+					: "薪水=" + enterprisejobvacancy.getSalary() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getCreateby()) ? ""
+					: "创建人=" + enterprisejobvacancy.getCreateby() + ",";
+			log += StringUtils.isBlank(enterprisejobvacancy.getAuditor()) ? ""
+					: "审核人=" + enterprisejobvacancy.getAuditor() + ",";
+			log = log.substring(0, log.length() - 1) + " ]";
+			this.dbLog(accountid, name, log, DB_LOG_TYPE);
+			return Result.succee();
+		} else {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+	}
+
+	@Override
+	public Result recycleRecruitment(AccountInfo accountInfo, String AUTHORITY_CODE,
+			Enterprisejobvacancy enterprisejobvacancy) throws MyException {
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if (enterprisejobvacancy.getEjobvacancyid() != null) {
+			enterprisejobvacancy.setIsdelete("Y");// 删除到回收站
+			int i = enterprisejobvacancyMapper.updateByPrimaryKeySelective(enterprisejobvacancy);
+			if (i < 1) {
+				throw new MyException(ResultEnum.UPDATE_SQL_ERROR);
+			}
+
+			return Result.succee();
+		} else {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+	}
+
+	@Override
+	public Result getRecycleInfoByJobTypeID(Integer jobtypeid, String jobtitle, Integer page, Integer pageSize) {
+		jobtitle = this.checkSearch(jobtitle);// 参数检查
+		List<Enterprisejobvacancy> rows = enterprisejobvacancyMapper.getRecycleInfoByJobTypeID(jobtypeid, jobtitle,
+				(page - 1) * pageSize, pageSize);
+		Integer count = enterprisejobvacancyMapper.getRecycleInfoCountByJobTypeID(jobtypeid, jobtitle);
+		Map<String, Object> map = new HashMap<>();
+		map.put("rows", rows);
+		map.put("count", count);
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result getFormLoad(AccountInfo accountInfo) throws MyException {
+//		// 检测查询权限
+//		if (!this.checkSelectRight(accountInfo, AUTHORITY_CODE)) {
+//			return Result.build(ResultEnum.NOT_SELECT_RIGHTS);
+//		}
+		Map<String, Object> map = new HashMap<>();
+		List<Jobtype> jobtypeList = jobtypeMapper.selectByExample(null);
+		List<Jobproperty> jobpropertyList = jobpropertyMapper.selectByExample(null);
+		List<Salarytype> salarytypeList = salarytypeMapper.selectByExample(null);
+		List<Educationbackground> educationbackgroundList = educationbackgroundMapper.selectByExample(null);
+		
+		map.put("jobtypeList", jobtypeList);
+		map.put("jobpropertyList", jobpropertyList);
+		map.put("salarytypeList", salarytypeList);
+		map.put("educationbackgroundList", educationbackgroundList);
+
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result getUpdateSelect(AccountInfo accountInfo, String AUTHORITY_CODE, Integer ejobvacancyid)
+			throws MyException {
+
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if(ejobvacancyid != null) {
+			Enterprisejobvacancy selectByPrimaryKey = enterprisejobvacancyMapper.selectByPrimaryKey(ejobvacancyid);
+			Integer jobtypeid = selectByPrimaryKey.getJobtypeid();
+			Integer jobpropertyid = selectByPrimaryKey.getJobpropertyid();
+			Integer salarytypeid = selectByPrimaryKey.getSalarytypeid();
+			Integer educationid = selectByPrimaryKey.getEducationid();
+			
+			if(jobtypeid != null) {
+				Jobtype selectByPrimaryKey2 = jobtypeMapper.selectByPrimaryKey(jobtypeid);
+				selectByPrimaryKey.setJobTypeName(selectByPrimaryKey2 == null ? "" : selectByPrimaryKey2.getJobtypename());
+			}
+			if (jobpropertyid != null) {
+				Jobproperty selectByPrimaryKey2 = jobpropertyMapper.selectByPrimaryKey(jobpropertyid);
+				selectByPrimaryKey.setProperty(selectByPrimaryKey2 == null ? "" : selectByPrimaryKey2.getJobpropertyname());
+			}
+			if (salarytypeid != null) {
+				Salarytype selectByPrimaryKey2 = salarytypeMapper.selectByPrimaryKey(salarytypeid);
+				selectByPrimaryKey.setSalary(selectByPrimaryKey2 == null ? "" : selectByPrimaryKey2.getSalaryname());
+			}
+			if (educationid != null) {
+				Educationbackground selectByPrimaryKey2 = educationbackgroundMapper.selectByPrimaryKey(educationid);
+				String educationlevel = selectByPrimaryKey2 == null ? "" : selectByPrimaryKey2.getEducationlevel();
+				selectByPrimaryKey.setEducation(educationlevel);
+			}
+			return Result.succee(selectByPrimaryKey);
+		}
+		
+
+		return Result.build(ResultEnum.PARAMETER_ERROR);
+	}
+
+	@Override
+	public Result addLM(AccountInfo accountInfo, String AUTHORITY_CODE, Jobtype jobtype) throws MyException {
+		// 检测权限
+				Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+				if (checkAuthority.getStatus() != 200) {
+					return checkAuthority;
+				}
+				if(jobtype.getJobtypename() == null) {
+					return Result.build(ResultEnum.PARAMETER_ERROR);
+				}
+				//类目数量检查
+				 int num = jobtypeMapper.countByExample(null);
+				 if(num >= 8) {
+					 return Result.build(2004,400,"最多只能添加8个类目!");
+				 }
+				
+				//类目同名检查
+				JobtypeExample jobtypeExample = new JobtypeExample();
+				Criteria createCriteria = jobtypeExample.createCriteria();
+				createCriteria.andJobtypenameEqualTo(jobtype.getJobtypename());
+				int countByExample = jobtypeMapper.countByExample(jobtypeExample);
+				if(countByExample > 0) {
+					return Result.build(ResultEnum.DATA_EXIST);
+				}
+				
+				jobtype.setCreateby(accountInfo.getAccount().getName());
+				jobtype.setCreatepersonid(accountInfo.getAccount().getAccountid());
+				jobtype.setCreatetime(new Date());
+				jobtype.setStatus(1);
+		jobtypeMapper.insertSelective(jobtype);
+		return Result.succee();
+	}
+
+	@Override
+	public Result updateLM(AccountInfo accountInfo, String AUTHORITY_CODE, Jobtype jobtype) throws MyException {
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		if(jobtype.getJobtypeid() == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		jobtype.setUpdateby(accountInfo.getAccount().getName());
+		jobtype.setUpdatepersonid(accountInfo.getAccount().getAccountid());
+		jobtype.setUpdatetime(new Date());
+		jobtypeMapper.updateByPrimaryKeySelective(jobtype);
+		return Result.succee();
+	}
+
+	@Override
+	public Result deleteLM(AccountInfo accountInfo, String AUTHORITY_CODE, Integer jobtypeid) throws MyException {
+		if(jobtypeid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		jobtypeMapper.deleteByPrimaryKey(jobtypeid);
+		return Result.succee();
+	}
+
+	@Override
+	public Result infoLM(AccountInfo accountInfo, String AUTHORITY_CODE, Integer jobtypeid) throws MyException {
+		if(jobtypeid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Jobtype jobtype = jobtypeMapper.selectByPrimaryKey(jobtypeid);
+		return Result.succee(jobtype);
+	}
+
+}

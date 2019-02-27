@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.product.product.ProductinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.product.product.Productinfo" >
+    <id column="ProductID" property="productid" jdbcType="BIGINT" />
+    <result column="ProductName" property="productname" jdbcType="VARCHAR" />
+    <result column="ProductPrice" property="productprice" jdbcType="DECIMAL" />
+    <result column="Description" property="description" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="IsAuditPassed" property="isauditpassed" jdbcType="CHAR" />
+    <result column="Auditor" property="auditor" jdbcType="VARCHAR" />
+    <result column="IsDelete" property="isdelete" jdbcType="CHAR" />
+    <result column="Subheading" property="subheading" jdbcType="VARCHAR" />
+    <result column="FileID" property="fileid" jdbcType="BIGINT" />
+    <result column="Remove" property="remove" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.jy.entiy.content.product.product.Productinfo" extends="BaseResultMap" >
+    <result column="Introduce" property="introduce" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ProductID, ProductName, ProductPrice, Description, CreateTime, CreatePersonID, UpdateTime, 
+    UpdatePersonID, IsAuditPassed, Auditor, IsDelete, Subheading, FileID, Remove
+  </sql>
+  <sql id="Blob_Column_List" >
+    Introduce
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.jy.entiy.content.product.product.ProductinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ProductInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.product.product.ProductinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ProductInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ProductInfo
+    where ProductID = #{productid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ProductInfo
+    where ProductID = #{productid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.product.product.ProductinfoExample" >
+    delete from ProductInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.product.product.Productinfo" >
+    insert into ProductInfo (ProductID, ProductName, ProductPrice, 
+      Description, CreateTime, CreatePersonID, 
+      UpdateTime, UpdatePersonID, IsAuditPassed, 
+      Auditor, IsDelete, Subheading, 
+      FileID, Remove, Introduce
+      )
+    values (#{productid,jdbcType=BIGINT}, #{productname,jdbcType=VARCHAR}, #{productprice,jdbcType=DECIMAL}, 
+      #{description,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{createpersonid,jdbcType=BIGINT}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{updatepersonid,jdbcType=BIGINT}, #{isauditpassed,jdbcType=CHAR}, 
+      #{auditor,jdbcType=VARCHAR}, #{isdelete,jdbcType=CHAR}, #{subheading,jdbcType=VARCHAR}, 
+      #{fileid,jdbcType=BIGINT}, #{remove,jdbcType=VARCHAR}, #{introduce,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.product.product.Productinfo" >
+    <selectKey keyProperty="productid" order="AFTER"
+			resultType="Long">
+			SELECT LAST_INSERT_ID()
+	</selectKey>
+    insert into ProductInfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productid != null" >
+        ProductID,
+      </if>
+      <if test="productname != null" >
+        ProductName,
+      </if>
+      <if test="productprice != null" >
+        ProductPrice,
+      </if>
+      <if test="description != null" >
+        Description,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="isauditpassed != null" >
+        IsAuditPassed,
+      </if>
+      <if test="auditor != null" >
+        Auditor,
+      </if>
+      <if test="isdelete != null" >
+        IsDelete,
+      </if>
+      <if test="subheading != null" >
+        Subheading,
+      </if>
+      <if test="fileid != null" >
+        FileID,
+      </if>
+      <if test="remove != null" >
+        Remove,
+      </if>
+      <if test="introduce != null" >
+        Introduce,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productid != null" >
+        #{productid,jdbcType=BIGINT},
+      </if>
+      <if test="productname != null" >
+        #{productname,jdbcType=VARCHAR},
+      </if>
+      <if test="productprice != null" >
+        #{productprice,jdbcType=DECIMAL},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="isauditpassed != null" >
+        #{isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=CHAR},
+      </if>
+      <if test="subheading != null" >
+        #{subheading,jdbcType=VARCHAR},
+      </if>
+      <if test="fileid != null" >
+        #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="remove != null" >
+        #{remove,jdbcType=VARCHAR},
+      </if>
+      <if test="introduce != null" >
+        #{introduce,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.product.product.ProductinfoExample" resultType="java.lang.Integer" >
+    select count(*) from ProductInfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ProductInfo
+    <set >
+      <if test="record.productid != null" >
+        ProductID = #{record.productid,jdbcType=BIGINT},
+      </if>
+      <if test="record.productname != null" >
+        ProductName = #{record.productname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productprice != null" >
+        ProductPrice = #{record.productprice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.description != null" >
+        Description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.isauditpassed != null" >
+        IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="record.auditor != null" >
+        Auditor = #{record.auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isdelete != null" >
+        IsDelete = #{record.isdelete,jdbcType=CHAR},
+      </if>
+      <if test="record.subheading != null" >
+        Subheading = #{record.subheading,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileid != null" >
+        FileID = #{record.fileid,jdbcType=BIGINT},
+      </if>
+      <if test="record.remove != null" >
+        Remove = #{record.remove,jdbcType=VARCHAR},
+      </if>
+      <if test="record.introduce != null" >
+        Introduce = #{record.introduce,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update ProductInfo
+    set ProductID = #{record.productid,jdbcType=BIGINT},
+      ProductName = #{record.productname,jdbcType=VARCHAR},
+      ProductPrice = #{record.productprice,jdbcType=DECIMAL},
+      Description = #{record.description,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      Auditor = #{record.auditor,jdbcType=VARCHAR},
+      IsDelete = #{record.isdelete,jdbcType=CHAR},
+      Subheading = #{record.subheading,jdbcType=VARCHAR},
+      FileID = #{record.fileid,jdbcType=BIGINT},
+      Remove = #{record.remove,jdbcType=VARCHAR},
+      Introduce = #{record.introduce,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ProductInfo
+    set ProductID = #{record.productid,jdbcType=BIGINT},
+      ProductName = #{record.productname,jdbcType=VARCHAR},
+      ProductPrice = #{record.productprice,jdbcType=DECIMAL},
+      Description = #{record.description,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      IsAuditPassed = #{record.isauditpassed,jdbcType=CHAR},
+      Auditor = #{record.auditor,jdbcType=VARCHAR},
+      IsDelete = #{record.isdelete,jdbcType=CHAR},
+      Subheading = #{record.subheading,jdbcType=VARCHAR},
+      FileID = #{record.fileid,jdbcType=BIGINT},
+      Remove = #{record.remove,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.product.product.Productinfo" >
+    update ProductInfo
+    <set >
+      <if test="productname != null" >
+        ProductName = #{productname,jdbcType=VARCHAR},
+      </if>
+      <if test="productprice != null" >
+        ProductPrice = #{productprice,jdbcType=DECIMAL},
+      </if>
+      <if test="description != null" >
+        Description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="isauditpassed != null" >
+        IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      </if>
+      <if test="auditor != null" >
+        Auditor = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        IsDelete = #{isdelete,jdbcType=CHAR},
+      </if>
+      <if test="subheading != null" >
+        Subheading = #{subheading,jdbcType=VARCHAR},
+      </if>
+      <if test="fileid != null" >
+        FileID = #{fileid,jdbcType=BIGINT},
+      </if>
+      <if test="remove != null" >
+        Remove = #{remove,jdbcType=VARCHAR},
+      </if>
+      <if test="introduce != null" >
+        Introduce = #{introduce,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ProductID = #{productid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jy.entiy.content.product.product.Productinfo" >
+    update ProductInfo
+    set ProductName = #{productname,jdbcType=VARCHAR},
+      ProductPrice = #{productprice,jdbcType=DECIMAL},
+      Description = #{description,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      Auditor = #{auditor,jdbcType=VARCHAR},
+      IsDelete = #{isdelete,jdbcType=CHAR},
+      Subheading = #{subheading,jdbcType=VARCHAR},
+      FileID = #{fileid,jdbcType=BIGINT},
+      Remove = #{remove,jdbcType=VARCHAR},
+      Introduce = #{introduce,jdbcType=LONGVARCHAR}
+    where ProductID = #{productid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.product.product.Productinfo" >
+    update ProductInfo
+    set ProductName = #{productname,jdbcType=VARCHAR},
+      ProductPrice = #{productprice,jdbcType=DECIMAL},
+      Description = #{description,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      IsAuditPassed = #{isauditpassed,jdbcType=CHAR},
+      Auditor = #{auditor,jdbcType=VARCHAR},
+      IsDelete = #{isdelete,jdbcType=CHAR},
+      Subheading = #{subheading,jdbcType=VARCHAR},
+      FileID = #{fileid,jdbcType=BIGINT},
+      Remove = #{remove,jdbcType=VARCHAR}
+    where ProductID = #{productid,jdbcType=BIGINT}
+  </update>
+</mapper>

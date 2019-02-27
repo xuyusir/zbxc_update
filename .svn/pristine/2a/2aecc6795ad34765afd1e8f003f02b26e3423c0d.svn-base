@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.marketingFunction.lotteryManagement.DrawlotteryconfigMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryconfig" >
+    <id column="DrawLotteryConfigID" property="drawlotteryconfigid" jdbcType="INTEGER" />
+    <result column="DrawLotteryTitle" property="drawlotterytitle" jdbcType="VARCHAR" />
+    <result column="DrawLotteryContent" property="drawlotterycontent" jdbcType="VARCHAR" />
+    <result column="TwoDimensionPath" property="twodimensionpath" jdbcType="VARCHAR" />
+    <result column="DrawLotteryPageUrl" property="drawlotterypageurl" jdbcType="VARCHAR" />
+    <result column="TwoDimensionName" property="twodimensionname" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CeateBy" property="ceateby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+    <result column="DrawLotteryNo" property="drawlotteryno" jdbcType="INTEGER" />
+    <result column="GetLotteryNo" property="getlotteryno" jdbcType="INTEGER" />
+    <result column="VoteStatusID" property="votestatusid" jdbcType="INTEGER" />
+    <result column="VoteParticipantTypeID" property="voteparticipanttypeid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DrawLotteryConfigID, DrawLotteryTitle, DrawLotteryContent, TwoDimensionPath, DrawLotteryPageUrl, 
+    TwoDimensionName, CreateTime, CeateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID, 
+    DrawLotteryNo, GetLotteryNo, VoteStatusID, VoteParticipantTypeID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryconfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from DrawLotteryConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from DrawLotteryConfig
+    where DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from DrawLotteryConfig
+    where DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryconfigExample" >
+    delete from DrawLotteryConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryconfig" >
+    insert into DrawLotteryConfig (DrawLotteryConfigID, DrawLotteryTitle, 
+      DrawLotteryContent, TwoDimensionPath, DrawLotteryPageUrl, 
+      TwoDimensionName, CreateTime, CeateBy, 
+      CreatePersonID, UpdateTime, UpdateBy, 
+      UpdatePersonID, DrawLotteryNo, GetLotteryNo, 
+      VoteStatusID, VoteParticipantTypeID)
+    values (#{drawlotteryconfigid,jdbcType=INTEGER}, #{drawlotterytitle,jdbcType=VARCHAR}, 
+      #{drawlotterycontent,jdbcType=VARCHAR}, #{twodimensionpath,jdbcType=VARCHAR}, #{drawlotterypageurl,jdbcType=VARCHAR}, 
+      #{twodimensionname,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{ceateby,jdbcType=VARCHAR}, 
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR}, 
+      #{updatepersonid,jdbcType=BIGINT}, #{drawlotteryno,jdbcType=INTEGER}, #{getlotteryno,jdbcType=INTEGER}, 
+      #{votestatusid,jdbcType=INTEGER}, #{voteparticipanttypeid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryconfig" useGeneratedKeys="true" keyColumn="DrawLotteryConfigID" keyProperty="drawlotteryconfigid">
+    insert into DrawLotteryConfig
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="drawlotteryconfigid != null" >
+        DrawLotteryConfigID,
+      </if>
+      <if test="drawlotterytitle != null" >
+        DrawLotteryTitle,
+      </if>
+      <if test="drawlotterycontent != null" >
+        DrawLotteryContent,
+      </if>
+      <if test="twodimensionpath != null" >
+        TwoDimensionPath,
+      </if>
+      <if test="drawlotterypageurl != null" >
+        DrawLotteryPageUrl,
+      </if>
+      <if test="twodimensionname != null" >
+        TwoDimensionName,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="ceateby != null" >
+        CeateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+      <if test="drawlotteryno != null" >
+        DrawLotteryNo,
+      </if>
+      <if test="getlotteryno != null" >
+        GetLotteryNo,
+      </if>
+      <if test="votestatusid != null" >
+        VoteStatusID,
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        VoteParticipantTypeID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="drawlotteryconfigid != null" >
+        #{drawlotteryconfigid,jdbcType=INTEGER},
+      </if>
+      <if test="drawlotterytitle != null" >
+        #{drawlotterytitle,jdbcType=VARCHAR},
+      </if>
+      <if test="drawlotterycontent != null" >
+        #{drawlotterycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionpath != null" >
+        #{twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="drawlotterypageurl != null" >
+        #{drawlotterypageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionname != null" >
+        #{twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ceateby != null" >
+        #{ceateby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="drawlotteryno != null" >
+        #{drawlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="getlotteryno != null" >
+        #{getlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="votestatusid != null" >
+        #{votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        #{voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryconfigExample" resultType="java.lang.Integer" >
+    select count(*) from DrawLotteryConfig
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update DrawLotteryConfig
+    <set >
+      <if test="record.drawlotteryconfigid != null" >
+        DrawLotteryConfigID = #{record.drawlotteryconfigid,jdbcType=INTEGER},
+      </if>
+      <if test="record.drawlotterytitle != null" >
+        DrawLotteryTitle = #{record.drawlotterytitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.drawlotterycontent != null" >
+        DrawLotteryContent = #{record.drawlotterycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.twodimensionpath != null" >
+        TwoDimensionPath = #{record.twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.drawlotterypageurl != null" >
+        DrawLotteryPageUrl = #{record.drawlotterypageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.twodimensionname != null" >
+        TwoDimensionName = #{record.twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.ceateby != null" >
+        CeateBy = #{record.ceateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.drawlotteryno != null" >
+        DrawLotteryNo = #{record.drawlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="record.getlotteryno != null" >
+        GetLotteryNo = #{record.getlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="record.votestatusid != null" >
+        VoteStatusID = #{record.votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.voteparticipanttypeid != null" >
+        VoteParticipantTypeID = #{record.voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update DrawLotteryConfig
+    set DrawLotteryConfigID = #{record.drawlotteryconfigid,jdbcType=INTEGER},
+      DrawLotteryTitle = #{record.drawlotterytitle,jdbcType=VARCHAR},
+      DrawLotteryContent = #{record.drawlotterycontent,jdbcType=VARCHAR},
+      TwoDimensionPath = #{record.twodimensionpath,jdbcType=VARCHAR},
+      DrawLotteryPageUrl = #{record.drawlotterypageurl,jdbcType=VARCHAR},
+      TwoDimensionName = #{record.twodimensionname,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CeateBy = #{record.ceateby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      DrawLotteryNo = #{record.drawlotteryno,jdbcType=INTEGER},
+      GetLotteryNo = #{record.getlotteryno,jdbcType=INTEGER},
+      VoteStatusID = #{record.votestatusid,jdbcType=INTEGER},
+      VoteParticipantTypeID = #{record.voteparticipanttypeid,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryconfig" >
+    update DrawLotteryConfig
+    <set >
+      <if test="drawlotterytitle != null" >
+        DrawLotteryTitle = #{drawlotterytitle,jdbcType=VARCHAR},
+      </if>
+      <if test="drawlotterycontent != null" >
+        DrawLotteryContent = #{drawlotterycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionpath != null" >
+        TwoDimensionPath = #{twodimensionpath,jdbcType=VARCHAR},
+      </if>
+      <if test="drawlotterypageurl != null" >
+        DrawLotteryPageUrl = #{drawlotterypageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="twodimensionname != null" >
+        TwoDimensionName = #{twodimensionname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ceateby != null" >
+        CeateBy = #{ceateby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+      <if test="drawlotteryno != null" >
+        DrawLotteryNo = #{drawlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="getlotteryno != null" >
+        GetLotteryNo = #{getlotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="votestatusid != null" >
+        VoteStatusID = #{votestatusid,jdbcType=INTEGER},
+      </if>
+      <if test="voteparticipanttypeid != null" >
+        VoteParticipantTypeID = #{voteparticipanttypeid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryconfig" >
+    update DrawLotteryConfig
+    set DrawLotteryTitle = #{drawlotterytitle,jdbcType=VARCHAR},
+      DrawLotteryContent = #{drawlotterycontent,jdbcType=VARCHAR},
+      TwoDimensionPath = #{twodimensionpath,jdbcType=VARCHAR},
+      DrawLotteryPageUrl = #{drawlotterypageurl,jdbcType=VARCHAR},
+      TwoDimensionName = #{twodimensionname,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CeateBy = #{ceateby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      DrawLotteryNo = #{drawlotteryno,jdbcType=INTEGER},
+      GetLotteryNo = #{getlotteryno,jdbcType=INTEGER},
+      VoteStatusID = #{votestatusid,jdbcType=INTEGER},
+      VoteParticipantTypeID = #{voteparticipanttypeid,jdbcType=INTEGER}
+    where DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectDrawlotteryconfigList" resultMap="BaseResultMap">
+		SELECT
+		  <include refid="Base_Column_List" />
+    	FROM DrawLotteryConfig
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="votestatusid != null">
+					AND (VoteStatusID = #{votestatusid})
+				</if>
+				<if test="search != null">
+					AND (DrawLotteryTitle like #{search})
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		DrawLotteryConfigID DESC
+		LIMIT
+		#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="selectCountDrawlotteryconfigList" resultType="int">
+		SELECT
+			count(DrawLotteryConfigID)
+		FROM
+			DrawLotteryConfig
+		<where>
+			<trim prefixOverrides="AND">
+				<if test="votestatusid != null">
+					AND (VoteStatusID = #{votestatusid})
+				</if>
+				<if test="search != null">
+					AND (DrawLotteryTitle like #{search})
+				</if>
+			</trim>
+		</where>
+  	</select>
+  
+</mapper>

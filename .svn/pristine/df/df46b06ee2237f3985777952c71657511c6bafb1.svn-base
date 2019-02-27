@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.content.file.directory.DocumentdirectoryMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.content.file.directory.Documentdirectory" >
+    <id column="DocumentDirectoryID" property="documentdirectoryid" jdbcType="BIGINT" />
+    <result column="DirectoryName" property="directoryname" jdbcType="VARCHAR" />
+    <result column="DirectoryPath" property="directorypath" jdbcType="VARCHAR" />
+    <result column="ParentID" property="parentid" jdbcType="BIGINT" />
+    <result column="IsParent" property="isparent" jdbcType="INTEGER" />
+    <result column="IsNetworkDisk" property="isnetworkdisk" jdbcType="INTEGER" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DocumentDirectoryID, DirectoryName, DirectoryPath, ParentID, IsParent, IsNetworkDisk,
+    CreateTime, CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.content.file.directory.DocumentdirectoryExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from DocumentDirectory
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from DocumentDirectory
+    where DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from DocumentDirectory
+    where DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.content.file.directory.DocumentdirectoryExample" >
+    delete from DocumentDirectory
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.content.file.directory.Documentdirectory" >
+    insert into DocumentDirectory (DocumentDirectoryID, DirectoryName,
+      DirectoryPath, ParentID, IsParent,
+      IsNetworkDisk, CreateTime, CreateBy,
+      CreatePersonID, UpdateTime, UpdateBy,
+      UpdatePersonID)
+    values (#{documentdirectoryid,jdbcType=BIGINT}, #{directoryname,jdbcType=VARCHAR},
+      #{directorypath,jdbcType=VARCHAR}, #{parentid,jdbcType=BIGINT}, #{isparent,jdbcType=INTEGER},
+      #{isnetworkdisk,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR},
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+      #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.content.file.directory.Documentdirectory" useGeneratedKeys="true" keyColumn="DocumentDirectoryID" keyProperty="documentdirectoryid">
+    insert into DocumentDirectory
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="documentdirectoryid != null" >
+        DocumentDirectoryID,
+      </if>
+      <if test="directoryname != null" >
+        DirectoryName,
+      </if>
+      <if test="directorypath != null" >
+        DirectoryPath,
+      </if>
+      <if test="parentid != null" >
+        ParentID,
+      </if>
+      <if test="isparent != null" >
+        IsParent,
+      </if>
+      <if test="isnetworkdisk != null" >
+        IsNetworkDisk,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="documentdirectoryid != null" >
+        #{documentdirectoryid,jdbcType=BIGINT},
+      </if>
+      <if test="directoryname != null" >
+        #{directoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="directorypath != null" >
+        #{directorypath,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="isparent != null" >
+        #{isparent,jdbcType=INTEGER},
+      </if>
+      <if test="isnetworkdisk != null" >
+        #{isnetworkdisk,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.content.file.directory.DocumentdirectoryExample" resultType="java.lang.Integer" >
+    select count(*) from DocumentDirectory
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update DocumentDirectory
+    <set >
+      <if test="record.documentdirectoryid != null" >
+        DocumentDirectoryID = #{record.documentdirectoryid,jdbcType=BIGINT},
+      </if>
+      <if test="record.directoryname != null" >
+        DirectoryName = #{record.directoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.directorypath != null" >
+        DirectoryPath = #{record.directorypath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentid != null" >
+        ParentID = #{record.parentid,jdbcType=BIGINT},
+      </if>
+      <if test="record.isparent != null" >
+        IsParent = #{record.isparent,jdbcType=INTEGER},
+      </if>
+      <if test="record.isnetworkdisk != null" >
+        IsNetworkDisk = #{record.isnetworkdisk,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update DocumentDirectory
+    set DocumentDirectoryID = #{record.documentdirectoryid,jdbcType=BIGINT},
+      DirectoryName = #{record.directoryname,jdbcType=VARCHAR},
+      DirectoryPath = #{record.directorypath,jdbcType=VARCHAR},
+      ParentID = #{record.parentid,jdbcType=BIGINT},
+      IsParent = #{record.isparent,jdbcType=INTEGER},
+      IsNetworkDisk = #{record.isnetworkdisk,jdbcType=INTEGER},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.content.file.directory.Documentdirectory" >
+    update DocumentDirectory
+    <set >
+      <if test="directoryname != null" >
+        DirectoryName = #{directoryname,jdbcType=VARCHAR},
+      </if>
+      <if test="directorypath != null" >
+        DirectoryPath = #{directorypath,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        ParentID = #{parentid,jdbcType=BIGINT},
+      </if>
+      <if test="isparent != null" >
+        IsParent = #{isparent,jdbcType=INTEGER},
+      </if>
+      <if test="isnetworkdisk != null" >
+        IsNetworkDisk = #{isnetworkdisk,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.content.file.directory.Documentdirectory" >
+    update DocumentDirectory
+    set DirectoryName = #{directoryname,jdbcType=VARCHAR},
+      DirectoryPath = #{directorypath,jdbcType=VARCHAR},
+      ParentID = #{parentid,jdbcType=BIGINT},
+      IsParent = #{isparent,jdbcType=INTEGER},
+      IsNetworkDisk = #{isnetworkdisk,jdbcType=INTEGER},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where DocumentDirectoryID = #{documentdirectoryid,jdbcType=BIGINT}
+  </update>
+
+  <select id="getDocumentDirectoryIDByParentID" resultType="long">
+  		select DocumentDirectoryID from DocumentDirectory where ParentID = #{parent_id}
+  </select>
+
+  <!-- 根据文件夹ID获取父级ID -->
+    <select id="getParentIDByDocumentDirectoryID" resultType="java.lang.Long">
+      SELECT ParentID FROM  DocumentDirectory WHERE DocumentDirectoryID = #{directoryID}
+    </select>
+</mapper>

@@ -1,0 +1,181 @@
+package com.jy.common.result;
+
+/**
+ * @ClassName:  ResultEnum
+ * @Description:返回状态码枚举
+ * @author: cheng fei
+ * @date:   2018-05-25 21:48
+ */
+public enum  ResultEnum {
+
+	//成功
+	SUCCESS(10001,200,"OK!"),
+	//请求超时
+	REQUEST_TIMEOUT(10002, 500, "请求超时!"),
+	MOBILE_NOT_OPEN (10003, 404, "移动端未开启!"),
+
+	//参数相关
+	PARAMETER_ERROR(20001,400,"参数列表错误!"),
+
+	SERIAL_NUMBER_EXIST(20002,500,"序号已存在1"),
+
+	DATA_EXIST(2004,400,"已存在"),
+
+	DATA_NOT_EXIST(20003,400,"没有这条数据"),
+
+	//登录相关
+	LOGIN_UNAUTHORIZED(30001,404,"未授权用户!"),
+	LOGIN_DATA_UNPACK_ERROR(30002,500,"登录数据解包异常!"),
+	LOGIN_NAME_OR_PASS_ERROR(30003,404,"账户名或者密码错误!"),
+	LOGIN_CODE_ERROR(30004,404,"验证码错误,或者验证码已过期!"),
+	LOGIN_PHONE_ERROR(30006,500,"该手机未注册!"),
+	ACCOUNT_ERROR(30007, 500, "账号类型错误!"),
+	ACCOUNT_UNALLOWABLE(30008, 500, "该账号已禁用!"),
+	ACCOUNT_LOST_CONNECTION(30009, 500, "该账号已在其他地方登陆,请确认是否是本人操作!"),
+
+
+	//菜单相关
+	MENU_NAME_EXIST(40001,500,"菜单名已存在!"),
+	MENU_CONTROLLER_EXIST(40002,500,"服务接口已绑定!"),
+	MENU_AUTHORITY_NOT_EXIST(40003,404,"菜单权限不存在!"),
+
+	//验证相关
+	SMS_ACCESSKEY(50001,400,"未检测到accessKey信息请在短信设置中设置!"),
+	ACCOUNT_OK(50001,200,"OK!"),
+	ACCOUNT_USER_FORMAT_ERROR(5002,500,"用户名由字母数字下划线组成且开头必须是字母，长度在4-16位之间!"),
+	ACCOUNT_USERNAME_EXIST(50003,500,"用户名已存在!"),
+	ACCOUNT_TWO_PASSWORD_DIFFERENT(50004,500,"密码和确认密码不一致!"),
+	ACCOUNT_PASSWORD_LENGTH_ERROR(50005,500,"密码长度必须 在6-16 位之间!"),
+	ACCOUNT_PASSWORD_FORMAT_ERROR(50006,500,"密码必须包括字母、数字、特殊符号中的2种!"),
+	PHONE_ERROR(50007,500,"电话号码格式不正确!"),
+	MOBILE_PHONE_ERROR(5008,500,"手机号码格式不正确!"),
+	PHONE_EXIST(500911,500,"电话号码已使用!"),
+	PHONE_NOT_NULL(50010,404,"电话号码不能为空!"),
+	EMAIL_ERROR(50011,500,"邮箱格式不正确!"),
+	EMAIL_EXIST(50012,500,"邮箱已使用!"),
+	EMAIL_NOT_NULL(50013,404,"邮箱不能为空!"),
+	QQ_ERROR(50014,500,"QQ号码格式错误!"),
+	CUSTOMER_POOL_PARAM_ERROR(50015,500,"电话,邮箱,QQ,微信必须有一个存在!"),
+	PASSWORD_ERROR(500168,500,"密码错误!"),
+	URL_FORMAT_ERROR(50017,500,"url地址格式错误!"),
+	FAX_FORMAT_ERROR(50018,500,"传真格式错误!"),
+	PHONE_CODE_ERROR(50019,500,"手机验证码错误或已过期!"),
+	JSP_ERROR(50020,500,"邮箱验证错误!"),
+	PHONE_NOT_EXIST_ERROR(50020,500,"该手机号未注册!"),
+	AUTHORITY_CODE_EXIST(50021,500,"权限编码已存在!"),
+	INSERT_NOT_IN_COURSE_VIDEO_DIRECTORY(50022,500,"添加的子文件夹不属于课程视频,以及课程视频下属文件夹!"),
+	DIRECTORY_TIER_GREATER_THREE(50023,500,"课程视频只能有三级目录!"),
+	DELETE_NOT_IN_COURSE_VIDEO_DIRECTORY(50024,500,"删除的子文件夹不属于课程视频,以及课程视频下属文件夹!"),
+	IS_PARENT_DIRECTORY(50025,500,"该文件夹为父文件夹,请先删除子文件夹!"),
+	DIRECTORY_EXIST_FILE(50026,500,"该文件夹中存在文件,请先删除文件!"),
+	PHONE_NOT_EQUALS_ACCOUNT_PHONE(50027, 500, "手机号与账号绑定的手机号不一致!"),
+	ROLE_NAME_EXIST(50028, 500, "用户组名称已存在"),
+	EMAIL_NOT_EXIST(50029,500,"邮箱未注册!"),
+	EMIAL_CODE_ERROR(50030,500,"邮箱验证已过期!"),
+
+	//业务相关
+	SET_ERROR(60000,500,"设置失败!"),
+	SMSSETING_NULL(60001,500,"没有短信配置信息!"),
+	SMS_ERROR(60002,500,"发送短信失败!"),
+	SMS_PHONE_ERROR(60003,500,"请填写正确的手机号码!"),
+	MAILSTING_NULL(60004,500,"没有邮箱配置信息!"),
+	MAILSTING_ERROR(60005,500,"请检查邮箱配置信息!"),
+	MAILRECLED_ERROR(60006,500,"请输入正确的收件人地址信息!"),
+	INSERT_MJ_ERROR1(60007,500,"请先添加相关行业信息!"),
+	INSERT_MJ_ERROR2(60008,500,"请先添加相关公司信息!"),
+	CODE_EXIST(60009,500,"固定编码已存在!"),
+	SELECT_NULL(60010,200,"没有查到数据!"),
+	RECRUIT_EXPIRE_DATE_ERROR(60011, 500, "招聘有效时间不能小于当前时间!"),
+	NEXT_RERUIT_DATE_ERROR(60011, 500, "下次招聘时间不能小于招聘有效时间!"),
+
+
+	//上传下载相关
+	NOT_UPLOAD_FILE_RIGHTS(60101,500,"没有文件上传权限!"),
+	NOT_UPLOAD_IMAGE_RIGHTS(60102,500,"没有文件上传权限!"),
+	UPLOAD_FILE_ERROR(60103,404,"上传文件失败!"),
+	UPLOAD_IMAGE_ERROR(60103,404,"上传图片失败!"),
+	DELETE_FILE_ERROR(60104,500,"删除文件失败!"),
+	DELETE_IMAGE_ERROR(60105,500,"删除图片失败!"),
+	NOT_DOWNLOAD_RIGHTS(60106,500,"没有文件下载权限!"),
+	NOT_FIND_FILE(60107,404,"没有找到文件!"),
+	FILE_ISHAVE(60108,500,"文件已存在"),
+	BUSINESS_IS_PARENT(60109,500,"该行业下存在子行业,请先删除子行业!"),
+	BUSINESS_IS_TOP_PARENT(60109,500,"该行业是最顶级行业,不允许删除!"),
+	COMPANY_EXIST_FILE(60110,500,"该公司下还存在题库,请先删除题库!"),
+	VIDEO_TIME_ERROR(60011,500,"获取视频时长错误!"),
+	DELETE_LOG0_ACCOUNT_ERROR(60012,500,"只有企业用户才能删除logo!"),
+	EXPORT_PDF_ERROR(60013, 500, "导出PDF失败!"),
+	BUSINESS_EXIST_COMPANY(60014, 500, "该行业下存在公司,请先删除公司!"),
+
+	//配置表相关
+	SALARY_ON_FACE_NOT_EXIST(60201,404,"面谈薪资类型不存在!"),
+
+	//人才库
+	TALENTPOOL_NOT_SELECT_AUTHORITY(60301, 500, "请先申请人才库查看权限!"),
+
+
+	//权限相关
+	NOT_INSERT_RIGHTS(70001,500,"没有数据库添加权限!"),
+	NOT_UPDATE_RIGHTS(70002,500,"没有数据库修改权限!"),
+	NOT_SELECT_RIGHTS(70003,500,"没有数据库查询权限!"),
+	NOT_DELETE_RIGHTS(70004,500,"没有数据库删除权限!"),
+	NOT_AUTHORITY(70005,500,"没有操作权限!"),
+	NOT_TALENT_POOL_DOWN_AUTHORITY(70006,500,"没有人才库简历下载权限!"),
+
+	//数据库操作相关
+	INSERT_SQL_ERROR(80001,500,"数据库添加数据错误!"),
+	UPDATE_SQL_ERROR(80002,500,"数据库修改数据错误!"),
+	DELETE_SQL_ERROR(80003,500,"数据库删除数据错误!"),
+	SELECT_SQL_ERROR(80004,500,"数据库查询数据错误!"),
+	SELECT_ERROR(80005,500,"查询参数错误!"),
+	INSERT_DB_LOG_ERROR(80006,500,"添加数据库操作日志错误!"),
+	DB_ERROR(80007,500,"数据库数据错误!"),
+	DB_CONSTRUCTION_ERROR(80008,500,"数据库结构错误!"),
+
+	//未定义的错误
+	UNDEFINED_ERROR(90001,500,"未被定义的错误类型!"),
+
+	//未定义的错误
+	PAY_SIGN_ERRO(90002,500,"支付宝验签失败!"),
+
+	//未定义的错误
+	EXPORT_ORDER_ERRO(90003,500,"订单到处失败!"),
+
+	//抽奖相关
+	MORE_THAN_DRAWS(90004,200,"超过可抽奖次数"),
+	MORE_THAN_WIN(90005,400,"超过可中奖次数"),
+	ALL_PRIZE_OUT(90006,200,"全部奖品都已派送完"),
+
+
+	NOT_ENOUGH_PLACES(100001,500,"名额不足"),
+
+	//订单已付全款
+	ORDER_IS_PAY_ALL(100000,500,"全部奖品都已派送完"),
+
+	COURSR_DELETE_FAIL(100001,500,"已被绑定产品的课程删除失败，请先解除绑定后删除！"),
+	IS_NOT_REMEMBER(100002,500,"此服务仅限会员可申请!"),
+	OF_PEOPLE_RECOMMENDED_THIS_PRODUCT(100004,500,"此课程已反馈"),
+	DELETE_SECTION_FIRST(100003,500,"请先删除此章目下的章节!");
+
+	private Integer code;
+	private Integer status;
+	private String msg;
+
+	private ResultEnum(Integer code, Integer status,String msg) {
+		this.code = code;
+		this.status = status;
+		this.msg = msg;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+}

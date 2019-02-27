@@ -1,0 +1,101 @@
+package com.jy.service.content.file.file;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.file.file.Fileinfo;
+
+/**
+ * @ClassName:  FileService
+ * @Description:文件服务接口
+ * @author: cheng fei
+ * @date:   2018-08-25 16:39
+ */
+public interface FileService {
+
+
+	/**
+	 * 上传文件
+	 * @param accountInfo 当前登录人员
+	 * @param type 上传问价类型:0是图片,1是文件,2是视频,3是面经题库
+	 * @param uploadFile 上传的文件
+	 * @param directory_id 上传文件所属文件夹
+	 * @param video_time  视频时长
+	 * @return
+	 * @throws Exception
+	 */
+	Result insertFile(AccountInfo accountInfo, Integer type, MultipartFile uploadFile, Long directory_id, Long video_time) throws Exception;
+
+	/**
+	 * 查询图片库列表
+	 * @param accountInfo
+	 * @param directory_id
+	 * @param search
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	Result getMonthList(AccountInfo accountInfo , Integer type, Long directory_id, String search, Integer page, Integer pageSize);
+
+	/**
+	 * 查询当月所有文件
+	 * @param accountInfo
+	 * @param month
+	 * @param directory_id
+	 * @param search
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	Result getFileList(AccountInfo accountInfo, Integer type, String month, Long directory_id, String search, Integer page,Integer pageSize) throws Exception;
+
+	/**
+	 * 删除文件
+	 * @param accountInfo 当前登录人员
+	 * @param AUTHORITY_CODE 删除权限
+	 * @param ids 要删除的文件列表
+	 * @return
+	 * @throws Exception
+	 */
+	Result deleteFiles(AccountInfo accountInfo, String AUTHORITY_CODE, String ids) throws Exception;
+
+	/**
+	 * 修改文件名
+	 * @param accountInfo
+	 * @param AUTHORITY_CODE
+	 * @param fileinfo
+	 * @return
+	 * @throws MyException
+	 */
+	Result updateFiles(AccountInfo accountInfo, String AUTHORITY_CODE, Fileinfo fileinfo) throws MyException;
+
+	/**
+	 * 查询文件详情,仅限管理员使用
+	 * @param accountInfo
+	 * @param fileID
+	 * @return
+	 */
+	Result getFile(AccountInfo accountInfo, Long fileID);
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2019/1/17 15:17
+	 * 描述 : 添加视频
+	 * @param accountInfo 当前登陆人员
+	 * @param videoID 视频ID
+	 * @param videoName 视频名称
+	 * @return
+	 */
+	Result insertVideo(AccountInfo accountInfo, String videoID, String videoName, Long videoTime) throws Exception;
+
+	/**
+	 * 作者: cheng fei
+	 * 创建日期: 2019/1/18 0:59
+	 * 描述 : 获取文件上传进度
+	 * @param accountInfo
+	 * @return
+	 */
+	Result getProgressBar(AccountInfo accountInfo);
+}

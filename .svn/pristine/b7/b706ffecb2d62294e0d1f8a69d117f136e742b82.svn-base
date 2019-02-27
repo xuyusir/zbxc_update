@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.enterprise.info.EnterpriseinfoMapper">
+    <resultMap id="BaseResultMap" type="com.jy.entiy.function.enterprise.info.Enterpriseinfo">
+        <id column="EnterpriseID" property="enterpriseid" jdbcType="INTEGER"/>
+        <result column="EnterpriseName" property="enterprisename" jdbcType="VARCHAR"/>
+        <result column="Introduction" property="introduction" jdbcType="VARCHAR"/>
+        <result column="EnterpriseUrl" property="enterpriseurl" jdbcType="VARCHAR"/>
+        <result column="Headquarters" property="headquarters" jdbcType="VARCHAR"/>
+        <result column="LogoFileID" property="logofileid" jdbcType="BIGINT"/>
+        <result column="ContactorName" property="contactorname" jdbcType="VARCHAR"/>
+        <result column="ContactorPhone" property="contactorphone" jdbcType="VARCHAR"/>
+        <result column="ContactorEmail" property="contactoremail" jdbcType="VARCHAR"/>
+        <result column="Remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="Status" property="status" jdbcType="TINYINT"/>
+        <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP"/>
+        <result column="CreateBy" property="createby" jdbcType="VARCHAR"/>
+        <result column="CreaePersonID" property="creaepersonid" jdbcType="BIGINT"/>
+        <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP"/>
+        <result column="UpdateBy" property="updateby" jdbcType="VARCHAR"/>
+        <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    EnterpriseID, EnterpriseName, Introduction, EnterpriseUrl, Headquarters, LogoFileID,
+    ContactorName, ContactorPhone, ContactorEmail, Remark, Status, CreateTime, CreateBy,
+    CreaePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.jy.entiy.function.enterprise.info.EnterpriseinfoExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from EnterpriseInfo
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from EnterpriseInfo
+        where EnterpriseID = #{enterpriseid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from EnterpriseInfo
+    where EnterpriseID = #{enterpriseid,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.jy.entiy.function.enterprise.info.EnterpriseinfoExample">
+        delete from EnterpriseInfo
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.jy.entiy.function.enterprise.info.Enterpriseinfo">
+    insert into EnterpriseInfo (EnterpriseID, EnterpriseName, Introduction,
+      EnterpriseUrl, Headquarters, LogoFileID,
+      ContactorName, ContactorPhone, ContactorEmail,
+      Remark, Status, CreateTime,
+      CreateBy, CreaePersonID, UpdateTime,
+      UpdateBy, UpdatePersonID)
+    values (#{enterpriseid,jdbcType=INTEGER}, #{enterprisename,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR},
+      #{enterpriseurl,jdbcType=VARCHAR}, #{headquarters,jdbcType=VARCHAR}, #{logofileid,jdbcType=BIGINT},
+      #{contactorname,jdbcType=VARCHAR}, #{contactorphone,jdbcType=VARCHAR}, #{contactoremail,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createtime,jdbcType=TIMESTAMP},
+      #{createby,jdbcType=VARCHAR}, #{creaepersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP},
+      #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.jy.entiy.function.enterprise.info.Enterpriseinfo"
+            useGeneratedKeys="true" keyColumn="EnterpriseID" keyProperty="enterpriseid">
+        insert into EnterpriseInfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="enterpriseid != null">
+                EnterpriseID,
+            </if>
+            <if test="enterprisename != null">
+                EnterpriseName,
+            </if>
+            <if test="introduction != null">
+                Introduction,
+            </if>
+            <if test="enterpriseurl != null">
+                EnterpriseUrl,
+            </if>
+            <if test="headquarters != null">
+                Headquarters,
+            </if>
+            <if test="logofileid != null">
+                LogoFileID,
+            </if>
+            <if test="contactorname != null">
+                ContactorName,
+            </if>
+            <if test="contactorphone != null">
+                ContactorPhone,
+            </if>
+            <if test="contactoremail != null">
+                ContactorEmail,
+            </if>
+            <if test="remark != null">
+                Remark,
+            </if>
+            <if test="status != null">
+                Status,
+            </if>
+            <if test="createtime != null">
+                CreateTime,
+            </if>
+            <if test="createby != null">
+                CreateBy,
+            </if>
+            <if test="creaepersonid != null">
+                CreaePersonID,
+            </if>
+            <if test="updatetime != null">
+                UpdateTime,
+            </if>
+            <if test="updateby != null">
+                UpdateBy,
+            </if>
+            <if test="updatepersonid != null">
+                UpdatePersonID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="enterpriseid != null">
+                #{enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="enterprisename != null">
+                #{enterprisename,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null">
+                #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="enterpriseurl != null">
+                #{enterpriseurl,jdbcType=VARCHAR},
+            </if>
+            <if test="headquarters != null">
+                #{headquarters,jdbcType=VARCHAR},
+            </if>
+            <if test="logofileid != null">
+                #{logofileid,jdbcType=BIGINT},
+            </if>
+            <if test="contactorname != null">
+                #{contactorname,jdbcType=VARCHAR},
+            </if>
+            <if test="contactorphone != null">
+                #{contactorphone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactoremail != null">
+                #{contactoremail,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createtime != null">
+                #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createby != null">
+                #{createby,jdbcType=VARCHAR},
+            </if>
+            <if test="creaepersonid != null">
+                #{creaepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="updatetime != null">
+                #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateby != null">
+                #{updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="updatepersonid != null">
+                #{updatepersonid,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.jy.entiy.function.enterprise.info.EnterpriseinfoExample"
+            resultType="java.lang.Integer">
+        select count(*) from EnterpriseInfo
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update EnterpriseInfo
+        <set>
+            <if test="record.enterpriseid != null">
+                EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+            </if>
+            <if test="record.enterprisename != null">
+                EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+            </if>
+            <if test="record.introduction != null">
+                Introduction = #{record.introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="record.enterpriseurl != null">
+                EnterpriseUrl = #{record.enterpriseurl,jdbcType=VARCHAR},
+            </if>
+            <if test="record.headquarters != null">
+                Headquarters = #{record.headquarters,jdbcType=VARCHAR},
+            </if>
+            <if test="record.logofileid != null">
+                LogoFileID = #{record.logofileid,jdbcType=BIGINT},
+            </if>
+            <if test="record.contactorname != null">
+                ContactorName = #{record.contactorname,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contactorphone != null">
+                ContactorPhone = #{record.contactorphone,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contactoremail != null">
+                ContactorEmail = #{record.contactoremail,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                Remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                Status = #{record.status,jdbcType=TINYINT},
+            </if>
+            <if test="record.createtime != null">
+                CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createby != null">
+                CreateBy = #{record.createby,jdbcType=VARCHAR},
+            </if>
+            <if test="record.creaepersonid != null">
+                CreaePersonID = #{record.creaepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="record.updatetime != null">
+                UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updateby != null">
+                UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="record.updatepersonid != null">
+                UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update EnterpriseInfo
+        set EnterpriseID = #{record.enterpriseid,jdbcType=INTEGER},
+        EnterpriseName = #{record.enterprisename,jdbcType=VARCHAR},
+        Introduction = #{record.introduction,jdbcType=VARCHAR},
+        EnterpriseUrl = #{record.enterpriseurl,jdbcType=VARCHAR},
+        Headquarters = #{record.headquarters,jdbcType=VARCHAR},
+        LogoFileID = #{record.logofileid,jdbcType=BIGINT},
+        ContactorName = #{record.contactorname,jdbcType=VARCHAR},
+        ContactorPhone = #{record.contactorphone,jdbcType=VARCHAR},
+        ContactorEmail = #{record.contactoremail,jdbcType=VARCHAR},
+        Remark = #{record.remark,jdbcType=VARCHAR},
+        Status = #{record.status,jdbcType=TINYINT},
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+        CreaePersonID = #{record.creaepersonid,jdbcType=BIGINT},
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.enterprise.info.Enterpriseinfo">
+        update EnterpriseInfo
+        <set>
+            <if test="enterprisename != null">
+                EnterpriseName = #{enterprisename,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null">
+                Introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="enterpriseurl != null">
+                EnterpriseUrl = #{enterpriseurl,jdbcType=VARCHAR},
+            </if>
+            <if test="headquarters != null">
+                Headquarters = #{headquarters,jdbcType=VARCHAR},
+            </if>
+            <if test="logofileid != null">
+                LogoFileID = #{logofileid,jdbcType=BIGINT},
+            </if>
+            <if test="contactorname != null">
+                ContactorName = #{contactorname,jdbcType=VARCHAR},
+            </if>
+            <if test="contactorphone != null">
+                ContactorPhone = #{contactorphone,jdbcType=VARCHAR},
+            </if>
+            <if test="contactoremail != null">
+                ContactorEmail = #{contactoremail,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                Remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                Status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createtime != null">
+                CreateTime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createby != null">
+                CreateBy = #{createby,jdbcType=VARCHAR},
+            </if>
+            <if test="creaepersonid != null">
+                CreaePersonID = #{creaepersonid,jdbcType=BIGINT},
+            </if>
+            <if test="updatetime != null">
+                UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateby != null">
+                UpdateBy = #{updateby,jdbcType=VARCHAR},
+            </if>
+            <if test="updatepersonid != null">
+                UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+            </if>
+        </set>
+        where EnterpriseID = #{enterpriseid,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.enterprise.info.Enterpriseinfo">
+    update EnterpriseInfo
+    set EnterpriseName = #{enterprisename,jdbcType=VARCHAR},
+      Introduction = #{introduction,jdbcType=VARCHAR},
+      EnterpriseUrl = #{enterpriseurl,jdbcType=VARCHAR},
+      Headquarters = #{headquarters,jdbcType=VARCHAR},
+      LogoFileID = #{logofileid,jdbcType=BIGINT},
+      ContactorName = #{contactorname,jdbcType=VARCHAR},
+      ContactorPhone = #{contactorphone,jdbcType=VARCHAR},
+      ContactorEmail = #{contactoremail,jdbcType=VARCHAR},
+      Remark = #{remark,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=TINYINT},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreaePersonID = #{creaepersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where EnterpriseID = #{enterpriseid,jdbcType=INTEGER}
+  </update>
+
+    <select id="getEnterpriseNameByAccountID" resultType="string">
+  		SELECT
+			e.EnterpriseName
+		FROM
+			EnterpriseInfo e,
+			AccountEnterprise ae
+		WHERE
+			e.EnterpriseID = ae.EnterpriseID
+			AND ae.AccountID = #{account_id}
+  </select>
+
+    <!-- 查询企业列表 -->
+    <select id="getEnterpriseList" resultMap="BaseResultMap">
+    SELECT
+	    e.*
+    FROM
+	  enterpriseinfo e
+	LEFT JOIN AccountentErprise AS ae ON e.EnterpriseID = ae.EnterpriseID
+	LEFT JOIN account AS a ON ae.AccountID = a.AccountID
+	WHERE
+	  a.`Status` != 2
+    </select>
+</mapper>

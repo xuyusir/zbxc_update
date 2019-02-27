@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.teacher.TeacherresourceMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.teacher.Teacherresource" >
+    <id column="TeacherID" property="teacherid" jdbcType="INTEGER" />
+    <result column="TeacherName" property="teachername" jdbcType="VARCHAR" />
+    <result column="TeacherAbstract" property="teacherabstract" jdbcType="VARCHAR" />
+    <result column="TeacherResume" property="teacherresume" jdbcType="VARCHAR" />
+    <result column="TearcherSpeciality" property="tearcherspeciality" jdbcType="VARCHAR" />
+    <result column="Email" property="email" jdbcType="VARCHAR" />
+    <result column="Phone" property="phone" jdbcType="VARCHAR" />
+    <result column="BirhDate" property="birhdate" jdbcType="TIMESTAMP" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    TeacherID, TeacherName, TeacherAbstract, TeacherResume, TearcherSpeciality, Email, 
+    Phone, BirhDate, CreateTime, CreateBy, CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.teacher.TeacherresourceExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from TeacherResource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from TeacherResource
+    where TeacherID = #{teacherid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from TeacherResource
+    where TeacherID = #{teacherid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.teacher.TeacherresourceExample" >
+    delete from TeacherResource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.teacher.Teacherresource" >
+    insert into TeacherResource (TeacherID, TeacherName, TeacherAbstract, 
+      TeacherResume, TearcherSpeciality, Email, 
+      Phone, BirhDate, CreateTime, 
+      CreateBy, CreatePersonID, UpdateTime, 
+      UpdateBy, UpdatePersonID)
+    values (#{teacherid,jdbcType=INTEGER}, #{teachername,jdbcType=VARCHAR}, #{teacherabstract,jdbcType=VARCHAR}, 
+      #{teacherresume,jdbcType=VARCHAR}, #{tearcherspeciality,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{birhdate,jdbcType=TIMESTAMP}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{createby,jdbcType=VARCHAR}, #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{updateby,jdbcType=VARCHAR}, #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.teacher.Teacherresource" >
+    insert into TeacherResource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teacherid != null" >
+        TeacherID,
+      </if>
+      <if test="teachername != null" >
+        TeacherName,
+      </if>
+      <if test="teacherabstract != null" >
+        TeacherAbstract,
+      </if>
+      <if test="teacherresume != null" >
+        TeacherResume,
+      </if>
+      <if test="tearcherspeciality != null" >
+        TearcherSpeciality,
+      </if>
+      <if test="email != null" >
+        Email,
+      </if>
+      <if test="phone != null" >
+        Phone,
+      </if>
+      <if test="birhdate != null" >
+        BirhDate,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="teacherid != null" >
+        #{teacherid,jdbcType=INTEGER},
+      </if>
+      <if test="teachername != null" >
+        #{teachername,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherabstract != null" >
+        #{teacherabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherresume != null" >
+        #{teacherresume,jdbcType=VARCHAR},
+      </if>
+      <if test="tearcherspeciality != null" >
+        #{tearcherspeciality,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="birhdate != null" >
+        #{birhdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.teacher.TeacherresourceExample" resultType="java.lang.Integer" >
+    select count(*) from TeacherResource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update TeacherResource
+    <set >
+      <if test="record.teacherid != null" >
+        TeacherID = #{record.teacherid,jdbcType=INTEGER},
+      </if>
+      <if test="record.teachername != null" >
+        TeacherName = #{record.teachername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teacherabstract != null" >
+        TeacherAbstract = #{record.teacherabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teacherresume != null" >
+        TeacherResume = #{record.teacherresume,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tearcherspeciality != null" >
+        TearcherSpeciality = #{record.tearcherspeciality,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        Email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        Phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birhdate != null" >
+        BirhDate = #{record.birhdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update TeacherResource
+    set TeacherID = #{record.teacherid,jdbcType=INTEGER},
+      TeacherName = #{record.teachername,jdbcType=VARCHAR},
+      TeacherAbstract = #{record.teacherabstract,jdbcType=VARCHAR},
+      TeacherResume = #{record.teacherresume,jdbcType=VARCHAR},
+      TearcherSpeciality = #{record.tearcherspeciality,jdbcType=VARCHAR},
+      Email = #{record.email,jdbcType=VARCHAR},
+      Phone = #{record.phone,jdbcType=VARCHAR},
+      BirhDate = #{record.birhdate,jdbcType=TIMESTAMP},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{record.createby,jdbcType=VARCHAR},
+      CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.teacher.Teacherresource" >
+    update TeacherResource
+    <set >
+      <if test="teachername != null" >
+        TeacherName = #{teachername,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherabstract != null" >
+        TeacherAbstract = #{teacherabstract,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherresume != null" >
+        TeacherResume = #{teacherresume,jdbcType=VARCHAR},
+      </if>
+      <if test="tearcherspeciality != null" >
+        TearcherSpeciality = #{tearcherspeciality,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        Email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        Phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="birhdate != null" >
+        BirhDate = #{birhdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where TeacherID = #{teacherid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.teacher.Teacherresource" >
+    update TeacherResource
+    set TeacherName = #{teachername,jdbcType=VARCHAR},
+      TeacherAbstract = #{teacherabstract,jdbcType=VARCHAR},
+      TeacherResume = #{teacherresume,jdbcType=VARCHAR},
+      TearcherSpeciality = #{tearcherspeciality,jdbcType=VARCHAR},
+      Email = #{email,jdbcType=VARCHAR},
+      Phone = #{phone,jdbcType=VARCHAR},
+      BirhDate = #{birhdate,jdbcType=TIMESTAMP},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where TeacherID = #{teacherid,jdbcType=INTEGER}
+  </update>
+  <select id="getTeacherresource" resultMap="BaseResultMap">
+		SELECT
+			TeacherID,
+			TeacherName,
+			TeacherAbstract,
+			TeacherResume,
+			TearcherSpeciality,
+			Email,
+			Phone,
+			BirhDate,
+			CreateTime,
+			CreateBy,
+			CreatePersonID,
+			UpdateTime,
+			UpdateBy,
+			UpdatePersonID 
+		FROM
+			TeacherResource		
+		LIMIT
+			#{startSize},#{pageSize}
+
+	</select>
+
+	<select id="getCountTeacherresource" resultType="int">
+		SELECT
+			count(TeacherID)
+		FROM
+			TeacherResource
+		
+	</select>
+</mapper>

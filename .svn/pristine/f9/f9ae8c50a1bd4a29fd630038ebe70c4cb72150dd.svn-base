@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.marketingFunction.votingManagement.VotedetailsMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.marketingFunction.votingManagement.Votedetails" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="AccountID" property="accountid" jdbcType="BIGINT" />
+    <result column="VoteOptionID" property="voteoptionid" jdbcType="INTEGER" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+    <result column="VoteID" property="voteid" jdbcType="INTEGER" />
+    <result column="VoteItemID" property="voteitemid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, AccountID, VoteOptionID, Remark, VoteID, VoteItemID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.VotedetailsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from VoteDetails
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from VoteDetails
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from VoteDetails
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.VotedetailsExample" >
+    delete from VoteDetails
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.Votedetails" >
+    insert into VoteDetails (ID, AccountID, VoteOptionID, 
+      Remark, VoteID, VoteItemID
+      )
+    values (#{id,jdbcType=BIGINT}, #{accountid,jdbcType=BIGINT}, #{voteoptionid,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{voteid,jdbcType=INTEGER}, #{voteitemid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.Votedetails" >
+    insert into VoteDetails
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="accountid != null" >
+        AccountID,
+      </if>
+      <if test="voteoptionid != null" >
+        VoteOptionID,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+      <if test="voteid != null" >
+        VoteID,
+      </if>
+      <if test="voteitemid != null" >
+        VoteItemID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="accountid != null" >
+        #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="voteoptionid != null" >
+        #{voteoptionid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="voteid != null" >
+        #{voteid,jdbcType=INTEGER},
+      </if>
+      <if test="voteitemid != null" >
+        #{voteitemid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.VotedetailsExample" resultType="java.lang.Integer" >
+    select count(*) from VoteDetails
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update VoteDetails
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.accountid != null" >
+        AccountID = #{record.accountid,jdbcType=BIGINT},
+      </if>
+      <if test="record.voteoptionid != null" >
+        VoteOptionID = #{record.voteoptionid,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        Remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voteid != null" >
+        VoteID = #{record.voteid,jdbcType=INTEGER},
+      </if>
+      <if test="record.voteitemid != null" >
+        VoteItemID = #{record.voteitemid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update VoteDetails
+    set ID = #{record.id,jdbcType=BIGINT},
+      AccountID = #{record.accountid,jdbcType=BIGINT},
+      VoteOptionID = #{record.voteoptionid,jdbcType=INTEGER},
+      Remark = #{record.remark,jdbcType=VARCHAR},
+      VoteID = #{record.voteid,jdbcType=INTEGER},
+      VoteItemID = #{record.voteitemid,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.Votedetails" >
+    update VoteDetails
+    <set >
+      <if test="accountid != null" >
+        AccountID = #{accountid,jdbcType=BIGINT},
+      </if>
+      <if test="voteoptionid != null" >
+        VoteOptionID = #{voteoptionid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="voteid != null" >
+        VoteID = #{voteid,jdbcType=INTEGER},
+      </if>
+      <if test="voteitemid != null" >
+        VoteItemID = #{voteitemid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.votingManagement.Votedetails" >
+    update VoteDetails
+    set AccountID = #{accountid,jdbcType=BIGINT},
+      VoteOptionID = #{voteoptionid,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR},
+      VoteID = #{voteid,jdbcType=INTEGER},
+      VoteItemID = #{voteitemid,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

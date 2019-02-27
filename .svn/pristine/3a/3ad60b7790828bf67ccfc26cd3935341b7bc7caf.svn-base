@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.person.memberFunction.ComplaintapplicationMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.person.memberFunction.Complaintapplication" >
+    <id column="ComplaintApplicationID" property="complaintapplicationid" jdbcType="BIGINT" />
+    <result column="ApplicationStatusID" property="applicationstatusid" jdbcType="INTEGER" />
+    <result column="ComplaintNo" property="complaintno" jdbcType="VARCHAR" />
+    <result column="ComplaintPerson" property="complaintperson" jdbcType="VARCHAR" />
+    <result column="Phone" property="phone" jdbcType="VARCHAR" />
+    <result column="ComplaintTime" property="complainttime" jdbcType="TIMESTAMP" />
+    <result column="ComplaintTarget" property="complainttarget" jdbcType="VARCHAR" />
+    <result column="ComplaintContent" property="complaintcontent" jdbcType="VARCHAR" />
+    <result column="HandleTime" property="handletime" jdbcType="TIMESTAMP" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="CreateBy" property="createby" jdbcType="VARCHAR" />
+    <result column="CreatePersonID" property="createpersonid" jdbcType="BIGINT" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="UpdateBy" property="updateby" jdbcType="VARCHAR" />
+    <result column="UpdatePersonID" property="updatepersonid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ComplaintApplicationID, ApplicationStatusID, ComplaintNo, ComplaintPerson, Phone,
+    ComplaintTime, ComplaintTarget, ComplaintContent, HandleTime, CreateTime, CreateBy,
+    CreatePersonID, UpdateTime, UpdateBy, UpdatePersonID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.person.memberFunction.ComplaintapplicationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ComplaintApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from ComplaintApplication
+    where ComplaintApplicationID = #{complaintapplicationid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ComplaintApplication
+    where ComplaintApplicationID = #{complaintapplicationid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.person.memberFunction.ComplaintapplicationExample" >
+    delete from ComplaintApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.person.memberFunction.Complaintapplication" >
+    insert into ComplaintApplication (ComplaintApplicationID, ApplicationStatusID,
+      ComplaintNo, ComplaintPerson, Phone,
+      ComplaintTime, ComplaintTarget, ComplaintContent,
+      HandleTime, CreateTime, CreateBy,
+      CreatePersonID, UpdateTime, UpdateBy,
+      UpdatePersonID)
+    values (#{complaintapplicationid,jdbcType=BIGINT}, #{applicationstatusid,jdbcType=INTEGER},
+      #{complaintno,jdbcType=VARCHAR}, #{complaintperson,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+      #{complainttime,jdbcType=TIMESTAMP}, #{complainttarget,jdbcType=VARCHAR}, #{complaintcontent,jdbcType=VARCHAR},
+      #{handletime,jdbcType=TIMESTAMP}, #{createtime,jdbcType=TIMESTAMP}, #{createby,jdbcType=VARCHAR},
+      #{createpersonid,jdbcType=BIGINT}, #{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR},
+      #{updatepersonid,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.person.memberFunction.Complaintapplication" >
+    insert into ComplaintApplication
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="complaintapplicationid != null" >
+        ComplaintApplicationID,
+      </if>
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID,
+      </if>
+      <if test="complaintno != null" >
+        ComplaintNo,
+      </if>
+      <if test="complaintperson != null" >
+        ComplaintPerson,
+      </if>
+      <if test="phone != null" >
+        Phone,
+      </if>
+      <if test="complainttime != null" >
+        ComplaintTime,
+      </if>
+      <if test="complainttarget != null" >
+        ComplaintTarget,
+      </if>
+      <if test="complaintcontent != null" >
+        ComplaintContent,
+      </if>
+      <if test="handletime != null" >
+        HandleTime,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="createby != null" >
+        CreateBy,
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="updateby != null" >
+        UpdateBy,
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="complaintapplicationid != null" >
+        #{complaintapplicationid,jdbcType=BIGINT},
+      </if>
+      <if test="applicationstatusid != null" >
+        #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="complaintno != null" >
+        #{complaintno,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintperson != null" >
+        #{complaintperson,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="complainttime != null" >
+        #{complainttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="complainttarget != null" >
+        #{complainttarget,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintcontent != null" >
+        #{complaintcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="handletime != null" >
+        #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.person.memberFunction.ComplaintapplicationExample" resultType="java.lang.Integer" >
+    select count(*) from ComplaintApplication
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ComplaintApplication
+    <set >
+      <if test="record.complaintapplicationid != null" >
+        ComplaintApplicationID = #{record.complaintapplicationid,jdbcType=BIGINT},
+      </if>
+      <if test="record.applicationstatusid != null" >
+        ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="record.complaintno != null" >
+        ComplaintNo = #{record.complaintno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.complaintperson != null" >
+        ComplaintPerson = #{record.complaintperson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        Phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.complainttime != null" >
+        ComplaintTime = #{record.complainttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.complainttarget != null" >
+        ComplaintTarget = #{record.complainttarget,jdbcType=VARCHAR},
+      </if>
+      <if test="record.complaintcontent != null" >
+        ComplaintContent = #{record.complaintcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.handletime != null" >
+        HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createby != null" >
+        CreateBy = #{record.createby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createpersonid != null" >
+        CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateby != null" >
+        UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatepersonid != null" >
+        UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ComplaintApplication
+    set ComplaintApplicationID = #{record.complaintapplicationid,jdbcType=BIGINT},
+    ApplicationStatusID = #{record.applicationstatusid,jdbcType=INTEGER},
+    ComplaintNo = #{record.complaintno,jdbcType=VARCHAR},
+    ComplaintPerson = #{record.complaintperson,jdbcType=VARCHAR},
+    Phone = #{record.phone,jdbcType=VARCHAR},
+    ComplaintTime = #{record.complainttime,jdbcType=TIMESTAMP},
+    ComplaintTarget = #{record.complainttarget,jdbcType=VARCHAR},
+    ComplaintContent = #{record.complaintcontent,jdbcType=VARCHAR},
+    HandleTime = #{record.handletime,jdbcType=TIMESTAMP},
+    CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+    CreateBy = #{record.createby,jdbcType=VARCHAR},
+    CreatePersonID = #{record.createpersonid,jdbcType=BIGINT},
+    UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+    UpdateBy = #{record.updateby,jdbcType=VARCHAR},
+    UpdatePersonID = #{record.updatepersonid,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.person.memberFunction.Complaintapplication" >
+    update ComplaintApplication
+    <set >
+      <if test="applicationstatusid != null" >
+        ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      </if>
+      <if test="complaintno != null" >
+        ComplaintNo = #{complaintno,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintperson != null" >
+        ComplaintPerson = #{complaintperson,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        Phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="complainttime != null" >
+        ComplaintTime = #{complainttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="complainttarget != null" >
+        ComplaintTarget = #{complainttarget,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintcontent != null" >
+        ComplaintContent = #{complaintcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="handletime != null" >
+        HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createby != null" >
+        CreateBy = #{createby,jdbcType=VARCHAR},
+      </if>
+      <if test="createpersonid != null" >
+        CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateby != null" >
+        UpdateBy = #{updateby,jdbcType=VARCHAR},
+      </if>
+      <if test="updatepersonid != null" >
+        UpdatePersonID = #{updatepersonid,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ComplaintApplicationID = #{complaintapplicationid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.person.memberFunction.Complaintapplication" >
+    update ComplaintApplication
+    set ApplicationStatusID = #{applicationstatusid,jdbcType=INTEGER},
+      ComplaintNo = #{complaintno,jdbcType=VARCHAR},
+      ComplaintPerson = #{complaintperson,jdbcType=VARCHAR},
+      Phone = #{phone,jdbcType=VARCHAR},
+      ComplaintTime = #{complainttime,jdbcType=TIMESTAMP},
+      ComplaintTarget = #{complainttarget,jdbcType=VARCHAR},
+      ComplaintContent = #{complaintcontent,jdbcType=VARCHAR},
+      HandleTime = #{handletime,jdbcType=TIMESTAMP},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      CreateBy = #{createby,jdbcType=VARCHAR},
+      CreatePersonID = #{createpersonid,jdbcType=BIGINT},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      UpdateBy = #{updateby,jdbcType=VARCHAR},
+      UpdatePersonID = #{updatepersonid,jdbcType=BIGINT}
+    where ComplaintApplicationID = #{complaintapplicationid,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectComplaintList" resultMap="BaseResultMap">
+    SELECT
+    a.ComplaintApplicationID,
+    a.ApplicationStatusID,
+    b.ApplicationStatusName,
+    a.ComplaintNo,
+    a.ComplaintPerson,
+    a.Phone,
+    a.ComplaintTime,
+    a.ComplaintTarget,
+    a.ComplaintContent,
+    a.HandleTime,
+    a.CreateTime,
+    a.CreateBy,
+    a.CreatePersonID,
+    a.UpdateTime,
+    a.UpdateBy,
+    a.UpdatePersonID
+    FROM
+    ComplaintApplication a
+    LEFT JOIN ApplicationStatus b ON ( a.ApplicationStatusID = b.ApplicationStatusID )
+    <where>
+      <trim prefixOverrides="AND">
+        <if test="applicationstatusname != null">
+          AND (b.ApplicationStatusName = #{applicationstatusname})
+        </if>
+        <if test="complainttime != null">
+          AND (a.ComplaintTime like '%${complainttime}%')
+        </if>
+        <if test="personSearch != null">
+          AND (a.ComplaintPerson like #{personSearch} OR a.Phone like #{personSearch} OR a.ComplaintNo like #{personSearch})
+        </if>
+        <if test="targetSearch != null">
+          AND (a.ComplaintTarget like #{targetSearch})
+        </if>
+      </trim>
+    </where>
+    ORDER BY
+    a.ComplaintTime DESC
+    LIMIT
+    #{startSize},#{pageSize}
+
+  </select>
+
+  <select id="selectCountComplaintList" resultType="int">
+    SELECT
+    count(a.ComplaintApplicationID)
+    FROM
+    ComplaintApplication a
+    LEFT JOIN ApplicationStatus b ON ( a.ApplicationStatusID = b.ApplicationStatusID )
+    <where>
+      <trim prefixOverrides="AND">
+        <if test="applicationstatusname != null">
+          AND (b.ApplicationStatusName = #{applicationstatusname})
+        </if>
+        <if test="complainttime != null">
+          AND (a.ComplaintTime like '%${complainttime}%')
+        </if>
+        <if test="personSearch != null">
+          AND (a.ComplaintPerson like #{personSearch} OR a.Phone like #{personSearch})
+        </if>
+        <if test="targetSearch != null">
+          AND (a.ComplaintTarget like #{targetSearch})
+        </if>
+      </trim>
+    </where>
+  </select>
+</mapper>

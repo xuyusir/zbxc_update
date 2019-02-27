@@ -1,0 +1,374 @@
+package com.jy.service.content.columnManage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.aliyun.oss.model.Callback.CalbackBodyType;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jy.common.exception.MyException;
+import com.jy.common.result.Result;
+import com.jy.common.result.ResultEnum;
+import com.jy.dao.content.articleManage.ArticleinfoMapper;
+import com.jy.dao.content.columnManage.PagecolumnMapper;
+import com.jy.dao.content.file.file.FileinfoMapper;
+import com.jy.dao.content.file.file.UsefileMapper;
+import com.jy.dao.content.navbarManage.PageMapper;
+import com.jy.dao.content.positionManage.ColumnpostionMapper;
+import com.jy.entiy.account.account.AccountInfo;
+import com.jy.entiy.content.articleManage.Articleinfo;
+import com.jy.entiy.content.articleManage.ArticleinfoExample;
+import com.jy.entiy.content.columnManage.Pagecolumn;
+import com.jy.entiy.content.columnManage.PagecolumnExample;
+import com.jy.entiy.content.file.file.Fileinfo;
+import com.jy.entiy.content.navbarManage.Page;
+import com.jy.entiy.content.navbarManage.PageExample;
+import com.jy.entiy.content.navbarManage.PageExample.Criteria;
+import com.jy.entiy.content.positionManage.Columnpostion;
+import com.jy.entiy.content.positionManage.ColumnpostionExample;
+import com.jy.service.base.BaseService;
+
+/**
+ * @ClassName: ColumnManageServiceImpl
+ * @Description:栏目管理实现类
+ * @author: chenye
+ * @date: 2018-09-19 16:45
+ */
+@Service
+public class ColumnManageServiceImpl extends BaseService implements ColumnManageService {
+
+	// 数据库操作日志类型
+	private static final String DB_LOG_TYPE = "DB_LOG_COLUMN_MANAGE";
+	private static final String TABLE_NAME = "PageColumn";
+	//private static final String TABLE_NAME2 = "ColumnPostion";
+	//private static final String TABLE_NAME3 = "ArticleInfo";
+
+	@Resource
+	private PageMapper pageMapper;
+	@Resource
+	PagecolumnMapper pagecolumnMapper;
+	@Resource
+	private ArticleinfoMapper articleinfoMapper;
+	@Resource
+	private ColumnpostionMapper columnpostionMapper;
+	@Resource
+	private FileinfoMapper fileinfoMapper;
+	@Resource
+	private UsefileMapper usefileMapper;
+
+	public Result getColumnList() throws MyException {
+
+		PagecolumnExample pagecolumnExample = new PagecolumnExample();
+		pagecolumnExample.setOrderByClause("PageID,DisplayOrder");
+		List<Pagecolumn> list = pagecolumnMapper.selectByExample(pagecolumnExample);
+		return Result.succee(list);
+	}
+
+	@Override
+	public Result getColumnList(AccountInfo accountInfo, String AUTHORITY_CODE, Integer page, Integer pageSize)
+			throws MyException {
+
+		// // 检测权限
+		// Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		// if (checkAuthority.getStatus() != 200) {
+		// return checkAuthority;
+		// }
+
+		PageHelper.startPage(page, pageSize);
+		PagecolumnExample pagecolumnExample = new PagecolumnExample();
+		pagecolumnExample.setOrderByClause("PageID,DisplayOrder");
+		List<Pagecolumn> list = pagecolumnMapper.selectByExample(pagecolumnExample);
+		PageInfo<Pagecolumn> info = new PageInfo<>(list);
+		List<Pagecolumn> rows = info.getList();
+		if(rows != null && rows.size() != 0) {
+			for (Pagecolumn pagecolumn : rows) {
+				Integer pageid = pagecolumn.getPageid();
+				if(pageid != null && pageid != 0) {
+					Page selectByPrimaryKey = pageMapper.selectByPrimaryKey(pageid);
+					if(selectByPrimaryKey != null) {
+						pagecolumn.setPagename(selectByPrimaryKey.getPagename());
+					}
+				}
+			}
+		}
+		long count = info.getTotal();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("rows", rows);
+		map.put("count", count);
+		return Result.succee(map);
+	}
+
+	@Override
+	public Result getColumnInfo(AccountInfo accountInfo, String AUTHORITY_CODE, Integer pagecolumnid)
+			throws MyException {
+
+		// // 检测权限
+		// Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		// if (checkAuthority.getStatus() != 200) {
+		// return checkAuthority;
+		// }
+		if (pagecolumnid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		Pagecolumn pagecolumn = pagecolumnMapper.selectByPrimaryKey(pagecolumnid);
+		if (pagecolumn.getFileid() != null) {
+			Fileinfo fileinfo = fileinfoMapper.selectByPrimaryKey(pagecolumn.getFileid());
+			if(fileinfo == null) {
+				return Result.succee(pagecolumn);
+			}
+			if (fileinfo.getFilefullpath() != null) {
+				pagecolumn.setPicturePath(aliyunOSSClientUtil.getUrl(fileinfo.getFilefullpath()));
+			}
+
+		}
+		//关闭阿里云oss
+		aliyunOSSClientUtil.closeOSSClient();
+		return Result.succee(pagecolumn);
+	}
+
+	public Result getAllColumnByPageid(AccountInfo accountInfo, Integer pageid) throws MyException {
+
+		if (pageid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		//查询该导航页下所有子导航页的栏目
+		PageExample pageExample = new PageExample();
+		pageExample.setOrderByClause("DisplayOrder");
+		Criteria createCriteria2 = pageExample.createCriteria();
+		createCriteria2.andParentidEqualTo(pageid);
+		//下辖的所有子导航页
+		List<Page> pageList = pageMapper.selectByExample(pageExample);
+		Page thisPage = pageMapper.selectByPrimaryKey(pageid);
+		//加上当前导航页
+		pageList.add(thisPage);
+		//返回该导航页及其子导航页下的所有栏目
+		List<Pagecolumn> list = new ArrayList<>();
+		for (Page page : pageList) {
+			PagecolumnExample pagecolumnExample = new PagecolumnExample();
+			pagecolumnExample.setOrderByClause("DisplayOrder");
+			com.jy.entiy.content.columnManage.PagecolumnExample.Criteria createCriteria = pagecolumnExample.createCriteria();
+			createCriteria.andPageidEqualTo(page.getPageid());
+			List<Pagecolumn> pagecolumnList = pagecolumnMapper.selectByExample(pagecolumnExample);
+			list.addAll(pagecolumnList);
+		}
+		
+		return Result.succee(list);
+
+	}
+
+	@Override
+	public Result insertColumn(AccountInfo accountInfo, String AUTHORITY_CODE, Pagecolumn pageColumn)
+			throws MyException { 
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 参数非空检查
+		if (StringUtils.isBlank(pageColumn.getPagecolumnname()) || pageColumn.getDisplayorder() == null
+				|| pageColumn.getPageid() == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		Page page = pageMapper.selectByPrimaryKey(pageColumn.getPageid());
+		if (page == null) {// 该导航页不存在
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		// 同一导航页下栏目序号检查是否已存在
+		PagecolumnExample pagecolumnExample = new PagecolumnExample();
+		com.jy.entiy.content.columnManage.PagecolumnExample.Criteria createCriteria = pagecolumnExample.createCriteria();
+		createCriteria.andDisplayorderEqualTo(pageColumn.getDisplayorder());
+		createCriteria.andPageidEqualTo(pageColumn.getPageid());
+		int count = pagecolumnMapper.countByExample(pagecolumnExample);
+
+		if (count != 0) {
+			return Result.build(ResultEnum.SERIAL_NUMBER_EXIST);
+		}
+
+		int i = pagecolumnMapper.insertSelective(pageColumn);
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+		if (pageColumn.getFileid() != null) {
+			this.addUseFile(pageColumn.getFileid(), TABLE_NAME, (long) pageColumn.getPagecolumnid());
+		}
+
+		// 插入数据库操作日志
+		String log = "添加了一个栏目 : [ ";
+		log += StringUtils.isBlank(pageColumn.getPagecolumnname()) ? ""
+				: "栏目名称=" + pageColumn.getPagecolumnname() + ",";
+		log += pageColumn.getPagecolumnid() == null ? "" : "栏目id=" + pageColumn.getPagecolumnid() + ",";
+		log += StringUtils.isBlank(pageColumn.getCreateby()) ? "" : "创建者=" + pageColumn.getCreateby() + ",";
+		log += pageColumn.getCreatepersonid() == null ? "" : "创建者id=" + pageColumn.getCreatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result updateColumn(AccountInfo accountInfo, String AUTHORITY_CODE, Pagecolumn pageColumn)
+			throws MyException {
+
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		
+		// 参数非空检查
+		if (pageColumn.getPagecolumnid() == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+
+		Pagecolumn selectByPrimaryKey = pagecolumnMapper.selectByPrimaryKey(pageColumn.getPagecolumnid());
+		if(selectByPrimaryKey == null) {//没有该栏目
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		
+		if (pageColumn.getDisplayorder() != null) {
+			// 序号检查是否已存在
+			PagecolumnExample pagecolumnExample = new PagecolumnExample();
+			com.jy.entiy.content.columnManage.PagecolumnExample.Criteria createCriteria = pagecolumnExample.createCriteria();
+			createCriteria.andDisplayorderEqualTo(pageColumn.getDisplayorder());
+			createCriteria.andPagecolumnidNotEqualTo(pageColumn.getPagecolumnid());
+			createCriteria.andPageidEqualTo(pageColumn.getPageid());
+			int count = pagecolumnMapper.countByExample(pagecolumnExample);
+			if (count != 0) {
+				return Result.build(ResultEnum.SERIAL_NUMBER_EXIST);
+			}
+		}
+
+		Pagecolumn old_pagecolumn = selectByPrimaryKey;
+
+		int i = pagecolumnMapper.updateByPrimaryKeySelective(pageColumn);
+		if (i < 1) {
+			throw new MyException(ResultEnum.INSERT_SQL_ERROR);
+		}
+		if (pageColumn.getFileid() != null) {
+			this.addUseFile(pageColumn.getFileid(), TABLE_NAME, (long) pageColumn.getPagecolumnid());
+			if (old_pagecolumn.getFileid() != null) {
+				this.deleteFile(accountInfo, DB_LOG_TYPE, old_pagecolumn.getFileid(), TABLE_NAME,
+						(long) old_pagecolumn.getPagecolumnid());
+			}
+		}
+
+		// 插入数据库操作日志
+		String log = "修改了一个栏目 : [ ";
+		log += StringUtils.isBlank(pageColumn.getPagecolumnname()) ? ""
+				: "栏目名称=" + pageColumn.getPagecolumnname() + ",";
+		log += pageColumn.getPagecolumnid() == null ? "" : "栏目id=" + pageColumn.getPagecolumnid() + ",";
+		log += StringUtils.isBlank(pageColumn.getCreateby()) ? "" : "修改者=" + pageColumn.getUpdateby() + ",";
+		log += pageColumn.getUpdatepersonid() == null ? "" : "修改者id=" + pageColumn.getUpdatepersonid() + ",";
+		log = log.substring(0, log.length() - 1) + " ]";
+		this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+
+		return Result.succee();
+	}
+
+	@Override
+	public Result deleteColumn(AccountInfo accountInfo, String AUTHORITY_CODE, Integer pagecolumnid)
+			throws MyException {
+
+		// 检测权限
+		Result checkAuthority = this.checkAuthority(accountInfo, AUTHORITY_CODE);
+		if (checkAuthority.getStatus() != 200) {
+			return checkAuthority;
+		}
+		// 参数非空检查
+		if (pagecolumnid == null) {
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		
+		if(pagecolumnid == 1) {
+			return Result.build(20001,400,"不能删除首页介绍栏目!");
+		}
+		
+
+		ColumnpostionExample columnpostionExample = new ColumnpostionExample();
+		com.jy.entiy.content.positionManage.ColumnpostionExample.Criteria createCriteria = columnpostionExample.createCriteria();
+		createCriteria.andPagecolumnidEqualTo(pagecolumnid);
+		Pagecolumn pagecolumn = pagecolumnMapper.selectByPrimaryKey(pagecolumnid);
+		if (pagecolumn == null) {//该栏目不存在
+			return Result.build(ResultEnum.PARAMETER_ERROR);
+		}
+		if(pagecolumn.getRemark() != null && pagecolumn.getRemark().equals("Y")) {
+			return Result.build(20001,400,"不能删除网站初始化栏目!");
+		}
+		ArticleinfoExample articleinfoExample = new ArticleinfoExample();
+		com.jy.entiy.content.articleManage.ArticleinfoExample.Criteria createCriteria2 = articleinfoExample.createCriteria();
+		createCriteria2.andPagecolumnidEqualTo(pagecolumnid);
+		List<Articleinfo> articleinfoList = articleinfoMapper.selectByExample(articleinfoExample);//该栏目下所有文章
+		
+
+			if(articleinfoList.size() != 0) {
+				return Result.build(2002,500,"请先删除栏目下的文章!");
+//				for (Articleinfo articleinfo : articleinfoList) {
+//					if (articleinfo.getThumbnailfileid() != null) {
+//						this.deleteFile(accountInfo, DB_LOG_TYPE, articleinfo.getThumbnailfileid(), TABLE_NAME3,
+//								(long) articleinfo.getArticleid());//删除文章引用文件
+//					}
+//					if (articleinfo.getAttachmentfileid() != null) {
+//						this.deleteFile(accountInfo, DB_LOG_TYPE, articleinfo.getAttachmentfileid(), TABLE_NAME3,
+//								(long) articleinfo.getArticleid());//删除文章引用文件
+//					}
+//				}
+//				
+//				int deleteArticle = articleinfoMapper.deleteByExample(articleinfoExample);//删除该栏目下的所有文章
+//				if (deleteArticle < 1) {
+//					throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+//				}
+			}
+			
+			
+			List<Columnpostion> columnpostionList = columnpostionMapper.selectByExample(columnpostionExample);// 该栏目下的所有推荐位
+			
+			if(columnpostionList.size() != 0) {//有推荐位才删除推荐位
+
+				return Result.build(2003,500,"请先删除栏目下的推荐位!");
+//				for (Columnpostion columnpostion : columnpostionList) {
+//					if (columnpostion.getFileid() != null) {
+//						this.deleteFile(accountInfo, DB_LOG_TYPE, columnpostion.getFileid(), TABLE_NAME2,
+//								(long) columnpostion.getColumnpostionid());
+//					}
+//				}
+//
+//				int i1 = columnpostionMapper.deleteByExample(columnpostionExample);// 删除栏目之前删除该栏目下所有的推荐位
+//				if (i1 < 1) {
+//					throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+//				}
+				
+			}
+			
+			int i2 = pagecolumnMapper.deleteByPrimaryKey(pagecolumnid);
+			if (i2 < 1) {
+				throw new MyException(ResultEnum.DELETE_SQL_ERROR);
+			}
+
+			
+			if (pagecolumn.getFileid() != null) {
+				this.deleteFile(accountInfo, DB_LOG_TYPE, pagecolumn.getFileid(), TABLE_NAME,
+						(long) pagecolumn.getPagecolumnid());
+			}
+			// 插入数据库操作日志
+			String log = "删除了一个栏目 :  栏目id为";
+			log += pagecolumnid;
+			log += "删除者";
+			log += accountInfo.getAccount().getName();
+
+			this.dbLog(accountInfo.getAccount().getAccountid(), accountInfo.getAccount().getName(), log, DB_LOG_TYPE);
+	
+		return Result.succee();
+	}
+
+}

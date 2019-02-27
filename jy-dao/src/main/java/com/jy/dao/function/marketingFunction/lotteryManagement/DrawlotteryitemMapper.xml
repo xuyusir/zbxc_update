@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jy.dao.function.marketingFunction.lotteryManagement.DrawlotteryitemMapper" >
+  <resultMap id="BaseResultMap" type="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryitem" >
+    <id column="DrawLotteryItemID" property="drawlotteryitemid" jdbcType="INTEGER" />
+    <result column="DrawLotteryConfigID" property="drawlotteryconfigid" jdbcType="INTEGER" />
+    <result column="LotterySet" property="lotteryset" jdbcType="VARCHAR" />
+    <result column="LotteryNo" property="lotteryno" jdbcType="INTEGER" />
+    <result column="GetLotteryProbalility" property="getlotteryprobalility" jdbcType="REAL" />
+    <result column="DrawLotteryLevelID" property="drawlotterylevelid" jdbcType="INTEGER" />
+    <result column="picturePathId" property="picturepathid" jdbcType="BIGINT" />
+    <result column="picturePath" property="picturepath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DrawLotteryItemID, DrawLotteryConfigID, LotterySet, LotteryNo, GetLotteryProbalility, 
+    DrawLotteryLevelID, picturePathId, picturePath
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from DrawLotteryItem
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from DrawLotteryItem
+    where DrawLotteryItemID = #{drawlotteryitemid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from DrawLotteryItem
+    where DrawLotteryItemID = #{drawlotteryitemid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample" >
+    delete from DrawLotteryItem
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryitem" >
+    insert into DrawLotteryItem (DrawLotteryItemID, DrawLotteryConfigID, 
+      LotterySet, LotteryNo, GetLotteryProbalility, 
+      DrawLotteryLevelID, picturePathId, picturePath
+      )
+    values (#{drawlotteryitemid,jdbcType=INTEGER}, #{drawlotteryconfigid,jdbcType=INTEGER}, 
+      #{lotteryset,jdbcType=VARCHAR}, #{lotteryno,jdbcType=INTEGER}, #{getlotteryprobalility,jdbcType=REAL}, 
+      #{drawlotterylevelid,jdbcType=INTEGER}, #{picturepathid,jdbcType=BIGINT}, #{picturepath,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryitem" useGeneratedKeys="true" keyColumn="DrawLotteryItemID" keyProperty="drawlotteryitemid">
+    insert into DrawLotteryItem
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="drawlotteryitemid != null" >
+        DrawLotteryItemID,
+      </if>
+      <if test="drawlotteryconfigid != null" >
+        DrawLotteryConfigID,
+      </if>
+      <if test="lotteryset != null" >
+        LotterySet,
+      </if>
+      <if test="lotteryno != null" >
+        LotteryNo,
+      </if>
+      <if test="getlotteryprobalility != null" >
+        GetLotteryProbalility,
+      </if>
+      <if test="drawlotterylevelid != null" >
+        DrawLotteryLevelID,
+      </if>
+      <if test="picturepathid != null" >
+        picturePathId,
+      </if>
+      <if test="picturepath != null" >
+        picturePath,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="drawlotteryitemid != null" >
+        #{drawlotteryitemid,jdbcType=INTEGER},
+      </if>
+      <if test="drawlotteryconfigid != null" >
+        #{drawlotteryconfigid,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryset != null" >
+        #{lotteryset,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryno != null" >
+        #{lotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="getlotteryprobalility != null" >
+        #{getlotteryprobalility,jdbcType=REAL},
+      </if>
+      <if test="drawlotterylevelid != null" >
+        #{drawlotterylevelid,jdbcType=INTEGER},
+      </if>
+      <if test="picturepathid != null" >
+        #{picturepathid,jdbcType=BIGINT},
+      </if>
+      <if test="picturepath != null" >
+        #{picturepath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.DrawlotteryitemExample" resultType="java.lang.Integer" >
+    select count(*) from DrawLotteryItem
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update DrawLotteryItem
+    <set >
+      <if test="record.drawlotteryitemid != null" >
+        DrawLotteryItemID = #{record.drawlotteryitemid,jdbcType=INTEGER},
+      </if>
+      <if test="record.drawlotteryconfigid != null" >
+        DrawLotteryConfigID = #{record.drawlotteryconfigid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lotteryset != null" >
+        LotterySet = #{record.lotteryset,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lotteryno != null" >
+        LotteryNo = #{record.lotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="record.getlotteryprobalility != null" >
+        GetLotteryProbalility = #{record.getlotteryprobalility,jdbcType=REAL},
+      </if>
+      <if test="record.drawlotterylevelid != null" >
+        DrawLotteryLevelID = #{record.drawlotterylevelid,jdbcType=INTEGER},
+      </if>
+      <if test="record.picturepathid != null" >
+        picturePathId = #{record.picturepathid,jdbcType=BIGINT},
+      </if>
+      <if test="record.picturepath != null" >
+        picturePath = #{record.picturepath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update DrawLotteryItem
+    set DrawLotteryItemID = #{record.drawlotteryitemid,jdbcType=INTEGER},
+      DrawLotteryConfigID = #{record.drawlotteryconfigid,jdbcType=INTEGER},
+      LotterySet = #{record.lotteryset,jdbcType=VARCHAR},
+      LotteryNo = #{record.lotteryno,jdbcType=INTEGER},
+      GetLotteryProbalility = #{record.getlotteryprobalility,jdbcType=REAL},
+      DrawLotteryLevelID = #{record.drawlotterylevelid,jdbcType=INTEGER},
+      picturePathId = #{record.picturepathid,jdbcType=BIGINT},
+      picturePath = #{record.picturepath,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryitem" >
+    update DrawLotteryItem
+    <set >
+      <if test="drawlotteryconfigid != null" >
+        DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryset != null" >
+        LotterySet = #{lotteryset,jdbcType=VARCHAR},
+      </if>
+      <if test="lotteryno != null" >
+        LotteryNo = #{lotteryno,jdbcType=INTEGER},
+      </if>
+      <if test="getlotteryprobalility != null" >
+        GetLotteryProbalility = #{getlotteryprobalility,jdbcType=REAL},
+      </if>
+      <if test="drawlotterylevelid != null" >
+        DrawLotteryLevelID = #{drawlotterylevelid,jdbcType=INTEGER},
+      </if>
+      <if test="picturepathid != null" >
+        picturePathId = #{picturepathid,jdbcType=BIGINT},
+      </if>
+      <if test="picturepath != null" >
+        picturePath = #{picturepath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DrawLotteryItemID = #{drawlotteryitemid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jy.entiy.function.marketingFunction.lotteryManagement.Drawlotteryitem" >
+    update DrawLotteryItem
+    set DrawLotteryConfigID = #{drawlotteryconfigid,jdbcType=INTEGER},
+      LotterySet = #{lotteryset,jdbcType=VARCHAR},
+      LotteryNo = #{lotteryno,jdbcType=INTEGER},
+      GetLotteryProbalility = #{getlotteryprobalility,jdbcType=REAL},
+      DrawLotteryLevelID = #{drawlotterylevelid,jdbcType=INTEGER},
+      picturePathId = #{picturepathid,jdbcType=BIGINT},
+      picturePath = #{picturepath,jdbcType=VARCHAR}
+    where DrawLotteryItemID = #{drawlotteryitemid,jdbcType=INTEGER}
+  </update>
+</mapper>
